@@ -15,9 +15,10 @@ def activity_spider():
     sid2ven = {u'5':1,u'8':2,u'10':3}
     #Fetch contents
     try:
-        proxy_handler = urllib2.ProxyHandler({"http" : 'http://nadc:supernadc@202.114.20.58:612'})  
-        opener = urllib2.build_opener(proxy_handler)
-        urllib2.install_opener(opener)
+        if config.HTTP_PROXY:
+            proxy_handler = urllib2.ProxyHandler({"http" : config.HTTP_PROXY})  
+            opener = urllib2.build_opener(proxy_handler)
+            urllib2.install_opener(opener)
         content = urllib2.urlopen(url).read()
     except:
         log.append('Can\'t fetch vrs api' )
