@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+
+{% block body %}
+
+{{manage_nav()}}
+
+<p>总计 {{count.activity}} 个活动</p>
+<p>总计 {{count.duty}} 个任务</p>
+<p>总计 {{count.article}} 篇文章</p>
+<p>总计 {{count.member}} 个成员</p>
+<p>总计 {{count.message}} 条消息</p>
+
+<p>上次周期任务触发时间
+    {% if param.last_cron %}
+        {{param.last_cron|timeformat("%Y-%m-%d %H:%M:%S")}}
+    {% else %}
+        从未
+    {% endif %}
+</p>
+
+<p>上次自动活动同步时间
+    {% if param.last_sync %}
+        {{param.last_sync|timeformat("%Y-%m-%d %H:%M:%S")}}
+    {% else %}
+        从未
+    {% endif %}
+</p>
+
+
+
+{% endblock %}
+

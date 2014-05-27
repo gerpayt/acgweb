@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="row">
+<div class="span4">
+  <div class="row">
+    <h4 class="span2">活动信息</h4><p class="span2"><a class="btn btn-small btn-success pull-right" href="{{ url_for('activityedit',activity_id=activity.id) }}">编辑活动</a></p>
+  </div>
+<table class="table table-striped">
+  <tr><th width='60'>活动日期</th><td>{{ activity.start_time|timeformat('%Y-%m-%d') }} {{ activity.start_time|dayname() }}</td></tr>
+  <tr><th>开始时间</th><td>{{ activity.start_time|periodname() }} {{ activity.start_time|timeformat('%H:%M') }}</td></tr>
+  <tr><th>活动地点</th><td>{{ activity.venue|venuename() }}</td></tr>
+  <tr><th>活动名称</th><td>{{ activity.title }}</td></tr>
+  <tr><th>活动类型</th><td>{{ activity.type|activitytypename() }}</td></tr>
+  <tr><th>主办方</th><td>{{ activity.hostname }}</td></tr>
+
+</table>
+<hr />
+<h4>活动备注</h4>
+<p>{% if activity.remark %}{{ activity.remark }}{% else %}没有备注{% endif %}</p>
+</div>
+<div class="span8">
+<h4>已排班音控员</h4>
+{% for duty in activity.duties %}
+<div class="row">
+<h5 class="span1 text-center">{{ duty.member.name }}</h5>
+<ul class="duty-list">
+{% for process in duty.getprocesses() %}
+<li class="duty-item" title="{{process.content}}">{{(process.op|dutyoperationname).title}}<br /><small>{{process.time|timeformat('%y-%m %H:%M')}}</small></li>
+{% endfor %}
+</ul>
+  <span class="pull-right text-center">
+    {{ duty.status|dutystatusname }}<br />
+      {% if session.is_arra_monitor %}{% for op in config.CONST.duty_status_opeartion_monitor_mapper[duty.status] %} 
+        <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini">{{config.CONST.dutyoperationname[op].title}}</a>
+      {% endfor %}{% endif %}
+  </span>
+</div>
+<hr />
+{% endfor %}
+</div>
+</div>
+<hr />
+<div class="row">
+<div class="span12">
+<h4>音控员</h4>
+<table class="table table-striped">
+  <tr><th>姓名</th><th>电话号码</th><th>电子邮箱</th><th>QQ号码</th><th>上次值班时间</th><th>上次值班地点</th><th>本月值班</th><th>本周值班</th><th>状态</th><th>操作</th></tr>
+  {% for member in available_member %}
+  <tr><td><a href="{{url_for('memberdetail',member_uid=member.uid)}}">{{ member.name }}</a></td>
+    <td>{{ member.mobile_num }}</td><td>{{ member.email }}</td><td>{{ member.qqnum }}</td>
+    <td>{% if member.start_time %}<span title="{{ member.start_time|timeformat('%Y-%m-%d %H:%M') }}">{{ member.start_time|friendlytime }}</span>
+      {% else %}从未{% endif %}</td>
+    <td>{{ member.venue|venuename }}</td><td>{{ member.monthcount }}次</td><td>{{ member.weekcount }}次</td>
+    <td>{% if member.available == 0 %}空闲
+        {% elif member.available == 1 %}必修课
+        {% elif member.available == 2 %}选修课
+        {% elif member.available == 9 %}已排班
+      {% endif %}</td>
+    <td><a class="btn btn-mini{% if member.available==0 %} btn-success{% endif %}" href="{{url_for('activityappoint',activity_id=activity.id,member_uid=member.uid)}}">排班</a></td></tr>
+  {% endfor %}
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}
+

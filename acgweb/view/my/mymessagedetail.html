@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% from "wysiwyg.html" import wysiwyg %}
+{% set css_list = ['font-awesome'] %}
+{% set script_list = ['bootstrap-wysiwyg','jquery.hotkeys','mybootstrap-wysiwyg'] %}
+
+{% block body %}
+
+<form id="form" action="{{url_for('mymessagesend')}}" method="POST">
+<div class="row">
+<div class="span3">
+    <p><a class="btn" href="{{url_for('mymessage')}}">返回消息列表</a>
+    <a class="btn" href="{{url_for('mymessagesend')}}">发送消息</a></p>
+  <input type="hidden" name="sendto" value="{{message.fromuid}}">
+<hr />
+<h4>消息信息</h4>
+<table class="table table-striped">
+  <tr><th width='60'>发送时间</th><td><span title="{{message.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}">{{message.sendtime|friendlytime}}</span></td></tr>
+  <tr><th>发送者</th><td><a href="{{url_for('memberdetail', member_uid=message.fromuid)}}">{{message.frommember.name}}</a></td></tr>
+  <tr><th>电话号码</th><td>{{message.frommember.mobile_num}}</td></tr>
+  <tr><th>电话类型</th><td>{{message.frommember.mobile_type|mobiletypename}}</td></tr>
+  <tr><th>电话短号</th><td>{{message.frommember.mobile_short}}</td></tr>
+  <tr><th>电子邮件</th><td>{{message.frommember.email}}</td></tr>
+  <tr><th>QQ号码</th><td>{{message.frommember.qqnum}}</td></tr>
+</table>
+</div>
+<div class="span9">
+  <h3>{{ message.subject }}</h3>
+  <hr />
+  <p>{{message.content|safe}}</p>
+  <hr />
+  <div class="row">
+    <div class="span8">
+        <input class="span8" type="text" name="subject" placeholder="消息主题" value="回复：{{message.subject}}">
+    </div>
+    <div class="span1"><button class="btn btn-primary" type="submit">回复</button></div>
+  </div>
+
+  {{ wysiwyg() }}
+  <input type="hidden" name="content" id="content-input">
+  <div id="editor">
+  </div>
+</div>
+</div>
+</form>
+
+
+{% endblock %}
+

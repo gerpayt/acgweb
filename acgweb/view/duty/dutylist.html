@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="page-header">
+  <h1>值班记录</h1>
+</div>
+
+{% for activity in activity_list %}
+<div class="row">
+<div class="span1">
+<p class="calendar"><span class="month">{{ activity.start_time|monthname() }}</span>{{ activity.start_time|timeformat('%d') }}<span class="weekday">{{ activity.start_time|dayname() }}</span></p> 
+</div>
+<span class="span3"><strong> [ {{ activity.venue|venuename() }} ] </strong> {{ activity.start_time|timeformat('%H:%M') }} - {% if activity.end_time %}{{ activity.end_time|timeformat('%H:%M') }}{% else %}?{% endif %} <br />{{activity.title}}<br />{{activity.hostname}}</span>
+<div class="span8">
+<p>
+{% for duty in activity.duties %}
+  {% for log in duty.getlogs() %}
+  {{ duty.member.name }}: [{{ log.type|dutylogtypename() }}] {{ log.content }} <br />
+  {% endfor %}
+{% endfor %}
+
+</p>
+</div>
+</div>
+<hr />
+{% endfor %}
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}><a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('dutylist',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}><a href="{{ url_for('dutylist',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}><a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('dutylist',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+{% endblock %}
+

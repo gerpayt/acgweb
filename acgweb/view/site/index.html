@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="row cms-row">
+<div class="span3">
+<div class="cms-div">
+<h4>最新文章</h4>
+<ul class="long-text">
+{% for article in article_list %}
+  <li><span class="label label-info">{{article.cate_id|categoryname}}</span> <a href="{{url_for('articledetail',article_title=article.title)}}">{{article.title}}</a></li>
+{% endfor %}
+</ul>
+</div>
+</div>
+<div class="span6">
+    <div class="well height-340">
+      <h3>{{article_notice.title}}</h3>
+      <p>{{article_notice.content|safe}}</p>
+	  <p><a class="btn btn-primary btn" href="{{url_for('articledetail',article_title=article_notice.title)}}">参看更多 »</a></p>
+    </div>    
+</div>
+<div class="span3">
+<div class="cms-div">
+<h4>本月值班排名</h4>
+<ul>
+  {% for rank in rank_list %}
+  <li><span class="badge badge-warning">{{rank.rank}}</span> <a href="#">{{rank.name}}</a><span class="label label-inverse pull-right">{{rank.time/3600}} 小时</span></li>
+  {% endfor %}
+</ul>
+</div>
+</div>
+
+</div>
+
+<div class="row cms-row">
+<div class="span4">
+<div class="cms-div">
+<h4>我的活动</h4>
+<ul class="long-text">
+  {% if duty_list %}
+  {% for duty in duty_list %}
+  <li><span class="label label-{{ duty.activity.venue|venuecolor }}">{{duty.activity.venue|venuename}}</span>
+      <strong>{{duty.activity.start_time|timeformat('%m月%d日')}} {{duty.activity.start_time|dayname()}}
+          {{duty.activity.start_time|timeformat('%H:%S')}} </strong>
+      <span class="label label-{{ duty.activity.status|activitystatuscolor }}">{{duty.activity.status|activitystatusname()}}</span></li>
+  <li> <a href="{{url_for('activitydetail',activity_id=duty.activity.id)}}">{{duty.activity.title}}</a></li>
+  {% endfor %}
+  {% else %}
+  <li>你当前没有活动。<a class="btn btn-mini" href="{{url_for('activity_list')}}">活动列表</a></li>
+  {% endif %}
+</ul>
+</div>
+</div>
+<div class="span8">
+<div class="cms-div">
+<h4>近期活动</h4>
+<ul class="longtext">
+{% for activity in activity_list %}
+  <li><span class="label label-{{ activity.venue|venuecolor }}">{{activity.venue|venuename}}</span> {{activity.start_time|timeformat('%Y年%m月%d日')}} {{activity.start_time|dayname()}} {{activity.start_time|timeformat('%H:%S')}} <a href="{{url_for('activitydetail',activity_id=activity.id)}}">{{activity.title}}</a></li>
+{% endfor %}
+</ul>
+</div>
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% set css_list = ['lightbox'] %}
+{% set script_list = ['lightbox.min'] %}
+
+{% block body %}
+
+<div class="page-header">
+  <h1>{{ member.name }}</h1>
+</div>
+
+<div class="row">
+<div class="span4">
+<h4>基本信息</h4>
+<table class="table table-striped">
+  <tr><th>学号</th><td>{{ member.uid }}</td></tr>
+  <tr><th>姓名</th><td>{{ member.name }}</td></tr>
+  <tr><th>性别</th><td>{{ member.sex|sexname() }}</td></tr>
+  <tr><th>专业</th><td>{{ member.school }}</td></tr>
+  <tr><th>电话号码</th><td>{{ member.mobile_num }}</td></tr>
+  <tr><th>电话类型</th><td>{{ member.mobile_type|mobiletypename() }}</td></tr>
+  <tr><th>电话短号</th><td>{{ member.mobile_short }}</td></tr>
+  <tr><th>QQ</th><td>{{ member.qqnum }}</td></tr>
+  <tr><th>邮箱</th><td>{{ member.email }}</td></tr>
+  <tr><th>住址</th><td>{{ member.address }}</td></tr>
+  <tr><th>最近登录</th><td>{{ member.lastlogin_time|timeformat('%Y-%m-%d %H:%M:%S') }}</td></tr>
+  <tr><th>状态</th><td>{{ member.type|membertypename }}</td></tr>
+</table>
+</div>
+<div class="span8">
+<h4>照片</h4>
+{% if member.photo %}
+<div id="member-images-box">
+  {% for photo in member.getphotos() %}
+  {% if photo %}
+  <a href="{{photo}}" data-lightbox="roadtrip" class="image-link">
+    <img src="{{photo}}" class="img-polaroid" />
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<p>还没上传。</p>
+{% endif %}
+<hr />
+
+<h4>个人简介</h4>
+{% if member.introduce %}
+<p>{{ member.introduce }}</p>
+{% else %}
+<p>还没填写。</p>
+{% endif %}
+</div>
+
+</div>
+<hr />
+
+
+<h4>本学期值班记录</h4>
+{% if member.duties %}
+<table class="table table-striped">
+  <tr><th width='80'>日期</th><th width='90'>时间</th><th width='50'>时长</th><th width='30'>地点</th><th>活动</th><th>状态</th><th>记录</th></tr>
+  {% for duty in member.duties %}{% if duty.is_success() %}
+  <tr><td>{{ duty.activity.start_time|timeformat('%Y-%m-%d') }}</td>
+      <td>{{ duty.activity.start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
+      <td>{% if duty.activity.last_time != 0.0 %}{{ duty.activity.last_time }}{% endif %}</td>
+      <td><span class="label label-{{ duty.activity.venue|venuecolor }}">{{ duty.activity.venue|venuename }}</span></td>
+      <td><a href="{{url_for('activitydetail',activity_id=duty.aid)}}">{{ duty.activity.title }}</a></td>
+      <td><span class="label label-{{ duty.status|dutystatuscolor }}">{{ duty.status|dutystatusname }}</span></td>
+      <td>{% for log in duty.getlogs() %}
+          [{{log.type|dutylogtypename}}]:{{log.content}}<br />
+      {% endfor %}</td></tr>
+  {% endif %}{% endfor %}
+</table>
+{% else %}
+<p>本学期还没有值班的记录。</p>
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<div class="row">
+  <h2 class="span10">我的消息</h2>
+  <p class="span2"><a class="btn pull-right" href="{{url_for('mymessagesend')}}">发送消息</a></p>
+</div>
+
+<hr />
+
+{% if message_list %}
+<table class="table table-striped">
+  <tr><th width='50'>类型</th><th width='70'>发送时间</th><th width='60'>发送者</th><th>主题</th><th>摘要</th><th width='70'>阅读时间</th></tr>
+  {% for message in message_list %}
+  <tr><td>{{message.type|messagetypename}}</td>
+  <td><span title="{{message.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}">{{message.sendtime|friendlytime()}}<span></td>
+  <td><a href="{{url_for('memberdetail', member_uid=message.fromuid)}}">{{message.frommember.name}}</a></td>
+  <td><a href="{{url_for('mymessagedetail', message_id=message.id)}}">{{message.subject|striptags|escape|truncate(length=20,end='...',killwords=True)}}</a></td>
+  <td>{{message.content|striptags|escape|truncate(length=30,end='...',killwords=True)}}</td>
+  <td><span title="{% if message.readtime %}{{message.readtime|timeformat('%Y-%m-%d %H:%M:%S')}}{% else %}未读{% endif %}">
+    {% if message.readtime %}{{message.readtime|friendlytime()}}{% else %}<span class="label label-important">未读</span>{% endif %}</span></td></tr>
+  {% endfor %}
+</table>
+
+
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}>
+      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('mymessage',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}>
+      <a href="{{ url_for('mymessage',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}>
+      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('mymessage',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+{% else %}
+<p>你暂时没有消息。</p>
+{% endif %}
+
+{% endblock %}

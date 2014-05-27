@@ -1,0 +1,214 @@
+{% extends "layout.html" %}
+{% set script_list = ['mycountdown', 'mysubmit_message', 'myconfirm'] %}
+
+{% block body %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<div class="row">
+<div class="span4">
+<h4>活动信息</h4>
+<table class="table table-striped">
+  <tr><th width='60'>活动日期</th><td>{{ activity.start_time|timeformat('%Y-%m-%d') }} {{ activity.start_time|dayname() }}</td></tr>
+  <tr><th>开始时间</th><td>{{ activity.start_time|periodname() }} {{ activity.start_time|timeformat('%H:%M') }}</td></tr>
+  {% if activity.end_time %}<tr><th>结束时间</th><td>{{ activity.end_time|periodname() }} {{ activity.end_time|timeformat('%H:%M') }}</td></tr>{% endif %}
+  <tr><th>活动地点</th><td>{{ activity.venue|venuename() }}</td></tr>
+  <tr><th>活动名称</th><td>{{ activity.title }}</td></tr>
+  <tr><th>活动类型</th><td>{{ activity.type|activitytypename() }}</td></tr>
+  <tr><th>主办方</th><td>{{ activity.hostname }}</td></tr>
+
+</table>
+<hr />
+
+<h4>活动备注</h4>
+<p>{% if activity.remark %}{{ activity.remark }}{% else %}没有备注{% endif %}</p>
+<hr />
+{% if activity.status == 3 %}
+<p>活动已结束。</p>
+{% elif activity.status == 2 %}
+<p>活动正在进行中。 {% if is_success %}<a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+    data-href="{{ url_for('activityterminate',activity_id=activity.id) }}"
+    data-label="真的要结束活动吗?" data-content="请填写活动结束时间"
+    data-require_select='1' data-start_time="{{activity.start_time}}">活动结束</a> {% endif %}</p>
+{% elif activity.status == 1 %}
+  <p><span id='activity_from_time_int' class='hide'>{{ activity.from_time() }}</span><span id='activity_from_time_str'></span> <br />
+  {% if session.is_arra_monitor %}<a class="btn btn-danger btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+    data-href="{{ url_for('activitycancle',activity_id=activity.id) }}"
+    data-label="真的要取消活动吗?" data-content="取消活动会通知所有值班的音控员">取消活动</a>{% endif %}</p>
+{% elif activity.status == 4 %}
+<p>活动已取消。</p>
+{% else %}
+<p>活动尚未就绪。<a href="{{url_for('activityready',activity_id=activity.id)}}" class="btn btn-success btn-mini">活动就绪</a></p>
+{% endif %}
+</div>
+
+<div class="span8">
+<h4>音控员</h4>
+{% if activity.status >= 1 %}
+{% if activity.duties %}
+<table class="table table-striped">
+  <tr><th>姓名</th><th>电话号码</th><th>电话短号</th><th>状态</th><th>操作</th></tr>
+  {% for duty in activity.duties %}
+  <tr>
+    <td><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a></td>
+    <td>{{duty.member.mobile_num}}</td><td>{{duty.member.mobile_short}}</td><td>{{ duty.status|dutystatusname() }}</td>
+    <td>
+      {% if activity.status == 1 %}
+      {% if session.uid == duty.member.uid %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %} 
+        {% if config.CONST.dutyoperationname[op].content %}
+          <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+            data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"
+            data-label="{{config.CONST.dutyoperationname[op].title}}" data-content="{{config.CONST.dutyoperationname[op].content}}"
+            {% if config.CONST.dutyoperationname[op].require_input %}data-require_input='1'{% endif %}>
+          {{config.CONST.dutyoperationname[op].title}}</a>
+        {% else %}
+          <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini" href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}">
+          {{config.CONST.dutyoperationname[op].title}}</a>
+        {% endif %}
+      {% endfor %}{% endif %}
+      {% if not is_busy and session.uid != duty.member.uid %}{% for op in config.CONST.duty_status_opeartion_otheruser_mapper[duty.status] %} 
+        {% if config.CONST.dutyoperationname[op].content %}
+          <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+            data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"
+            data-label="{{config.CONST.dutyoperationname[op].title}}" data-content="{{config.CONST.dutyoperationname[op].content}}"
+            {% if config.CONST.dutyoperationname[op].require_input %}data-require_input='1'{% endif %}>
+          {{config.CONST.dutyoperationname[op].title}}</a>
+        {% else %}
+          <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini">
+          {{config.CONST.dutyoperationname[op].title}}</a>
+        {% endif %}
+      {% endfor %}{% endif %}
+      {% if session.is_arra_monitor %}{% for op in config.CONST.duty_status_opeartion_monitor_mapper[duty.status] %}
+        {% if config.CONST.dutyoperationname[op].content %}
+          <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+            data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"
+            data-label="{{config.CONST.dutyoperationname[op].title}}" data-content="{{config.CONST.dutyoperationname[op].content}}"
+            {% if config.CONST.dutyoperationname[op].require_input %}data-require_input='1'{% endif %}>
+          {{config.CONST.dutyoperationname[op].title}}</a>
+        {% else %}
+        <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini">
+          {{config.CONST.dutyoperationname[op].title}}</a>
+        {% endif %}
+      {% endfor %}{% endif %}
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>没有音控员被分派到此活动。</p>{% endif %}
+{% if session.is_arra_monitor and activity.status == 1 %}
+  <a href="{{url_for('activityarrange',activity_id=activity.id)}}" class="btn btn-success btn-mini">安排音控员值班</a>
+{% endif %}
+{% if not is_busy and activity.status == 1 %}<p>你有空闲时间，可以申请此次活动。
+  <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+   data-href="{{url_for('activityapply',activity_id=activity.id)}}"
+   data-label="申请值班" data-content="申请值班成功后不可以拒绝" data-require_input='1'>申请值班</a>
+</p>{% endif %}
+{% else %}
+<p>活动尚未就绪。</p>
+{% endif %}
+<hr />
+<h4>值班记录</h4>
+{% if activity.duties %}
+<table class="table table-striped">
+<!-- # TODO bug but not care  -->
+  <tr><th width='60'>音控员</th><th width='120'>发表时间</th><th width='90'>类型</th><th>内容</th></tr>
+  {% for duty in activity.duties %}
+  {% for log in duty.getlogs() %}
+  <tr><td>{{ duty.member.name }}</td><td>{{ log.time|timeformat('%Y-%m-%d %H:%M') }}</td><td>{{ log.type|dutylogtypename() }}</td><td>{{ log.content }}</td></tr>
+  {% endfor %}
+  {% endfor %}
+</table>
+{% else %}
+<p>暂时还没有值班记录。</p>
+{% endif %}
+<!-- # TODO -->
+{% if is_busy and ( activity.status == 2 or activity.status == 3 ) %}
+<div class="alert alert-error hide" id="submit_message_notice"> </div>
+<div class="input-prepend input-append">
+  <span class="add-on">类型</span>
+  <select class="span2" id="submit_message_type">
+  <option value="">选择类型</option>
+  <option value="equip">设备记录</option>
+  <option value="">报告班长</option>
+  <option value="prev">对前音控员说</option>
+  <option value="next">对后音控员说</option>
+  <option value="host">活动方记录</option>
+  <option value="">抱怨吐槽</option>
+  </select>
+  <input class="span5" id="submit_message_input" type="text">
+  <a class="btn dropdown-toggle" id="submit_message_button">提交</a>
+</div>
+
+{% endif %}
+
+<!--
+<hr />
+<h4>活动方记录</h4>
+<table class="table table-striped">
+  <tr><th width='80'>日期</th><th width='30'>时间</th><th width='30'>地点</th><th width='60'>音控员</th><th>情况</th></tr>
+  <tr><td>2014-04-21</td><td>18:00</td><td>513</td><td>某某某某</td><td>三度空间划分开来申达股份立刻集散地恢复了快速</td></tr>
+</table>
+<p>没有活动方的记录。</p>
+-->
+</div>
+</div>
+</div>
+ 
+<!-- Modal -->
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <form id="myModalform" class="form_no_margin" action="" method="post">
+  <div class="modal-header">
+    <a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+    <h3 id="myModalLabel"></h3>
+  </div>
+  <div class="modal-body">
+    <div id="myModalContent"></div>
+    <input id="myModalInput" name="content" type="text" />
+    <select id="myModalSelect" name="end_time"></select>
+  </div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
+    <button id="myModalButton" href="#" class="btn"></button>
+  </div>
+  </form>
+</div>
+
+
+{% endblock %}
+
+{% block custom_script %}
+<script>
+
+$('#submit_message_button').click(function(){
+    var type = $('#submit_message_type').val();
+    var content = $('#submit_message_input').val();
+    if (type=='') {
+        $('#submit_message_notice').html('类型不能为空。');
+        $('#submit_message_notice').removeClass('hide');
+    }
+    else if (content=='') {
+        $('#submit_message_notice').html('内容不能为空。');
+        $('#submit_message_notice').removeClass('hide');
+    }
+    else {
+        $.post(location.href,{type:type,content:content},function(data){
+            if(data.result=='ok') {
+                $('#submit_message_type').val('');
+                $('#submit_message_input').val('');
+                window.location.reload();
+            }
+            else {
+                $('#submit_message_notice').html(data.msg);
+                $('#submit_message_notice').removeClass('hide');
+            }
+        }, "json")
+    }
+})
+</script>
+
+{% endblock %}

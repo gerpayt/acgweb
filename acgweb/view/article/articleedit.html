@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% from "wysiwyg.html" import wysiwyg %}
+{% set css_list = ['font-awesome'] %}
+{% set script_list = ['bootstrap-wysiwyg','jquery.hotkeys','mybootstrap-wysiwyg'] %}
+
+{% block body %}
+
+{% for part in form.errors.values() %}
+{% for message in part %}
+  {% if message %}<div class="alert alert-error">{{ message }}</div>{% endif %}
+{% endfor %}
+{% endfor %}
+
+<div class="row">
+<div class="span3">
+<h4>文章分类</h4>
+<ul class="nav nav-tabs nav-stacked">
+  <li><a href="{{url_for('articlelist')}}">全部文章</a></li>
+  {% for category in category_list %}
+  <li><a href="{{url_for('articlelist',cateid=category.id)}}">{{category.name}}</a></li>
+  {% endfor %}
+</ul>
+
+</div>
+<div class="span9">
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<div class="row">
+<div class="span2">
+  {{form.cate_id(class="span2")}}
+</div>
+
+<div class="span6">
+  <div class="control-group{% if form.title.errors %} error{% endif %}">
+    {{form.title(class="span6", placeholder="文章标题")}}
+  </div>
+</div>
+
+<div class="span1">
+  {{ form.csrf_token }}
+  {{ form.id() }}
+  <input type="hidden" name="content" id="content-input" value="{{form.content.data|safe}}">
+  <button class="btn btn-primary" type="submit">发布</button>
+</div>
+
+</div>
+
+{{ wysiwyg() }}
+
+<div id="editor">
+{% if form.content.data %}{{form.content.data|safe}}{% endif %}
+</div>
+
+</form>
+
+</div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% set script_list = ['myconfirm'] %}
+
+{% block body %}
+
+
+<div class="page-header">
+  <h1>我的活动</h1>
+</div>
+
+{% if duty_list %}
+<table class="table table-striped">
+  <tr><th width='120'>日期</th><th width='90'>时间</th><th width='30'>地点</th><th>活动</th><th>状态</th><th>操作</th></tr>
+  {% for duty in duty_list %}
+  <tr><td>{{ duty.activity.start_time|timeformat('%Y-%m-%d') }} {{ duty.activity.start_time|dayname }}</td>
+  <td>{{ duty.activity.start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
+  <td><span class="label label-{{ duty.activity.venue|venuecolor }}">{{ duty.activity.venue|venuename }}</span></td>
+  <td><a href="{{ url_for('activitydetail',activity_id=duty.activity.id) }}">{{ duty.activity.title }}</a></td>
+  <td><span class="label label-{{ duty.status|dutystatuscolor }}">{{ duty.status|dutystatusname }}</span></td>
+  <td>
+    {% if duty.activity.status == 1 %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %}
+      {% if config.CONST.dutyoperationname[op].label %}
+        <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
+          data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"
+          data-label="{{config.CONST.dutyoperationname[op].label}}" data-content="{{config.CONST.dutyoperationname[op].content}}">
+        {{config.CONST.dutyoperationname[op].title}}</a>
+      {% else %}
+        <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini" href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}">
+        {{config.CONST.dutyoperationname[op].title}}</a>
+      {% endif %}
+    {% endfor %}{% endif %}
+
+  </td></tr>
+  {% endfor %}
+</table>
+
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}>
+    <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('myactivity',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}>
+    <a href="{{ url_for('myactivity',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}>
+    <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('myactivity',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+{% else %}
+<p>你没有选择任何活动。</p>
+{% endif %}
+<!-- Modal -->
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+    <h3 id="myModalLabel"></h3>
+  </div>
+  <div class="modal-body" id="myModalContent"></div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
+    <a id="myModalButton" href="#" class="btn"></a>
+  </div>
+</div>
+
+{% endblock %}

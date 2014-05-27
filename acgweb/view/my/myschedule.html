@@ -1,0 +1,152 @@
+{% extends "layout.html" %}
+{% set css_list = ['timeline'] %}
+{% set script_list = ['timeline'] %}
+
+{% block body %}
+
+
+<div class="page-header">
+  <h1>我的课表</h1>
+</div>
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<div id="mytimeline"></div>
+<hr />
+
+{% if schedule_list %}
+<table class="table table-striped">
+  <tr><th>周次</th><th>周天</th><th>节次</th><th>课程名称</th><th>课程类型</th><th width='80'>操作</th></tr>
+  {% for schedule in schedule_list %}
+  <tr data-id="{{ schedule.id }}">
+    <td class="sch-week">{{ schedule.week }}</td>
+    <td class="sch-weekday">{{ schedule.weekday }}</td>
+    <td class="sch-section">{{ schedule.section }}</td>
+    <td class="sch-classname">{{ schedule.classname }}</td>
+    <td class="sch-classtype">{{ schedule.classtype|classtypename }}</td>
+    <td><a href="{{ url_for('myschedule_form', schedule_id=schedule.id) }}" class="btn btn-default btn-mini">编辑</a>
+    <a href="#" class="btn btn-danger btn-mini">删除</a></td></tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>你还没添加任何课程。</p>
+{% endif %}
+<a href="{{ url_for('myschedule_form') }}" class="btn btn-primary btn-mini">添加课程</a>
+
+<span class="hide" id="VAR_SEMASTER_BASE">{{config.SEMASTER_BASE}}</span>
+{% endblock %}
+
+{% block custom_script %}
+<script>
+function parsemystr(str) {
+    rtnlist = [];
+    tmp1 = str.split(',');
+    console.log('tmp1',tmp1);
+    for (i in tmp1) {
+        tmp2 = tmp1[i].split('-');
+        console.log(tmp1[i],'tmp2',tmp2);
+        if (tmp2.length==2) {
+            for (j=parseInt(tmp2[0]);j<=parseInt(tmp2[1]);j++)
+                rtnlist.push(j);
+        }
+        else
+            rtnlist.push(parseInt(tmp1[i]));
+    }
+    return rtnlist;
+}
+function summertime(date){
+    var dateobj = new Date(date*1000);
+    var mon = dateobj.getMonth()
+    return mon >= 4 && mon < 9;
+}
+var timeline;
+function drawVisualization() {
+    // create and populate an array with data
+    //console.log($('.sch-week'));
+    classes = {}
+    $('.sch-week').each(function(){
+        //console.log($(this).html());
+        var sch_id = $(this).parent().data('id');
+        classes[sch_id]={week: parsemystr($(this).html())};
+    });
+
+    $('.sch-weekday').each(function(){
+        var sch_id = $(this).parent().data('id');
+        classes[sch_id].weekday=parsemystr($(this).html());
+    });
+
+    $('.sch-section').each(function(){
+        var sch_id = $(this).parent().data('id');
+        classes[sch_id].section=parsemystr($(this).html());
+    });
+
+    $('.sch-classname').each(function(){
+        var sch_id = $(this).parent().data('id');
+        classes[sch_id].classname=$(this).html();
+    });
+
+    $('.sch-classtype').each(function(){
+        var sch_id = $(this).parent().data('id');
+        classes[sch_id].classtype=$(this).html();
+    });
+
+    console.log(classes);
+
+    var semasterbase = {{config.SEMASTER_BASE}};
+    var data = [];
+
+    for (i in classes) {
+        for (wk in classes[i].week) {
+            var start_wk = 7 * 86400 * (classes[i].week[wk]-1);
+            for (wd in classes[i].weekday) {
+                var start_wd = 86400 * classes[i].weekday[wd];
+                for (sc in classes[i].section) {
+                    switch(classes[i].section[sc]) {
+                        case 1:  var start_sc = 8 * 3600; break;
+                        case 2:  var start_sc = 8 * 3600 + 55 * 60; break;
+                        case 3:  var start_sc = 10 * 3600 + 10 * 60; break;
+                        case 4:  var start_sc = 11 * 3600 + 5 * 50; break;
+                        case 5:  var start_sc = 14 * 3600 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 6:  var start_sc = 14 * 3600 + 50 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 7:  var start_sc = 15 * 3600 + 55 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 8:  var start_sc = 16 * 3600 + 45 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 9:  var start_sc = 18 * 3600 + 30 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 10: var start_sc = 19 * 3600 + 20 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 11: var start_sc = 20 * 3600 + 15 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 12: var start_sc = 21 * 3600 + 5 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                    }
+                    var start = semasterbase + start_wk + start_wd + start_sc;
+                    var end = start + 45 * 60;
+                    var p = {'start': new Date(start*1000), 'end': new Date(end*1000), 'content': classes[i].classname};
+                    data.push(p);
+                }
+
+            }
+        }
+
+    }
+
+    // specify options
+    var options = {
+        "width":  "100%",
+        "height": "150px",
+        eventMargin: 0,  // minimal margin between events
+        eventMarginAxis: 0, // minimal margin between events and the axis
+        "min": new Date({{config.SEMASTER_BASE}}*1000),                // lower limit of visible range
+        "max": new Date(({{config.SEMASTER_BASE}} + 25 * 7 * 24 * 3600 )*1000),                // upper limit of visible range
+        "zoomMin": 1000 * 60 * 60 * 12,             // one day in milliseconds
+        "zoomMax": 1000 * 60 * 60 * 24 * 31 * 12,     // about three months in milliseconds
+        "locale" : 'en'
+    };
+
+    // Instantiate our timeline object.
+    timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+    // Draw our timeline with the created data and options
+    timeline.draw(data, options);
+}
+window.onload=function(){drawVisualization();}
+</script>
+
+{% endblock %}

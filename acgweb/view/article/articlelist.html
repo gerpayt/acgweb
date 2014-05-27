@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+<div class="row">
+<div class="span3">
+<h4>文章分类</h4>
+<ul class="nav nav-tabs nav-stacked">
+  <li><a href="{{url_for('articlelist')}}">全部文章</a></li>
+  {% for category in category_list %}
+  <li><a href="{{url_for('articlelist',cateid=category.id)}}">{{category.name}}</a></li>
+  {% endfor %}
+</ul>
+</div>
+<div class="span9">
+<h4>文章列表</h4>
+
+{% if article_list %}
+<table class="table table-striped">
+  <tr><th>分类</th><th>标题</th><th>时间</th></tr>
+{% for article in article_list %}
+  <tr><td>[{{ article.cate_id|categoryname }}]</td><td><a href="{{url_for('articledetail',article_title=article.title)}}">{{ article.title }}</a></td><td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('%m-%d') }}<span></td></tr>
+{% endfor %}
+</table>
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}><a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('articlelist',pagenum=page_current-1,cateid=cateid) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}><a href="{{ url_for('articlelist',pagenum=page,cateid=cateid) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}><a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('articlelist',pagenum=page_current+1,cateid=cateid) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+{% else %}
+<p>没有相应的文章。</p>
+{% endif %}
+</div>
+</div>
+
+{% endblock %}
+

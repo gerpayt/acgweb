@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+<div class="row">
+<div class="span3">
+<h4>文章分类</h4>
+<ul class="nav nav-tabs nav-stacked">
+  <li><a href="{{url_for('articlelist')}}">全部文章</a></li>
+  {% for category in category_list %}
+  <li><a href="{{url_for('articlelist',cateid=category.id)}}">{{category.name}}</a></li>
+  {% endfor %}
+</ul>
+</div>
+<div class="span9">
+<div class="row">
+
+<h4 class="span8">{{ article_detail.title }}</h4>
+<h5 class="span1"><span title="{{ article_detail.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article_detail.posttime|timeformat('%m-%d') }}<span></h5>
+</div>
+<hr />
+<p>
+{{ article_detail.content|safe }}
+</p>
+</div>
+</div>
+
+
+{% endblock %}
+

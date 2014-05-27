@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="page-header">
+  <h1>活动列表</h1>
+</div>
+<div class="row">
+<div class="span12">
+<table class="table table-striped">
+  <tr><th width='155'>日期</th><th width='70'>时间</th><th width='30'>地点</th><th>活动</th><th width='30'>类型</th><th>音控员</th><th width='45'>状态</th></tr>
+  {% for activity in activity_list %}
+  <tr><td>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}</td>
+  <td>{{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}</td>
+  <td><span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></td>
+  <td><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
+  <td><span class="label label-{{ activity.type|activitytypecolor }}">{{ activity.type|activitytypename }}</span></td>
+  <td>{% for duty in activity.duties %}
+      {% if duty.is_success() %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a> {% endif %}
+    {% endfor %}</td>
+  <td><span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></td></tr>
+  {% endfor %}
+</table>
+
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}>
+      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('activitylist',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}>
+      <a href="{{ url_for('activitylist',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}>
+      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('activitylist',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+</div>
+</div>
+
+{% endblock %}
+

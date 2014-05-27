@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="row">
+<div class="span6 offset3">
+<h3>403 没有权限访问这个页面</h3>
+<p>您访问的页面必须使用管理员帐号才能浏览，请返回或者浏览其他页面。</p>
+<p><a href="{{url_for('siteindex')}}">返回首页</a></p>
+<p><a href="{{url_for('activitylist')}}">浏览活动列表</a></p>
+<p><a href="{{url_for('memberlist')}}">浏览成员列表</a></p>
+<p><a href="{{url_for('articlelist')}}">浏览文章列表</a></p>
+
+</div>
+</div>
+
+
+{% endblock %}
+

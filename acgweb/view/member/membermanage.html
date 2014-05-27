@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+{% set script_list = ['myconfirm'] %}
+{% block body %}
+
+{{manage_nav()}}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<table class="table table-striped">
+  <tr><th>学号</th><th>姓名</th><th>专业</th><th>电话号码</th><th>电话短号</th><th>QQ</th><th>邮箱</th><th>住址</th><th>状态</th><th>操作</th></tr>
+  {% for member in member_list %}
+  <tr><td>{{ member.uid }}</td>
+      <td><a href="{{ url_for('memberdetail', member_uid=member.uid) }}">{{ member.name }}</a></td>
+      <td>{{ member.school }}</td>
+      <td>{{ member.mobile_num }}</td><td>({{ member.mobile_type|mobiletypename() }}){{ member.mobile_short }}</td>
+      <td>{{member.qqnum}}</td><td>{{member.email}}</td><td>{{ member.address }}</td>
+      <td>{{ member.type|membertypename }}</td>
+      <td><a href="{{url_for('memberedit',member_uid=member.uid)}}" class="btn btn-mini">编辑</a>
+        <a class="btn btn-mini btn-danger modal-trigger" role="button" href="#myModal" data-toggle="modal"
+          data-href="{{url_for('memberdelete',member_uid=member.uid)}}"
+          data-label="确定要删除 {{ member.name }} 吗？"
+          data-content="删除成员不可撤销">删除</a> </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<a class="btn btn-mini" href="{{ url_for('memberedit') }}">添加成员</a>
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}>
+    <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}>
+    <a href="{{ url_for('memberlist',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}>
+    <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+<!-- Modal -->
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+    <h3 id="myModalLabel"></h3>
+  </div>
+  <div class="modal-body" id="myModalContent"></div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
+    <a id="myModalButton" href="#" class="btn"></a>
+  </div>
+</div>
+
+{% endblock %}

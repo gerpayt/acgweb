@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+{% set script_list = ['myconfirm'] %}
+{% block body %}
+
+{{manage_nav()}}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+<div class="row">
+<div class="span3">
+<h4>文章分类</h4>
+<ul class="nav nav-tabs nav-stacked">
+  <li><a href="{{url_for('articlelist')}}">全部文章</a></li>
+  {% for category in category_list %}
+  <li><a href="{{url_for('articlelist',cateid=category.id)}}">{{category.name}}</a></li>
+  {% endfor %}
+</ul>
+<a class="btn btn-mini" href="{{ url_for('articleedit') }}">添加文章</a>
+</div>
+<div class="span9">
+<h4>文章列表</h4>
+
+<table class="table table-striped">
+  <tr><th>分类</th><th>标题</th><th>时间</th><th>操作</th></tr>
+{% for article in article_list %}
+  <tr><td>[{{ article.cate_id|categoryname }}]</td><td><a href="{{url_for('articledetail',article_title=article.title)}}">{{ article.title }}</a></td>
+      <td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('%m-%d') }}<span></td>
+  <td><a href="{{ url_for('articleedit',article_id=article.id) }}" class="btn btn-mini">编辑</a>
+        <a class="btn btn-mini btn-danger modal-trigger" role="button" href="#myModal" data-toggle="modal"
+          data-href="{{url_for('articledelete',article_id=article.id)}}"
+          data-label="确定要删除 {{ article.title }} 吗？"
+          data-content="删除文章不可撤销">删除</a> </td></tr>
+{% endfor %}
+</table>
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}><a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('articlelist',pagenum=page_current-1,cateid=cateid) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}><a href="{{ url_for('articlelist',pagenum=page,cateid=cateid) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}><a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('articlelist',pagenum=page_current+1,cateid=cateid) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+</div>
+</div>
+
+<!-- Modal -->
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+    <h3 id="myModalLabel"></h3>
+  </div>
+  <div class="modal-body" id="myModalContent"></div>
+  <div class="modal-footer">
+    <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
+    <a id="myModalButton" href="#" class="btn"></a>
+  </div>
+</div>
+
+{% endblock %}
+

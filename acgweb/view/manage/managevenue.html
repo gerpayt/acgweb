@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+{% set css_list = ['timeline'] %}
+{% set script_list = ['timeline','jsapi'] %}
+{% block body %}
+
+{{manage_nav()}}
+
+<div id="mytimeline"></div>
+
+
+<hr />
+<span class="hide" id="VAR_SEMASTER_BASE">{{config.SEMASTER_BASE}}</span>
+{% endblock %}
+
+{% block custom_script %}
+<script>
+var timeline = null;
+var data = null;
+var venuename = {1:'305',2:'513',3:'东四'};
+google.load("visualization", "1");
+
+// Set callback to run when API is loaded
+google.setOnLoadCallback(drawVisualization);
+
+// Called when the Visualization API is loaded.
+function drawVisualization() {
+
+    // Instantiate our timeline object.
+    timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+    // Create and populate a data table.
+    data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'start');
+    data.addColumn('datetime', 'end');
+    data.addColumn('string', 'content');
+    data.addColumn('string', 'group');
+
+    // specify options
+    var options = {
+        "width":  "100%",
+        axisOnTop: true,
+        animate: false,
+        stackEvents: false,
+        groupChangeable: false,
+        autoHeight: false,
+        eventMargin: 0,  // minimal margin between events
+        eventMarginAxis: 0, // minimal margin between events and the axis
+        "min": new Date({{config.SEMASTER_BASE}}*1000),                // lower limit of visible range
+        "max": new Date(({{config.SEMASTER_BASE}} + 25 * 7 * 24 * 3600 )*1000),                // upper limit of visible range
+        "zoomMin": 1000 * 60 * 60 * 12,             // one day in milliseconds
+        "zoomMax": 1000 * 60 * 60 * 24 * 31 * 12,     // about three months in milliseconds
+        "locale" : 'en'
+    };
+
+    // Draw our timeline with the created data and options
+
+    $.ajax({
+        type: "GET",
+        cache:false,
+        url: 'activityjson',
+        dataType:"json",
+        success: function(response) {
+            for( i in response) {
+                //console.log(response[i]);
+                var start = response[i].start_time * 1000;
+                var end = response[i].end_time * 1000;
+                if (end == 0) end = start + 3 * 3600 * 1000;
+                var content = response[i].title+'<br />:'+response[i].remark;
+                var venue = venuename[response[i].venue];
+                console.log(new Date(start),new Date(end),content,venue);
+                data.addRow([new Date(start), new Date(end), content, venue]);
+            };
+            timeline.draw(data, options);
+        }
+    });
+
+}
+
+
+//window.onload=function(){drawVisualization();}
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+{% set css_list = ['bootstrap-datetimepicker.min'] %}
+{% set script_list = ['bootstrap-datetimepicker.min', 'bootstrap-datetimepicker.zh-CN', 'mydatepicker'] %}
+{% block body %}
+
+{{manage_nav()}}
+
+<form action="" method="get">
+<div class="row">
+  <h5 class="span2" for="inputDate">工资统计时间段：</h5>
+  <h5 class="span1" for="inputDate">开始日期</h5>
+  <div class="span2">
+    <input type="hidden" name="starttime" id="starttime_hidden" value="{{ starttime }}">
+    <div class="controls input-append date pull-left class_starttime_timepicker">
+      <input class="input-small" id="starttime_timepicker" type="text" placeholder="开始日期">
+      <span class="add-on"><i class="icon-th"></i></span>
+    </div>
+  </div>
+  <h5 class="span1" for="inputDate">结束日期</h5>
+  <div class="span2">
+    <input type="hidden" name="endtime" id="endtime_hidden" value="{{ endtime }}">
+    <div class="controls input-append date pull-left class_endtime_timepicker">
+      <input class="input-small" id="endtime_timepicker" type="text" placeholder="结束日期">
+      <span class="add-on"><i class="icon-th"></i></span>
+    </div>
+  </div>
+  <div class="span2">
+    <div class="controls"><label class="checkbox"><input type="checkbox" name="export">将结果导出报表</label></div>
+  </div>
+  <div class="span2">
+    <button class="btn btn-success" id="submit_request" type="submit">统计工资</button>
+  </div>
+</div>
+</form>
+<hr />
+<h4 class="text-center">
+  {% if starttime and endtime %}
+    {{ starttime|timeformat('%Y年%m月%d日') }} 至 {{ ((endtime|int) - 24 * 3600)|timeformat('%Y年%m月%d日') }} 工资统计
+  {% elif starttime and not endtime %}
+    {{ starttime|timeformat('%Y年%m月%d日') }} 之后 工资统计
+  {% elif not starttime and endtime %}
+    {{ ((endtime|int) - 24 * 3600)|timeformat('%Y年%m月%d日') }} 之前 工资统计
+  {% else %}
+    全部工资统计
+  {% endif %}
+  </h4>
+<table class="table">
+  <tr><th>学号</th><th>姓名</th><th>总工时</th><th>上班工资</th><th colspan="4">工资详细</th></tr>
+  {% for member in rank_list %}
+  <tr><td rowspan="{{ member.salalist|length }}">{{ member.uid }}</td>
+      <td rowspan="{{ member.salalist|length }}"><a href="{{ url_for('memberdetail',member_uid=member.uid) }}">{{ member.name }}</a></td>
+      <td rowspan="{{ member.salalist|length }}">{{ member.time / 3600 }}</td>
+      <td rowspan="{{ member.salalist|length }}">{{ salaperhour * member.time /3600 }}</td>
+      {% for duty in member.salalist %}
+        <td>{{ duty.start_time|timeformat('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ duty.venue|venuename }}</td>
+        <td><a href="{{ url_for('activitydetail',activity_id=duty.aid) }}">{{ duty.title }}</a></td>
+        <td>{{ duty.last_time /3600 }}</td></tr>
+      {% endfor %}
+  {% endfor %}
+</table>
+        
+<span class="hide" id="VAR_SEMASTER_BASE">{{config.SEMASTER_BASE}}</span>
+
+{% endblock %}
