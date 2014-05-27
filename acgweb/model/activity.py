@@ -58,5 +58,5 @@ class Activity(db.Model):
                 start_section = 7
             elif hour >= 19 and hour <= 22:
                 start_section = 9
-            self._strustarttime={'week':week+1, 'weekday':weekday, 'start_section':start_section }
+            self._strustarttime={'week':int(week)+1, 'weekday':int(weekday), 'start_section':int(start_section) }
         return self._strustarttime;

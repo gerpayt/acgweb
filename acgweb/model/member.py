@@ -57,9 +57,7 @@ class Member(db.Model):
         self.flag = 0
 
     def getphotos(self):
-        if not self.photo: return []
-        elif not self.photos:
-            self.photos = self.photo.split('\n')
+        self.photos = self.photo.split('\n')
         return self.photos
 
     def appendphoto(self, url):

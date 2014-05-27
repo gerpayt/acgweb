@@ -28,7 +28,7 @@
 <h5 class="span1 text-center">{{ duty.member.name }}</h5>
 <ul class="duty-list">
 {% for process in duty.getprocesses() %}
-<li class="duty-item" title="{{process.content}}">{{(process.op|dutyoperationname).title}}<br /><small>{{process.time|timeformat('%y-%m %H:%M')}}</small></li>
+<li class="duty-item" title="{{process.content}}">{{(process.op|dutyoperationname).title}}<br /><small>{{process.time|timeformat('%m-%d %H:%M')}}</small></li>
 {% endfor %}
 </ul>
   <span class="pull-right text-center">

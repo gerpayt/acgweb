@@ -34,7 +34,7 @@ def _parsemystr(str):
         print i,'tmp2',tmp2
         if len(tmp2)==2:
             for j in range (int(tmp2[0]),int(tmp2[1])+1):
-                rtnlist.append(j)
+                rtnlist.append(int(j))
         else:
-            rtnlist.append(i)
+            rtnlist.append(int(i))
     return rtnlist

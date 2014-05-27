@@ -153,7 +153,7 @@ def register():
             member.password=key.hexdigest()
             member.email=form.email.data
             member.mobile_num=form.mobile_num.data
-            member.type=3
+            member.type=0
             member.update_register_time()
             member.update_lastlogin_time()
             db.session.add(member)

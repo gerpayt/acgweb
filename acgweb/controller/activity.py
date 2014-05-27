@@ -218,6 +218,7 @@ def activityedit(activity_id):
 def activityarrange(activity_id):
     """Page: activity detail"""
     activity = Activity.query.get_or_404(activity_id)
+    st = activity.getstrustarttime()
     available_member = {}
     if activity.status == 1 and session.get('is_arra_monitor'):
         schedulelist = Schedule.query.all()
@@ -227,7 +228,6 @@ def activityarrange(activity_id):
             if busymember.has_key(s.uid):
                 continue
             s.strtolist()
-            st = activity.getstrustarttime()
             print st['week'], s.weeklist, st['weekday'], s.weekdaylist
             if st['week'] in s.weeklist and st['weekday'] in s.weekdaylist:
                 if st['start_section'] in s.sectionlist or st['start_section']+3 in s.sectionlist:
@@ -236,7 +236,7 @@ def activityarrange(activity_id):
         hour = time.localtime(activity.start_time).tm_hour
         print activity.start_time,hour
         starttime = activity.start_time - 1 * 3600
-        endtime = activity.start_time + 2 * 3600
+        endtime = activity.start_time + 3 * 3600
         activitylist = Activity.query.filter(Activity.start_time >= starttime, Activity.start_time <= endtime).all()
         for a in activitylist:
             for d in a.duties:

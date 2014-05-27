@@ -58,10 +58,11 @@ def activity_spider():
 
                 timestr_old = timeformat_filter(d['time'],"%Y-%m-%d %H:%M")
                 timestr_new = timeformat_filter(start_time,"%Y-%m-%d %H:%M")
-                venue_old = venuename_filter(d['venue'])
+                venue_old = venuename_filter(d['sid'])
                 venue_new = venuename_filter(venue)
                 title_old = d['title']
                 title_new = title
+                activity = Activity.query.get(d['id'])
                 url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
                 subject = mail.activity_modify_tmpl['subject']
                 content = mail.activity_modify_tmpl['content'] % ( timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, remark, url , url )

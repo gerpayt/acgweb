@@ -6,3 +6,4 @@ MySQL-python
 markdown2
 textile
 gunicorn
+xlwt

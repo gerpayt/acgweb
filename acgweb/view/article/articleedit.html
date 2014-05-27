@@ -46,7 +46,7 @@
 <div class="span1">
   {{ form.csrf_token }}
   {{ form.id() }}
-  <input type="hidden" name="content" id="content-input" value="{{form.content.data|safe}}">
+  <input type="hidden" name="content" id="content-input" value='{{form.content.data|safe}}'>
   <button class="btn btn-primary" type="submit">发布</button>
 </div>
 

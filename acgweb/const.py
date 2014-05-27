@@ -8,7 +8,9 @@ article_category=[
     {'id':1,'name':'新闻通知'},
     {'id':2,'name':'经验分享'},
     {'id':3,'name':'会议记录'},
-    {'id':4,'name':'其他文章'},
+    {'id':4,'name':'规章制度'},
+    {'id':5,'name':'技术文档'},
+    {'id':6,'name':'其他文章'},
 ]
 
 categorysellect=[(i['id'],i['name']) for i in article_category]

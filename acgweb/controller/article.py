@@ -47,7 +47,10 @@ def articlemanage(pagenum=1):
 def articledetail(article_title):
     """Page: article detail"""
     category_list = CONST.article_category
-    article_detail = Article.query.filter(Article.title==article_title).one()
+    try:
+        article_detail = Article.query.filter(Article.title==article_title).one()
+    except:
+        abort(404)
     #print Article.query.filter(Article.title==article_title).statement
     return render_template('article/articledetail.html', article_detail=article_detail,category_list=category_list)
 
