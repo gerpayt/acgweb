@@ -6,7 +6,8 @@ import template_filter
 from acgweb.form.member import MemberForm
 from decorated_function import *
 import acgweb.const as CONST
-import md5
+from acgweb import config
+import md5,time
 
 @app.route('/memberlist-p<int:pagenum>')
 @app.route('/memberlist')
@@ -24,7 +25,23 @@ def memberlist(pagenum=1):
 def memberdetail(member_uid):
     """Page: activity detail"""
     member = Member.query.get_or_404(member_uid)
-    return render_template('member/memberdetail.html', member=member)
+    schedule_table = {}
+    #try:
+    fp = open(config.BASE_DIR+'cache/st_%s.log' % member_uid,'r')
+    weeknum = int((time.time())-config.SEMASTER_BASE )/ (7*86400) + 1
+    weekstart = int(time.time())-86400 * (time.localtime().tm_wday+1)
+    startstr = time.strftime("%Y-%m-%d", time.localtime(weekstart))
+    endstr = time.strftime("%Y-%m-%d", time.localtime(weekstart+7*86400))
+    for line in fp:
+        timestr = line[:10]
+        if timestr >= startstr and timestr < endstr:
+            line = line.rstrip('\n')
+            schedule_content = line[11:].split('\t')
+            schedule_table[timestr] = schedule_content
+    #except:
+    #    pass#schedule_table = {}
+    print schedule_table
+    return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table, weekstart=weekstart, weeknum=weeknum)
 
 
 @app.route('/membermanage-p<int:pagenum>')
@@ -108,6 +125,7 @@ def memberdelete(member_uid):
     db.session.delete(member)
     db.session.commit()
     # TODO delete relation
+    # schedule cache duty message
     flash({'type':'success', 'content':'成员已删除。'})
     return redirect(url_for('membermanage'))
 

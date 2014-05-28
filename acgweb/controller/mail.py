@@ -46,6 +46,7 @@ def send_async_email(msg,toemail):
 forgetpassword_tmpl = {'subject':"重置密码",'content':'''
 点击下面链接来重置密码 <br />
 <a href="%s">%s</a>
+
 '''}
 
 activity_appoint_tmpl = {'subject':"安排值班",'content':'''
@@ -55,7 +56,7 @@ activity_appoint_tmpl = {'subject':"安排值班",'content':'''
 活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接来完成操作 <a href="%s">%s</a>
-
+请于活动开始前一个小时到达活动场地
 '''}
 
 
@@ -86,6 +87,7 @@ approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
 活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接来完成操作 <a href="%s">%s</a>
+
 '''}
 
 decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
@@ -95,6 +97,7 @@ decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
 活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接来完成操作 <a href="%s">%s</a>
+
 '''}
 
 cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
@@ -105,6 +108,7 @@ cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接来完成操作 <a href="%s">%s</a>
+
 '''}
 
 activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
@@ -114,5 +118,6 @@ activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
 活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接来完成操作 <a href="%s">%s</a>
+
 '''}
 

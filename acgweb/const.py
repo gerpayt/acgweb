@@ -49,8 +49,8 @@ activitytypecolor = ['inverse', 'info', 'important', 'inverse']
 activitystatusname = ['未知', '排班中', '正在进行', '已结束', '已取消']
 activitystatuscolor = ['inverse', 'info', 'success', 'default', 'warning']
 
-dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认', '班长拒绝了你的申请', '排班等待确认', '你拒绝了排班任务', '等待活动开始', '等待其他音控员代班', '其他音控员代班成功', '活动取消', '活动进行中', '活动结束']
-dutystatuscolor = ['inverse', 'success', 'important', 'default', 'important', 'default', 'success', 'warning', 'default', 'warning', 'success', 'default']
+dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认', '班长拒绝了你的申请', '排班等待确认', '你拒绝了排班任务', '等待活动开始', '等待其他音控员代班', '其他音控员代班成功', '活动取消', '活动进行中', '活动结束', '排班取消']
+dutystatuscolor = ['inverse', 'success', 'important', 'default', 'important', 'default', 'success', 'warning', 'default', 'warning', 'success', 'default', 'warning']
 
 dutyoperationname = {
         'activity_appoint': {'color':'success', 'title':'安排值班'},
@@ -64,7 +64,8 @@ dutyoperationname = {
         'cancle_cover'  : {'color':'danger' , 'title':'取消带班'},
         'cover_duty'    : {'color':'success', 'title':'代他值班'},
         'term_activity' : {'color':'danger' , 'title':'结束活动'},
-        'cover_task'    : {'color':'default', 'title':'代班任务'},
+        'cover_task'    : {'color':'default', 'title':'代TA值班'},
+        'cancle_task'   : {'color':'danger',  'title':'取消任务', 'content':'确定要取消排班吗？'},
     }
 
 
@@ -80,6 +81,7 @@ dutyoperationname = {
 9 活动取消     主办方取消活动
 10 活动进行中
 11 活动结束
+12 任务取消 班长取消了值班任务
 '''
 
 
@@ -87,9 +89,9 @@ duty_status_opeartion_selfuser_mapper = {0:['apply_duty'],1:[],2:['confirm_apply
 
 duty_status_opeartion_otheruser_mapper = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:['cover_duty'],8:[],9:[],10:[],11:[],12:[]}
 
-duty_status_opeartion_monitor_mapper = {0:['arrange_duty'],1:['approve_apply','decline_apply'],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[]}
+duty_status_opeartion_monitor_mapper = {0:['arrange_duty'],1:['approve_apply','decline_apply'],2:[],3:[],4:['cancle_task'],5:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[]}
 
-duty_status_opeartion_next = {'apply_duty':1,'confirm_apply':6,'accept_duty':6,'decline_duty':5,'request_cover':7,'cancle_cover':6,'term_activity':11,'cover_duty':8,'approve_apply':2,'decline_apply':3}
+duty_status_opeartion_next = {'apply_duty':1,'confirm_apply':6,'accept_duty':6,'decline_duty':5,'request_cover':7,'cancle_cover':6,'term_activity':11,'cover_duty':8,'approve_apply':2,'decline_apply':3,'cancle_task':12}
 
 dutylogtypename = {'equip':'设备记录', 'disc':'报告纪律班长', 'tech':'报告技术班长', 'arra':'报告排班班长' ,'prev':'通知前音控员', 'next':'通知后音控员'}
 

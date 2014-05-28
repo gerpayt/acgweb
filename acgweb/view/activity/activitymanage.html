@@ -45,23 +45,4 @@
 </div>
 {% endif %}
 
-<a class="btn btn-mini btn-success" href="#btn_activitysync" id="btn_activitysync">同步活动</a>
-
-
-{% endblock %}
-
-{% block custom_script %}
-<script>
-    $("#btn_activitysync").click(function(){
-        $.get("{{ url_for('activitysync') }}",function(data){
-            console.log(data);
-            $("#btn_activitysync").html("更新成功");
-            $("#btn_activitysync").addClass("disabled");
-            if (data!="Success")
-                location.reload()
-        });
-        return false;
-    });
-</script>
-
 {% endblock %}

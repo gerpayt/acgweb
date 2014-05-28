@@ -56,7 +56,7 @@
         <td>{{ duty.start_time|timeformat('%Y-%m-%d %H:%M') }}</td>
         <td>{{ duty.venue|venuename }}</td>
         <td><a href="{{ url_for('activitydetail',activity_id=duty.aid) }}">{{ duty.title }}</a></td>
-        <td>{{ duty.last_time /3600 }}</td></tr>
+        <td>{{ duty.work_last_time /3600 }}</td></tr>
       {% endfor %}
   {% endfor %}
 </table>

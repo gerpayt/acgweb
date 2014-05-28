@@ -8,6 +8,7 @@ from acgweb.model.member import Member
 from acgweb.form.schedule import ScheduleForm
 from acgweb.form.member import MemberForm
 import acgweb.const as CONST
+from acgweb import config
 import template_filter
 from decorated_function import *
 import time
@@ -33,6 +34,39 @@ def myschedule():
     return render_template('my/myschedule.html',
         schedule_list=schedule_list,)
 
+def update_schedule_cache(uid):
+    schedule_list = Schedule.query.filter(Schedule.uid==session[u'uid']).all()
+    fp = open(config.BASE_DIR+'cache/st_%s.log' % uid,'w')
+    schedule_table = {}
+    for i in range(1,25):
+        for j in range(7):
+            dayint = config.SEMASTER_BASE + ((i-1)*7 + j) * 86400
+            daystr = time.strftime('%Y-%m-%d',time.localtime(dayint))
+            if not schedule_table.has_key(daystr):
+                schedule_table[daystr] = {}
+            for k in range(1,13):
+                if not schedule_table[daystr].has_key(k):
+                    schedule_table[daystr][k] = []
+
+    for sch in schedule_list:
+        sch.strtolist()
+        for week in sch.weeklist:
+            for weekday in sch.weekdaylist:
+                dayint = config.SEMASTER_BASE + ((week-1)*7 + weekday) * 86400
+                daystr = time.strftime('%Y-%m-%d',time.localtime(dayint))
+                for section in sch.sectionlist:
+                    schedule_table[daystr][section].append(sch.classname)
+
+    keys = schedule_table.keys()
+    print keys
+    keys.sort()
+    print keys
+    for daystr in keys:
+        content = daystr
+        for i in range(1,13):
+            content += '\t'+('.'.join(schedule_table[daystr][i]))
+        fp.write(content+'\n')
+    fp.close()
 
 @app.route('/myschedule_form', methods=['GET', 'POST'])
 @app.route('/myschedule_form-<int:schedule_id>', methods=['GET', 'POST'])
@@ -60,6 +94,7 @@ def myschedule_form(schedule_id=0):
             db.session.commit()
 
             flash({'type':'success', 'content':'保存成功！'})
+            update_schedule_cache(session[u'uid'])
             return redirect('/myschedule')
         return render_template('my/myschedule-form.html', form=form)
     else:
@@ -71,6 +106,19 @@ def myschedule_form(schedule_id=0):
         else:
             form = ScheduleForm()
         return render_template('my/myschedule-form.html', form=form)
+
+
+@app.route('/myschedule_delete-<int:schedule_id>')
+@login_required
+def myschedule_delete(schedule_id):
+    schedule = Schedule.query.get(schedule_id)
+    if schedule.uid != session[u'uid']:
+        abort(403)
+    flash({'type':'success', 'content':'课表已删除。'})
+    db.session.delete(schedule)
+    db.session.commit()
+    update_schedule_cache(session[u'uid'])
+    return redirect(url_for('myschedule'))
 
 
 @app.route('/mymessage-p<int:pagenum>')

@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+
+{% block body %}
+
+{{manage_nav()}}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+<div class="row">
+    <div class="span2">
+        <p><a class="btn btn-mini btn-success" href="#btn_activitysync" id="btn_activitysync">同步活动</a></p>
+        <p>上次同步时间: <br />{{last_sync_time|timeformat("%Y-%m-%d %H:%M:%S")}}</p>
+        <p>也就是: {{last_sync_time|friendlytime}}</p>
+    </div>
+    <div class="span10">
+        {% for log in logs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block custom_script %}
+<script>
+    $("#btn_activitysync").click(function(){
+        $.get("{{ url_for('sync') }}",function(data){
+            console.log(data);
+            $("#btn_activitysync").html("更新成功");
+            $("#btn_activitysync").addClass("disabled");
+            if (data!="Success")
+                location.reload();
+        }).fail(function() {
+            alert( "同步过程中发送错误！" );
+        });
+        return false;
+    });
+</script>
+
+{% endblock %}

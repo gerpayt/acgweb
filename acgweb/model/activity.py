@@ -33,6 +33,15 @@ class Activity(db.Model):
         else:
             return 0.0
 
+    def work_last_time(self):
+        if self.end_time:
+            return (1.0*self.end_time-self.start_time)/3600 + 1
+        else:
+            return 0.0
+
+    def work_start_time(self):
+        return self.start_time - 3600
+
     def from_time(self):
         secs = self.start_time-int(time.time())
         return secs

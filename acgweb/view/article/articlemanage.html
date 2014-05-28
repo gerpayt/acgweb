@@ -48,19 +48,27 @@
 </div>
 </div>
 
+
 <!-- Modal -->
 
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <form id="myModalform" class="form_no_margin" action="" >
   <div class="modal-header">
     <a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
     <h3 id="myModalLabel"></h3>
   </div>
-  <div class="modal-body" id="myModalContent"></div>
+  <div class="modal-body">
+    <div id="myModalContent"></div>
+    <input id="myModalInput" name="content" type="text" />
+    <select id="myModalSelect" name="end_time"></select>
+  </div>
   <div class="modal-footer">
     <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
-    <a id="myModalButton" href="#" class="btn"></a>
+    <button id="myModalButton" href="#" class="btn"></button>
   </div>
+  </form>
 </div>
+
 
 {% endblock %}
 

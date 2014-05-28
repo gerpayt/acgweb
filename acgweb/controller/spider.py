@@ -8,6 +8,8 @@ from acgweb import config
 from acgweb.controller import mail
 import urllib2, json, MySQLdb
 #from acttypeclassify import acttype
+import time
+
 
 def activity_spider():
     log = []
@@ -22,6 +24,7 @@ def activity_spider():
         content = urllib2.urlopen(url).read()
     except:
         log.append('Can\'t fetch vrs api' )
+        content = ''
     #print content
     #Parse contents
 
@@ -34,25 +37,32 @@ def activity_spider():
         start_time = act['time']
         #type = acttype(title)
         type = 0
-        sql = 'insert into activity ( oid, title, remark, venue, start_time, type, status) values ("%s", "%s", "%s", "%s", "%s", "%s", "1");' % (oid, title, remark, venue, start_time, type)
-        print sql
-        try:
-            db.session.execute(sql)
+        #if exist
+
+        sql = 'select id,venue,title,remark,start_time from activity where oid = "%s";' % oid
+        print 'test oid:'+oid
+        res = db.session.execute(sql)
+        db.session.commit()
+        if not res.rowcount:
+            sql = 'insert into activity ( oid, title, remark, venue, start_time, type, status) values ("%s", "%s", "%s", "%s", "%s", "%s", "1");' % (oid, title, remark, venue, start_time, type)
+            #print sql
+            # help! Done
+            new_obj = db.session.execute(sql)
+            #print new_obj.lastrowid
             db.session.commit()
-        except:
-            sql = 'select id,venue,title,remark,start_time from activity where oid = "%s";' % oid
-            print sql
-            res = db.session.execute(sql)
-            db.session.commit()
+            new_id = new_obj.lastrowid
+            log.append('New record inserted new_id:%s oid=%s.' % (new_id, oid) )
+        else:
             d={}
             for r in res:
                 d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'time':r[4] }
-            #print str(title) , str(d['title']) , remark , d['remark'], venue , d['sid'] , start_time , d['time']
-            if str(title) != str(d['title']) or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or str(start_time) != str(d['time']):
+            print d
+            print str(title) , str(d['title']) , remark , d['remark'], venue , d['sid'] , start_time , d['time']
+            if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or str(start_time) != str(d['time']):
                 sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
                 db.session.execute(sql)
                 db.session.commit()
-                log.append('Same record exists but modified' )
+                log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid) )
 
                 duty_list = Duty.query.filter(Duty.aid==d['id']).all()
 
@@ -73,6 +83,6 @@ def activity_spider():
                 pass#log.append('Same record exists ignore' )
             #print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
     db.session.commit()
-    log.append('Success' )
+    log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S') )
 
     return log

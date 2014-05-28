@@ -55,6 +55,17 @@
 <hr />
 
 
+<h4>近期课表</h4>
+
+    <table class="table table-striped table-condensed">
+    <tr><th>第{{ weeknum }}周</th>{% for t in range(weekstart,weekstart+7*86400,86400) %}<th>{{ t|timeformat('%m月%d日') }} {{ t|dayname }}</th>{% endfor %}</tr>
+    {% for i in range(1,13) %}
+        <tr><th>第{{ i }}节</th>{% for t in range(weekstart,weekstart+7*86400,86400) %}<td>{{ schedule_table[t|timeformat('%Y-%m-%d')][i] }}</td>{% endfor %}</tr>
+    {% endfor %}
+    </table>
+
+<hr />
+
 <h4>本学期值班记录</h4>
 {% if member.duties %}
 <table class="table table-striped">
@@ -62,7 +73,7 @@
   {% for duty in member.duties %}{% if duty.is_success() %}
   <tr><td>{{ duty.activity.start_time|timeformat('%Y-%m-%d') }}</td>
       <td>{{ duty.activity.start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
-      <td>{% if duty.activity.last_time != 0.0 %}{{ duty.activity.last_time }}{% endif %}</td>
+      <td>{% if duty.activity.work_last_time != 0.0 %}{{ duty.activity.last_time }}{% endif %}</td>
       <td><span class="label label-{{ duty.activity.venue|venuecolor }}">{{ duty.activity.venue|venuename }}</span></td>
       <td><a href="{{url_for('activitydetail',activity_id=duty.aid)}}">{{ duty.activity.title }}</a></td>
       <td><span class="label label-{{ duty.status|dutystatuscolor }}">{{ duty.status|dutystatusname }}</span></td>
