@@ -428,7 +428,7 @@ def activityterminate(activity_id):
 def activitysync():
     logs=[]
     try:
-        fp = open(config.BASE_DIR+'data/sync.log','r')
+        fp = open(config.BASE_DIR+'log/sync.log','r')
         logs = fp.readlines()[-100:]
         fp.close()
     except:
@@ -458,9 +458,9 @@ def sync():
     from acgweb.controller.spider import activity_spider
     logs = activity_spider()
     try:
-        fp = open(config.BASE_DIR+'data/sync.log','a')
+        fp = open(config.BASE_DIR+'log/sync.log','a')
     except:
-        fp = open(config.BASE_DIR+'data/sync.log','w')
+        fp = open(config.BASE_DIR+'log/sync.log','w')
     for log in logs:
         fp.write("%s\n"%log)
     fp.close()
@@ -517,9 +517,9 @@ def cron():
         open(config.BASE_DIR+'data/last_cron.time','w').write(str(now))
 
         try:
-            fp = open(config.BASE_DIR+'data/cron.log','a')
+            fp = open(config.BASE_DIR+'log/cron.log','a')
         except:
-            fp = open(config.BASE_DIR+'data/cron.log','w')
+            fp = open(config.BASE_DIR+'log/cron.log','w')
         for log in logs:
             fp.write("%s\n"%log)
         fp.close()
