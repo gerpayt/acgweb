@@ -2,7 +2,6 @@
 import sys
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.uploads import UploadSet, IMAGES, configure_uploads
 from . import config
 
 # convert python's encoding to utf8
