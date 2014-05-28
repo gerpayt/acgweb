@@ -6,7 +6,7 @@ from wtforms import validators
 
 
 class RegisterForm(Form):
-    username = TextField('username', description='帐号', validators=[validators.DataRequired(message="帐号不能为空")])
+    username = TextField('username', description='学号', validators=[validators.DataRequired(message="学号不能为空")])
     password = PasswordField('password', description='密码', validators=[validators.DataRequired(message="密码不能为空")])
     password2 = PasswordField('password2', description='确认密码', validators=[validators.DataRequired(message="密码不能为空"),validators.EqualTo('password',message="两次密码不一致")])
     name = TextField('name', description='姓名', validators=[validators.DataRequired(message="姓名不能为空")])
