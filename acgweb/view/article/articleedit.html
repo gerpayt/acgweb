@@ -27,7 +27,7 @@
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
 {% endfor %}
 
-<form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
+<form id="form" action="{{request.url}}" method="POST">
 {% for message in get_flashed_messages() %}
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
 {% endfor %}
