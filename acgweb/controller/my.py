@@ -34,39 +34,52 @@ def myschedule():
     return render_template('my/myschedule.html',
         schedule_list=schedule_list,)
 
-def update_schedule_cache(uid):
-    schedule_list = Schedule.query.filter(Schedule.uid==session[u'uid']).all()
-    fp = open(config.BASE_DIR+'cache/st_%s.log' % uid,'w')
-    schedule_table = {}
-    for i in range(1,25):
-        for j in range(7):
-            dayint = config.SEMASTER_BASE + ((i-1)*7 + j) * 86400
-            daystr = time.strftime('%Y-%m-%d',time.localtime(dayint))
-            if not schedule_table.has_key(daystr):
-                schedule_table[daystr] = {}
-            for k in range(1,13):
-                if not schedule_table[daystr].has_key(k):
-                    schedule_table[daystr][k] = []
+@app.route('/update_all_schedule_cache')
+@login_required
+def update_all_schedule_cache():
+    update_schedule_cache()
+    return redirect(url_for('manage'))
 
-    for sch in schedule_list:
-        sch.strtolist()
-        for week in sch.weeklist:
-            for weekday in sch.weekdaylist:
-                dayint = config.SEMASTER_BASE + ((week-1)*7 + weekday) * 86400
+def update_schedule_cache(uid=''):
+    if uid == '':
+        member_list = Member.query.all()
+        uidlist = [i.uid for i in member_list]
+    else:
+        uidlist = [uid]
+
+    for uid in uidlist:
+        schedule_list = Schedule.query.filter(Schedule.uid==uid).all()
+        fp = open(config.BASE_DIR+'cache/st_%s.log' % uid,'w')
+        schedule_table = {}
+        for i in range(1,25):
+            for j in range(7):
+                dayint = config.SEMASTER_BASE + ((i-1)*7 + j) * 86400
                 daystr = time.strftime('%Y-%m-%d',time.localtime(dayint))
-                for section in sch.sectionlist:
-                    schedule_table[daystr][section].append(sch.classname)
+                if not schedule_table.has_key(daystr):
+                    schedule_table[daystr] = {}
+                for k in range(1,13):
+                    if not schedule_table[daystr].has_key(k):
+                        schedule_table[daystr][k] = []
 
-    keys = schedule_table.keys()
-    print keys
-    keys.sort()
-    print keys
-    for daystr in keys:
-        content = daystr
-        for i in range(1,13):
-            content += '\t'+('.'.join(schedule_table[daystr][i]))
-        fp.write(content+'\n')
-    fp.close()
+        for sch in schedule_list:
+            sch.strtolist()
+            for week in sch.weeklist:
+                for weekday in sch.weekdaylist:
+                    dayint = config.SEMASTER_BASE + ((week-1)*7 + weekday) * 86400
+                    daystr = time.strftime('%Y-%m-%d',time.localtime(dayint))
+                    for section in sch.sectionlist:
+                        schedule_table[daystr][section].append(sch.classname)
+
+        keys = schedule_table.keys()
+        print keys
+        keys.sort()
+        print keys
+        for daystr in keys:
+            content = daystr
+            for i in range(1,13):
+                content += '\t'+('.'.join(schedule_table[daystr][i]))
+            fp.write(content+'\n')
+        fp.close()
 
 @app.route('/myschedule_form', methods=['GET', 'POST'])
 @app.route('/myschedule_form-<int:schedule_id>', methods=['GET', 'POST'])
