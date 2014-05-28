@@ -138,6 +138,8 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
+            if form.reqcode != config.REQCODE:
+                form.reqcode.errors.append('邀请码错误')
             if Member.query.filter(Member.uid==form.username.data).count():
                 form.username.errors.append('帐号已存在')
             if Member.query.filter(Member.email==form.email.data).count():

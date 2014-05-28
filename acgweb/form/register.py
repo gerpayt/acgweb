@@ -12,4 +12,5 @@ class RegisterForm(Form):
     name = TextField('name', description='姓名', validators=[validators.DataRequired(message="姓名不能为空")])
     email = TextField('email', description='电子邮件', validators=[validators.DataRequired(message="电子邮件不能为空"),validators.Email(message="电子邮件格式错误")])
     mobile_num = TextField('mobile_num', description='手机号码', validators=[validators.DataRequired(message="手机号码不能为空")])
+    reqcode = TextField('reqcode', description='注册码', validators=[validators.DataRequired(message="注册码不能为空")])
 
