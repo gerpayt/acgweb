@@ -60,7 +60,7 @@
     <table class="table table-striped table-condensed">
     <tr><th>第{{ weeknum }}周</th>{% for t in range(weekstart,weekstart+7*86400,86400) %}<th>{{ t|timeformat('%m月%d日') }} {{ t|dayname }}</th>{% endfor %}</tr>
     {% for i in range(1,13) %}
-        <tr><th>第{{ i }}节</th>{% for t in range(weekstart,weekstart+7*86400,86400) %}<td>{{ schedule_table[t|timeformat('%Y-%m-%d')][i] }}</td>{% endfor %}</tr>
+        <tr><th>第{{ i }}节</th>{% for t in range(weekstart,weekstart+7*86400,86400) %}<td>{{ schedule_table[t|timeformat('%Y-%m-%d')][i-1] }}</td>{% endfor %}</tr>
     {% endfor %}
     </table>
 
