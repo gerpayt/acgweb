@@ -99,7 +99,7 @@
   
   <div class="control-group{% if form.address.errors %} error{% endif %}">
     <label class="control-label" for="inputAddress">住址</label>
-    <div class="controls">{{form.credit_card()}} 
+    <div class="controls">{{form.address()}} 
     {% if form.address.errors %}
       <span class="help-inline">{% for message in form.address.errors %}{{ message }}<br />{% endfor %}</span>
     {% endif %}
@@ -108,7 +108,7 @@
   
   <div class="control-group{% if form.credit_card.errors %} error{% endif %}">
     <label class="control-label" for="inputCredit_card">银行卡号</label>
-    <div class="controls">{{form.address()}} 
+    <div class="controls">{{form.credit_card()}} 
     {% if form.credit_card.errors %}
       <span class="help-inline">{% for message in form.credit_card.errors %}{{ message }}<br />{% endfor %}</span>
     {% endif %}
