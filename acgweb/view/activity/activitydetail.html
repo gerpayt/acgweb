@@ -132,12 +132,9 @@
   <span class="add-on">类型</span>
   <select class="span2" id="submit_message_type">
   <option value="">选择类型</option>
-  <option value="equip">设备记录</option>
-  <option value="">报告班长</option>
-  <option value="prev">对前音控员说</option>
-  <option value="next">对后音控员说</option>
-  <option value="host">活动方记录</option>
-  <option value="">抱怨吐槽</option>
+  {% for a in config.CONST.dutylogtypename.keys() %}
+  <option value="{{ a }}">{{ config.CONST.dutylogtypename[a] }}</option>
+  {% endfor %}
   </select>
   <input class="span5" id="submit_message_input" type="text">
   <a class="btn dropdown-toggle" id="submit_message_button">提交</a>

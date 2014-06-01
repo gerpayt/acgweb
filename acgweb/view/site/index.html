@@ -26,7 +26,7 @@
 <h4>本月值班排名</h4>
 <ul>
   {% for rank in rank_list %}
-  <li><span class="badge badge-warning">{{rank.rank}}</span> <a href="#">{{rank.name}}</a><span class="label label-inverse pull-right">{{rank.time/3600}} 小时</span></li>
+  <li><span class="badge badge-warning">{{rank.rank}}</span> <a href="{{ url_for('memberdetail',member_uid=rank.uid) }}">{{rank.name}}</a><span class="label label-inverse pull-right">{{rank.time/3600}} 小时</span></li>
   {% endfor %}
 </ul>
 </div>

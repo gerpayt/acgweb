@@ -93,5 +93,5 @@ duty_status_opeartion_monitor_mapper = {0:['arrange_duty'],1:['approve_apply','d
 
 duty_status_opeartion_next = {'apply_duty':1,'confirm_apply':6,'accept_duty':6,'decline_duty':5,'request_cover':7,'cancle_cover':6,'term_activity':11,'cover_duty':8,'approve_apply':2,'decline_apply':3,'cancle_task':12}
 
-dutylogtypename = {'equip':'设备记录', 'disc':'报告纪律班长', 'tech':'报告技术班长', 'arra':'报告排班班长' ,'prev':'通知前音控员', 'next':'通知后音控员'}
+dutylogtypename = {'equip':'设备记录', 'disc':'报告纪律班长', 'tech':'报告技术班长', 'arra':'报告排班班长' ,'prev':'通知前音控员', 'next':'通知后音控员', 'host':'活动方记录', 'blame':'抱怨吐槽'}
 

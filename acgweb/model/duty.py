@@ -31,14 +31,14 @@ class Duty(db.Model):
         return '<Duty %s>' % self.id
 
     def getlogs(self):
-        if not self.log: return []
-        elif not self.logs:
-            loglist = self.log.split('\n')
-            for i in loglist:
-                tmp = i.split('\t')
-                if len(tmp)==3:
-                    obj = {'time':tmp[0], 'type':tmp[1], 'content':tmp[2]}
-                    self.logs.append(obj)
+        self.logs = []
+        #if not self.log: return []
+        loglist = self.log.split('\n')
+        for i in loglist:
+            tmp = i.split('\t')
+            if len(tmp)==3:
+                obj = {'time':tmp[0], 'type':tmp[1], 'content':tmp[2]}
+                self.logs.append(obj)
         return self.logs
 
     def appendlog(self, type, content):
