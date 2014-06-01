@@ -47,7 +47,7 @@ def activitymanage(pagenum=1):
         page_count=(activity_count-1)/CONST.activity_per_page+1,page_current=pagenum)
 
 
-@app.route('/activity-<int:activity_id>')
+@app.route('/activity-<int:activity_id>', methods=['GET', 'POST'])
 @login_required
 def activitydetail(activity_id):
     """Page: activity detail"""
