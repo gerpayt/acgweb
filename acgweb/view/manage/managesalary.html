@@ -53,7 +53,7 @@
       <td rowspan="{{ member.salalist|length }}">{{ member.time / 3600 }}</td>
       <td rowspan="{{ member.salalist|length }}">{{ salaperhour * member.time /3600 }}</td>
       {% for duty in member.salalist %}
-        <td>{{ duty.start_time|timeformat('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ duty.start_time|timeformat('%Y-%m-%d %H:%M') }}-{{ duty.end_time|timeformat('%H:%M') }}</td>
         <td>{{ duty.venue|venuename }}</td>
         <td><a href="{{ url_for('activitydetail',activity_id=duty.aid) }}">{{ duty.title }}</a></td>
         <td>{{ duty.work_last_time /3600 }}</td></tr>
