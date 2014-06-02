@@ -1,10 +1,10 @@
 function parsemystr(str) {
     rtnlist = [];
     tmp1 = str.split(',');
-    console.log('tmp1',tmp1);
+    //console.log('tmp1',tmp1);
     for (i in tmp1) {
         tmp2 = tmp1[i].split('-');
-        console.log(tmp1[i],'tmp2',tmp2);
+        //console.log(tmp1[i],'tmp2',tmp2);
         if (tmp2.length==2) {
             for (j=parseInt(tmp2[0]);j<=parseInt(tmp2[1]);j++)
                 rtnlist.push(j);
@@ -18,38 +18,43 @@ function parsemystr(str) {
 function update_select() {
 
     $(".chk-week").each(function(){
-        console.log(this);
+        //console.log(this);
         this.checked=0;
     });
     var weeklist = parsemystr($('#sch-week-input').val());
-    console.log(weeklist);
+    //console.log(weeklist);
     for (week in weeklist) {
-        console.log(weeklist[week]);
-        $(".chk-week")[(weeklist[week]-1)].checked=1;
+        //console.log(weeklist[week]);
+        if (weeklist[week]) {
+            $(".chk-week")[(weeklist[week]-1)].checked=1;
+        }
     }
 
     $(".chk-weekday").each(function(){
-        console.log(this);
+        //console.log(this);
         this.checked=0;
     });
     var weekdaylist = parsemystr($('#sch-weekday-input').val());
-    console.log(weekdaylist);
+    //console.log(weekdaylist);
     for (weekday in weekdaylist) {
-        console.log(weekdaylist[weekday]);
-        $(".chk-weekday")[(weekdaylist[weekday])].checked=1;
+        //console.log(weekdaylist[weekday]);
+        if (weekdaylist[weekday]) {
+            $(".chk-weekday")[(weekdaylist[weekday])].checked=1;
+        }
     }
 
     $(".chk-section").each(function(){
-        console.log(this);
+        //console.log(this);
         this.checked=0;
     });
     var sectionlist = parsemystr($('#sch-section-input').val());
-    console.log(sectionlist);
+    //console.log(sectionlist);
     for (section in sectionlist) {
-        console.log(sectionlist[section]);
-        $(".chk-section")[(sectionlist[section]-1)].checked=1;
+        //console.log(sectionlist[section]);
+        if (sectionlist[section]) {
+            $(".chk-section")[(sectionlist[section]-1)].checked=1;
+        }
     }
-
 }
 
 function update_input() {
@@ -72,7 +77,7 @@ function update_input() {
         }
         i += 1;
     });
-    console.log(str.substr(0,str.length -1));
+    //console.log(str.substr(0,str.length -1));
     $('#sch-week-input').val(str.substr(0,str.length -1))
 
     var str = '';
@@ -94,7 +99,7 @@ function update_input() {
         }
         i += 1;
     });
-    console.log(str.substr(0,str.length -1));
+    //console.log(str.substr(0,str.length -1));
     $('#sch-weekday-input').val(str.substr(0,str.length -1))
 
     var str = '';
@@ -116,7 +121,7 @@ function update_input() {
         }
         i += 1;
     });
-    console.log(str.substr(0,str.length -1));
+    //console.log(str.substr(0,str.length -1));
     $('#sch-section-input').val(str.substr(0,str.length -1))
 
 }

@@ -37,7 +37,7 @@
 <div class="span6">
   <div class="control-group {% if form.week.errors %} error{% endif %}">
     <label class="control-label" for="inputWeek">周次</label>
-    <div class="controls">{{ form.week(id="sch-week-input", placeholder="周次") }}
+    <div class="controls">{{ form.week(id="sch-week-input", placeholder="请勾选下面复选框") }}
     <span class="help-inline">{% for message in form.week.errors %}{{ message }}<br />{% endfor %}</span></div>
   </div>
 <div class="row" id="chk-weeks">
@@ -78,7 +78,7 @@
 
   <div class="control-group {% if form.weekday.errors %} error{% endif %}">
     <label class="control-label" for="inputWeekday">周天</label>
-    <div class="controls">{{ form.weekday(class="input-mini", id="sch-weekday-input", placeholder="周天") }}
+    <div class="controls">{{ form.weekday(class="input-mini", id="sch-weekday-input", placeholder="请勾选") }}
     <span class="help-inline">{% for message in form.weekday.errors %}{{ message }}<br />{% endfor %}</span></div>
   </div>
 <div class="row">
@@ -99,7 +99,7 @@
 
   <div class="control-group {% if form.section.errors %} error{% endif %}">
     <label class="control-label" for="inputSection">节次</label>
-    <div class="controls">{{ form.section(class="input-mini", id="sch-section-input", placeholder="节次") }}
+    <div class="controls">{{ form.section(class="input-mini", id="sch-section-input", placeholder="请勾选") }}
     <span class="help-inline">{% for message in form.section.errors %}{{ message }}<br />{% endfor %}</span></div>
   </div>
 <div class="row">
