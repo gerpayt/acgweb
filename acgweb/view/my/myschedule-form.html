@@ -27,7 +27,7 @@
   {{ form.csrf_token }}
   <button type="submit" class="btn btn-primary btn-">保存</button>
   <a href="{{ url_for('myschedule') }}" class="btn">取消</a>
-  <a href="{{ url_for('myschedule_delete',schedule_id=form.id.data ) }}" class="btn btn-danger">删除</a>
+  {% if form.id.data %}<a href="{{ url_for('myschedule_delete',schedule_id=form.id.data ) }}" class="btn btn-danger">删除</a>{% endif %}
 </div>
 
 </div>

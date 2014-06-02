@@ -38,6 +38,7 @@ def myschedule():
 @login_required
 def update_all_schedule_cache():
     update_schedule_cache()
+    update_schedule_cache('empty')
     return redirect(url_for('manage'))
 
 def update_schedule_cache(uid=''):

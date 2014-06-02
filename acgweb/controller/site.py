@@ -15,7 +15,7 @@ from acgweb.controller import mail
 def login():
     """Page: all activitylist"""
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form['username'].upper()
         password = request.form['password']
         key = md5.new()
         key.update(password)
@@ -48,7 +48,7 @@ def logout():
 def forgetpassword():
     """Page: activity detail"""
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form['username'].upper()
         email = request.form['email']
         user = Member.query.filter(Member.uid==username, Member.email==email).first()
         if user:
@@ -138,7 +138,7 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            if form.reqcode != config.REQCODE:
+            if form.reqcode.data != config.REQCODE:
                 form.reqcode.errors.append('邀请码错误')
             if Member.query.filter(Member.uid==form.username.data).count():
                 form.username.errors.append('帐号已存在')
@@ -150,7 +150,7 @@ def register():
             key = md5.new()
             key.update(form.password.data)
             member = Member()
-            member.uid=form.username.data
+            member.uid=form.username.data.upper()
             member.name=form.name.data
             member.password=key.hexdigest()
             member.email=form.email.data
