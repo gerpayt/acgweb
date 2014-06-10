@@ -328,12 +328,13 @@ def activityappoint(activity_id,member_uid):
             db.session.commit()
             # need or not
             timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
+            worktimestr = timeformat_filter(activity.work_start_time(),"%Y-%m-%d %H:%M")
             venue = venuename_filter(activity.venue)
             title = activity.title
             remark = activity.remark
             url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
             subject = mail.activity_appoint_tmpl['subject']
-            content = mail.activity_appoint_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+            content = mail.activity_appoint_tmpl['content'] % ( timestr, venue, title, remark, url , url, worktimestr )
             mail.send_message(member_uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, member_uid, member.email)
 
@@ -523,6 +524,11 @@ def cron():
         for log in logs:
             fp.write("%s\n"%log)
         fp.close()
+
+        ts = time.localtime(now)
+        if ts.tm_hour == 22 and ts.tm_min == 0 and ts.tm_sec == 0:
+            # auto sync
+            sync()
 
         return "now"+str(now)
     else:

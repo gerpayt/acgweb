@@ -39,28 +39,38 @@ def send_mail(subject,content,toname,toemail):
 def send_async_email(msg,toemail):
     # send email
     #print config.SMTP_SERVER, config.SMTP_PORT,config.SMTP_USER, config.SMTP_PASSWORD,config.SMTP_USER, config.EMAIL_SALES, msg.as_string()
-    s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
-    s.login(config.SMTP_USER, config.SMTP_PASSWORD)
-    s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+    try:
+        s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
+        s.login(config.SMTP_USER, config.SMTP_PASSWORD)
+        s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+        s.quit()
+    except e:
+        try:
+            fp = open(config.BASE_DIR+'log/error.log','a')
+        except:
+            fp = open(config.BASE_DIR+'log/error.log','w')
+        fp.write("%s\n"%e)
+        fp.close()
 
-forgetpassword_tmpl = {'subject':"重置密码",'content':'''
+forgetpassword_tmpl = {'subject':"[音控组管理系统]重置密码",'content':'''
 点击下面链接来重置密码 <br />
 <a href="%s">%s</a>
 
 '''}
 
-activity_appoint_tmpl = {'subject':"安排值班",'content':'''
+activity_appoint_tmpl = {'subject':"[音控组管理系统]安排值班",'content':'''
 排班班长给你指派了一个活动 <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
 活动备注 %s <br />
-请点击这个链接来完成操作 <a href="%s">%s</a>
-请于活动开始前一个小时到达活动场地
+请点击这个链接来完成操作 <a href="%s">%s</a> <br />
+请于活动开始前一个小时 (%s) 到达活动场地
+
 '''}
 
 
-activity_cancle_tmpl = {'subject':"活动取消",'content':'''
+activity_cancle_tmpl = {'subject':"[音控组管理系统]活动取消",'content':'''
 你值班的活动被取消了<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -70,7 +80,7 @@ activity_cancle_tmpl = {'subject':"活动取消",'content':'''
 
 '''}
 
-activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
+activity_modify_tmpl = {'subject':"[音控组管理系统]活动信息变化",'content':'''
 你值班的活动信息发生了变化<br />
 活动时间 %s 修改为 %s <br />
 活动地点 %s 修改为 %s <br />
@@ -80,7 +90,7 @@ activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
 
 '''}
 
-approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
+approve_apply_tmpl = {'subject':"[音控组管理系统]批准值班申请",'content':'''
 排班班长批准了你的值班申请<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -90,7 +100,7 @@ approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
 
 '''}
 
-decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
+decline_apply_tmpl = {'subject':"[音控组管理系统]拒绝值班申请",'content':'''
 排班班长拒绝了你的值班申请<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -100,7 +110,7 @@ decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
 
 '''}
 
-cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
+cover_duty_tmpl = {'subject':"[音控组管理系统]找人代班成功",'content':'''
 你的带班申请成功处理<br />
 代班人 <a href="%s">%s</a> <br />
 活动时间 %s <br />
@@ -111,7 +121,7 @@ cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 
 '''}
 
-activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
+activity_nearly_begin_tmpl = {'subject':"[音控组管理系统]活动即将开始",'content':'''
 还有两个小时活动就要开始，请准时赶往活动场地<br />
 活动时间 %s <br />
 活动地点 %s <br />
