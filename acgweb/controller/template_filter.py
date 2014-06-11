@@ -78,7 +78,6 @@ def activitystatusname_filter(t):
 def dutystatusname_filter(t):
     return CONST.dutystatusname[t]
 
-
 @app.template_filter('dutystatuscolor')
 def dutystatuscolor_filter(t):
     return CONST.dutystatuscolor[t]

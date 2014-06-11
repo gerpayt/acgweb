@@ -22,10 +22,10 @@ categoryname.insert(0,'未分类')
 #pagination
 article_per_page = 20
 activity_per_page = 15
-member_per_page = 30
+member_per_page = 20
 duty_per_page = 10
 duty_index_page = 3
-message_per_page = 30
+message_per_page = 20
 activity_index_num = 6
 article_index_num = 5
 
@@ -50,7 +50,7 @@ activitystatusname = ['未知', '排班中', '正在进行', '已结束', '已�
 activitystatuscolor = ['inverse', 'info', 'success', 'default', 'warning']
 
 dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认', '班长拒绝了你的申请', '排班等待确认', '你拒绝了排班任务', '等待活动开始', '等待其他音控员代班', '其他音控员代班成功', '活动取消', '活动进行中', '活动结束', '排班取消']
-dutystatuscolor = ['inverse', 'success', 'important', 'default', 'important', 'default', 'success', 'warning', 'default', 'warning', 'success', 'default', 'warning']
+dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'warning', 'success', 'warning', 'default', 'default', 'success', 'default', 'default']
 
 dutyoperationname = {
         'activity_appoint': {'color':'success', 'title':'安排值班'},
