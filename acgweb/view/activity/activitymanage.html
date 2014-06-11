@@ -9,16 +9,15 @@
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
 {% endfor %}
 <table class="table table-striped">
-  <tr><th width='155'>日期</th><th width='70'>时间</th><th width='30'>地点</th><th>活动</th>
-      <th>类型</th><th>音控员</th><th>状态</th><th width='80'>操作</th></tr>
+  <tr><th width='110'>日期</th><th width='40'>时间</th><th width='30'>地点</th><th>活动</th>
+      <th>音控员</th><th>状态</th><th width='80'>操作</th></tr>
   {% for activity in activity_list %}
-  <tr><td>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}</td>
-  <td>{{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}</td>
+  <tr><td>{{ activity.start_time|timeformat('%Y年%m月%d日') }}</td>
+  <td>{{ activity.start_time|timeformat('%H:%M') }}</td>
   <td><span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></td>
   <td><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
-  <td><span class="label label-{{ activity.type|activitytypecolor }}">{{ activity.type|activitytypename }}</span></td>
   <td>{% for duty in activity.duties %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">
-      {{ duty.member.name }}</a> <small> ({{ duty.status|dutystatusname }})</small><br /> {% endfor %}</td>
+      {{ duty.member.name }}</a> <small class="label label-{{ duty.status|dutystatuscolor }}"> ({{ duty.status|dutystatusname }})</small><br /> {% endfor %}</td>
   <td><span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></td>
   <td><a class="btn btn-mini" href="{{ url_for('activityedit',activity_id=activity.id) }}">编辑</a>
     {% if activity.status %}

@@ -32,13 +32,13 @@
 <div class="pagination pagination-centered">
   <ul>
   <li{% if page_current == 1 %} class="active"{% endif %}>
-    <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+    <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('membermanage',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
   {% for page in range(1,page_count+1) %}
   <li{% if page == page_current %} class="active"{% endif %}>
-    <a href="{{ url_for('memberlist',pagenum=page) }}">{{ page }}</a></li>
+    <a href="{{ url_for('membermanage',pagenum=page) }}">{{ page }}</a></li>
   {% endfor %}
   <li{% if page_current == page_count %} class="active"{% endif %}>
-    <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+    <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('membermanage',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
   </ul>
 </div>
 {% endif %}
