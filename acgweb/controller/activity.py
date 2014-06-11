@@ -25,9 +25,10 @@ def activitylist(pagenum=1):
     activity_count = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0).count()
     activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0)\
         .order_by('start_time ASC').limit(CONST.activity_per_page).offset(CONST.activity_per_page*(pagenum-1))
-    return render_template('activity/activitylist.html',
-        activity_list=activity_list,
-        page_count=(activity_count-1)/CONST.activity_per_page+1,page_current=pagenum)
+    if viewtype()==1:
+        return render_template('activity/activitylist_mobile.html', activity_list=activity_list, page_count=(activity_count-1)/CONST.activity_per_page+1,page_current=pagenum)
+    else:
+        return render_template('activity/activitylist.html', activity_list=activity_list, page_count=(activity_count-1)/CONST.activity_per_page+1,page_current=pagenum)
 
 
 @app.route('/activitymanage-p<int:pagenum>')
@@ -59,7 +60,10 @@ def activitydetail(activity_id):
             is_success = duty.status==10
         else:
             is_success = False
-        return render_template('activity/activitydetail.html', activity=activity, is_busy=is_busy, is_success=is_success)
+        if viewtype()==1:
+            return render_template('activity/activitydetail_mobile.html', activity=activity, is_busy=is_busy, is_success=is_success)
+        else:
+            return render_template('activity/activitydetail.html', activity=activity, is_busy=is_busy, is_success=is_success)
     else:
         activity = Activity.query.get(activity_id)
         if activity.status == 2 or activity.status == 3:

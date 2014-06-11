@@ -43,7 +43,7 @@ def memberdetail(member_uid):
             line = line.rstrip('\n')
             schedule_content = line[11:].split('\t')
             schedule_table[timestr] = schedule_content
-    print schedule_table
+    #print schedule_table
     return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table, weekstart=weekstart, weeknum=weeknum)
 
 
@@ -145,3 +145,27 @@ def memberjson():
     rtn = json.dumps(member_list)
     return rtn
 
+
+@app.route('/memberactas-<member_uid>')
+@login_required
+def memberactas(member_uid):
+    """Page: all activitylist"""
+    if not session.get('is_arra_monitor'):
+        abort(403)
+    if member_uid == session.get('ori_uid'):
+        session['uid'] = session['ori_uid']
+        session['name'] =  session['ori_name']
+        session.pop('ori_uid',None)
+        session.pop('ori_name',None)
+    elif session.get('ori_uid'):
+        member = Member.query.get_or_404(member_uid)
+        session['uid'] = member_uid
+        session['name'] = '['+member.name+']'
+    else:
+        member = Member.query.get_or_404(member_uid)
+        session['ori_uid'] = session['uid']
+        session['ori_name'] = session['name']
+        session['uid'] = member_uid
+        session['name'] = '['+member.name+']'
+    flash({'type':'success', 'content':'切换成功。'})
+    return redirect('/member-'+member_uid)

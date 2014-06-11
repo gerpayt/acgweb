@@ -34,7 +34,10 @@ def login():
             return redirect(url)
         else:
             flash({'type':'error', 'content':'你提供的学号和密码不正确。'})
-    return render_template('site/login.html')
+    if viewtype()==1:
+        return render_template('site/login_mobile.html')
+    else:
+        return render_template('site/login.html')
 
 @app.route('/logout')
 def logout():
@@ -64,7 +67,10 @@ def forgetpassword():
             flash({'type':'success', 'content':'已经向邮箱中发送了电子邮件，请查收！'})
         else:
             flash({'type':'error', 'content':'你提供的学号和电子邮件不正确。'})
-    return render_template('site/forgetpassword.html')
+    if viewtype()==1:
+        return render_template('site/forgetpassword_mobile.html')
+    else:
+        return render_template('site/forgetpassword.html')
 
 
 @app.route('/resetpassword-<token>', methods=['GET', 'POST'])
@@ -89,12 +95,18 @@ def resetpassword(token=''):
                 session.pop('reset_password_token',None)
                 flash({'type':'success', 'content':'修改密码成功。'})
                 return redirect(url_for('login'))
-            return render_template('site/resetpassword.html')
+            if viewtype()==1:
+                return render_template('site/resetpassword_mobile.html')
+            else:
+                return render_template('site/resetpassword.html')
         else:
             abort(403)
     else:
         if session.has_key('reset_password_token') and session['reset_password_token'] == token:
-            return render_template('site/resetpassword.html')
+            if viewtype()==1:
+                return render_template('site/resetpassword.html')
+            else:
+                return render_template('site/resetpassword.html')
         else:
             abort(403)
 
@@ -162,9 +174,14 @@ def register():
             db.session.commit()
 
             flash({'type':'success', 'content':'注册成功，请登陆。'})
-            return render_template('site/login.html',form=form)
-
-    return render_template('site/register.html',form=form)
+            if viewtype()==1:
+                return render_template('site/login_mobile.html',form=form)
+            else:
+                return render_template('site/login.html',form=form)
+    if viewtype()==1:
+        return render_template('site/register_mobile.html',form=form)
+    else:
+        return render_template('site/register.html',form=form)
 
 
 @app.route('/imageupload', methods=['POST'])
