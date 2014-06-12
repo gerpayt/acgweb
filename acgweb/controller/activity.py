@@ -157,7 +157,7 @@ def activityopeartion(opeartion,duty_id):
             #mail.send_mail(subject, content, duty.member.name, duty.member.email)
 
         duty.status = CONST.duty_status_opeartion_next[opeartion]
-        duty.appendprocesse(opeartion,content)
+        duty.appendprocesse(opeartion,reason)
         db.session.add(duty)
         db.session.commit()
         flash({'type':'success', 'content':'操作成功！'})
