@@ -44,7 +44,7 @@ def send_async_email(msg,toemail):
         s.login(config.SMTP_USER, config.SMTP_PASSWORD)
         s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
         s.quit()
-    except e:
+    except Exception as e:
         try:
             fp = open(config.BASE_DIR+'log/error.log','a')
         except:
@@ -128,7 +128,7 @@ cover_duty_tmpl = {'subject':"[音控组管理系统]找人代班成功",'conten
 '''}
 
 activity_nearly_begin_tmpl = {'subject':"[音控组管理系统]活动即将开始",'content':'''
-还有两个小时活动就要开始，请准时赶往活动场地<br />
+还有两个小时活动就要开始了，请准时赶往活动场地<br />
 值班时间 %s <br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -162,3 +162,29 @@ decline_duty_tmpl = {'subject':"[音控组管理系统]拒绝排班",'content':'
 
 '''}
 
+notice_activity_modify_tmpl = {'subject':"[音控组管理系统]有一个活动信息变化",'content':'''
+有一个活动信息发生了变化<br />
+活动时间 %s 修改为 %s <br />
+活动地点 %s 修改为 %s <br />
+活动内容 %s 修改为 %s <br />
+请点击这个链接查看详细内容 <br />
+<a href="%s">%s</a> <br />
+请手动更改活动信息 <br />
+
+'''}
+
+notice_activity_cancle_tmpl = {'subject':"[音控组管理系统]有一个活动已删除",'content':'''
+有一个活动已删除<br />
+活动时间 %s <br />
+活动地点 %s <br />
+活动内容 %s <br />
+<a href="%s">%s</a> <br />
+请手动取消这个活动 <br />
+
+'''}
+
+spider_notice_tmpl = {'subject':"[音控组管理系统]自动同步通知",'content':'''
+自动同步操作于 %s 进行 <br />
+<hr />
+
+'''}

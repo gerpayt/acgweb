@@ -500,7 +500,7 @@ def cron():
     except:
         last_cron = 0
     now = int(time.time())
-    nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M")
+    nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M:%S")
     if last_cron / (30*60) < now / (30*60):
         now =  now / (30*60) * (30*60)
         logs = []
@@ -518,7 +518,7 @@ def cron():
             # TODO %d or %s ?
             logs.append("%s: Activity almost start id:%d" % (nowstr,activity.id))
             for duty in activity.duties:
-                print subject, content
+                #print subject, content, duty.member.name, duty.member.email, subject, content
                 mail.send_mail(subject, content, duty.member.name, duty.member.email)
                 logs.append("%s: Send mail to %s" % (nowstr,duty.uid))
 
@@ -526,12 +526,12 @@ def cron():
         activitylist = Activity.query.filter(Activity.start_time>= now-50 , Activity.start_time<now+1750, Activity.status==1).all()
         dutylist = Duty.query.join(Activity).filter(Activity.start_time>= now-50 , Activity.start_time<now+1750, Activity.status==1, or_(Duty.status==6,Duty.status==7)).all()
         for activity in activitylist:
-            logs.append("%s: Activity starts, change activity status id:%d" % (nowstr,activity.id))
+            logs.append("%s : Activity starts, change activity status id:%d" % (nowstr,activity.id))
             activity.status = 2
             db.session.add(activity)
         # TODO other duty status
         for duty in dutylist:
-            logs.append("%s: Activity starts, change duty status id:%d" % (nowstr,duty.id))
+            logs.append("%s : Activity starts, change duty status id:%d" % (nowstr,duty.id))
             duty.status = 10
             db.session.add(duty)
         db.session.commit()
@@ -563,11 +563,11 @@ def cron():
                 subject = mail.activity_mark_endtime_tmpl['subject']
                 content = mail.activity_mark_endtime_tmpl['content'] % ( timestr, venue, title, remark, url , url )
                 # TODO %d or %s ?
-                logs.append("%s: Activity almost end id:%d" % (nowstr,activity.id))
+                logs.append("%s : Activity almost end id:%d" % (nowstr,activity.id))
                 for duty in activity.duties:
-                    print subject, content
+                    #print subject, content
                     mail.send_mail(subject, content, duty.member.name, duty.member.email)
-                    logs.append("%s: Send mail to %s" % (nowstr,duty.uid))
+                    logs.append("%s : Send mail to %s" % (nowstr,duty.uid))
 
         return "now"+str(now)
     else:

@@ -3,6 +3,7 @@ from flask import url_for
 from acgweb import db
 from acgweb.model.activity import Activity
 from acgweb.model.duty import Duty
+from acgweb.model.member import Member
 from template_filter import *
 from acgweb import config
 from acgweb.controller import mail
@@ -29,8 +30,11 @@ def activity_spider():
     #Parse contents
 
     activities = json.loads(content)
+    oidlist = []
+    warnings = []
     for act in activities:
         oid = act['id']
+        oidlist.append(str(oid))
         title = act['activity']
         remark = act['remark']
         venue = sid2ven[act['sid']]
@@ -59,13 +63,10 @@ def activity_spider():
             #print d
             #print str(title) , str(d['title']) , remark , d['remark'], venue , d['sid'] , start_time , d['time']
             if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or str(start_time) != str(d['time']):
-                sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
-                db.session.execute(sql)
-                db.session.commit()
+                #sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
+                #db.session.execute(sql)
+                #db.session.commit()
                 log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid) )
-
-                duty_list = Duty.query.filter(Duty.aid==d['id']).all()
-
                 timestr_old = timeformat_filter(d['time'],"%Y-%m-%d %H:%M")
                 timestr_new = timeformat_filter(start_time,"%Y-%m-%d %H:%M")
                 venue_old = venuename_filter(d['sid'])
@@ -74,15 +75,58 @@ def activity_spider():
                 title_new = title
                 activity = Activity.query.get(d['id'])
                 url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
-                subject = mail.activity_modify_tmpl['subject']
-                content = mail.activity_modify_tmpl['content'] % ( timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, remark, url , url )
-                for duty in duty_list:
-                    mail.send_message(duty.uid,'ADMIN',subject,content,2)
-                    mail.send_mail(subject, content, duty.uid, duty.member.email)
+                #subject = mail.notice_activity_modify_tmpl['subject']
+                content = mail.notice_activity_modify_tmpl['content'] % ( timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, url, url )
+                warnings.append(content)
+                #duty_list = Duty.query.filter(Duty.aid==d['id']).all()
+
+                #timestr_old = timeformat_filter(d['time'],"%Y-%m-%d %H:%M")
+                #timestr_new = timeformat_filter(start_time,"%Y-%m-%d %H:%M")
+                #venue_old = venuename_filter(d['sid'])
+                #venue_new = venuename_filter(venue)
+                #title_old = d['title']
+                #title_new = title
+                #activity = Activity.query.get(d['id'])
+                #url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
+                #subject = mail.activity_modify_tmpl['subject']
+                #content = mail.activity_modify_tmpl['content'] % ( timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, remark, url, url )
+                #for duty in duty_list:
+                #    mail.send_message(duty.uid,'ADMIN',subject,content,2)
+                #    mail.send_mail(subject, content, duty.uid, duty.member.email)
+
             else:
                 pass#log.append('Same record exists ignore' )
             #print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
     db.session.commit()
+
+    #for oid in oidlist:
+    ts = time.localtime()
+    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    oidstr = ','.join(oidlist)
+    sql = 'select id, oid, start_time, venue, title from activity where status != "4" and start_time >= "%d" and oid not in( %s);' % (todaytime, oidstr)
+    #print sql
+    res = db.session.execute(sql)
+    for row in res:
+        log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]) )
+        timestr = timeformat_filter(row[2],"%Y-%m-%d %H:%M")
+        venue = venuename_filter(row[3])
+        title = row[4]
+        url = config.BASE_URL + url_for('activitydetail',activity_id=row[0])
+        #subject = mail.notice_activity_cancle_tmpl['subject']
+        content = mail.notice_activity_cancle_tmpl['content'] % ( timestr, venue, title, url, url )
+        warnings.append(content)
+
     log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S') )
+
+    if warnings:
+        now = int(time.time())
+        nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M:%S")
+
+        subject = mail.spider_notice_tmpl['subject']
+        content = mail.spider_notice_tmpl['content'] % nowstr + '<hr />'.join(warnings)
+        for uid in config.ARRA_MONITOR:
+            member = Member.query.get(uid)
+            mail.send_message(uid,config.SYS_ADMIN,subject,content,2)
+            mail.send_mail(subject, content, member.name, member.email)
 
     return log
