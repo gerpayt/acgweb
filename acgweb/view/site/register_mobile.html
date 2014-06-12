@@ -1,0 +1,41 @@
+{% extends "layout_mobile.html" %}
+
+
+{% block body %}
+
+<form class="form-horizontal" id="form" action="{{ url_for('register') }}" method="POST">
+
+<h4>请填写注册信息</h4>
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+<!--
+{% for part in form.errors.values() %}
+{% for message in part %}
+  {% if message %}<div class="alert alert-error">{{ message }}</div>{% endif %}
+{% endfor %}
+{% endfor %}
+-->
+
+{% for field in form %}
+  <div class="control-group{% if field.errors %} error{% endif %}">
+    <label class="control-label" for="input{{field.id}}">{{field.description}}</label>
+    <div class="controls">{{field()}} 
+    {% if field.errors %}
+      <span class="help-inline">{% for message in field.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}</div>
+  </div>
+{% endfor %}  
+
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn btn-primary">确认注册</button>
+      <a class="btn" href="{{ url_for('login') }}">登录</a>
+    </div>
+  </div>
+
+
+</form>
+
+
+{% endblock %}

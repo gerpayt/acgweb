@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% set script_list = ['myschedule'] %}
+{% block body %}
+<div class="page-header">
+  <h1>编辑课程</h1>
+</div>
+<form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
+<div class="row">
+<div class="span6">
+  <div class="control-group {% if form.classname.errors %} error{% endif %}">
+    <label class="control-label" for="inputClassname">课程名称</label>
+    <div class="controls">{{ form.classname(placeholder="课程名称") }}
+    <span class="help-inline">{% for message in form.classname.errors %}{{ message }}<br />{% endfor %}</span></div>
+  </div>
+</div>
+<div class="span3">
+  <div class="control-group {% if form.classtype.errors %} error{% endif %}">
+    <label class="control-label" for="inputClasstype">课程类型</label>
+    <div class="controls">{{ form.classtype(class="input-small") }}
+      <span class="help-inline">{% for message in form.classtype.errors %}{{ message }}<br />{% endfor %}</span>
+    </div>
+  </div>
+</div>
+<div class="span3">
+  {{ form.id(id="sch-id") }}
+  {{ form.csrf_token }}
+  <button type="submit" class="btn btn-primary btn-">保存</button>
+  <a href="{{ url_for('myschedule') }}" class="btn">取消</a>
+  {% if form.id.data %}<a href="{{ url_for('myschedule_delete',schedule_id=form.id.data ) }}" class="btn btn-danger">删除</a>{% endif %}
+</div>
+
+</div>
+
+
+<div class="row">
+<div class="span6">
+  <div class="control-group {% if form.week.errors %} error{% endif %}">
+    <label class="control-label" for="inputWeek">周次</label>
+    <div class="controls">{{ form.week(id="sch-week-input", placeholder="请勾选下面复选框") }}
+    <span class="help-inline">{% for message in form.week.errors %}{{ message }}<br />{% endfor %}</span></div>
+  </div>
+<div class="row" id="chk-weeks">
+<div class="span2">
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第1周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第2周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第3周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第4周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第5周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第6周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第7周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第8周</label>
+</div>
+<div class="span2">
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第9周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第10周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第11周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第12周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第13周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第14周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第15周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第16周</label>
+</div>
+<div class="span2">
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第17周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第18周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第19周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第20周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第21周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第22周</label>
+<label class="checkbox"><input class="chk-week" type="checkbox" value="">第23周</label>
+<input class="chk-week" type="hidden">
+</div>
+</div>
+</div>
+
+<div class="span3">
+
+  <div class="control-group {% if form.weekday.errors %} error{% endif %}">
+    <label class="control-label" for="inputWeekday">周天</label>
+    <div class="controls">{{ form.weekday(class="input-mini", id="sch-weekday-input", placeholder="请勾选") }}
+    <span class="help-inline">{% for message in form.weekday.errors %}{{ message }}<br />{% endfor %}</span></div>
+  </div>
+<div class="row">
+<div class="span2 offset1">
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周日</label>
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周一</label>
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周二</label>
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周三</label>
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周四</label>
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周五</label>
+<label class="checkbox"><input class="chk-weekday" type="checkbox" value="">周六</label>
+<input class="chk-weekday" type="hidden">
+</div>
+</div>
+</div>
+
+<div class="span3">
+
+  <div class="control-group {% if form.section.errors %} error{% endif %}">
+    <label class="control-label" for="inputSection">节次</label>
+    <div class="controls">{{ form.section(class="input-mini", id="sch-section-input", placeholder="请勾选") }}
+    <span class="help-inline">{% for message in form.section.errors %}{{ message }}<br />{% endfor %}</span></div>
+  </div>
+<div class="row">
+<div class="span1 offset1">
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">1</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">2</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">3</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">4</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">5</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">6</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">7</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">8</label>
+</div>
+<div class="span1">
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">9</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">10</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">11</label>
+<label class="checkbox"><input class="chk-section" type="checkbox" value="">12</label>
+<input class="chk-section" type="hidden">
+</div>
+</div>
+</div>
+</div>
+
+</form>
+
+{% endblock %}
+

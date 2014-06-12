@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+
+{% block body %}
+{{manage_nav()}}
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+
+{% if schedule_list %}
+<table class="table table-striped">
+  <tr><th>姓名</th><th>学期</th><th>周次</th><th>周天</th><th>节次</th><th>课程名称</th><th>课程类型</th></tr>
+  {% for schedule in schedule_list %}
+  <tr data-id="{{ schedule.id }}">
+    <td><a href="{{ url_for('memberdetail',member_uid=schedule.uid) }}">{{ schedule.member.name }}</a></td>
+    <td>{{ schedule.semester }}</td>
+    <td class="sch-week">{{ schedule.week }}</td>
+    <td class="sch-weekday">{{ schedule.weekday }}</td>
+    <td class="sch-section">{{ schedule.section }}</td>
+    <td class="sch-classname">{{ schedule.classname }}</td>
+    <td class="sch-classtype">{{ schedule.classtype|classtypename }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>你还没添加任何课程。</p>
+{% endif %}
+
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}>
+      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('schedulemanage',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}>
+      <a href="{{ url_for('schedulemanage',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}>
+      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('schedulemanage',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+{% endblock %}

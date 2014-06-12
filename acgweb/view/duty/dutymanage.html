@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+
+{% block body %}
+{{manage_nav()}}
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+{% if duty_list %}
+<table class="table table-striped">
+  <tr><th width='50'>姓名</th><th width='80'>日期</th><th width='90'>时间</th><th width='30'>时长</th><th width='30'>场地</th><th>活动名称</th><th width='70'>任务状态</th><th>操作</th></tr>
+  {% for duty in duty_list %}
+  <tr><td><a href="{{url_for('memberdetail',member_uid=duty.uid)}}">{{duty.member.name}}</a></td>
+  <td>{{ duty.activity.work_start_time()|timeformat('%Y-%m-%d') }}</td>
+  <td>{{ duty.activity.work_start_time()|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
+  <td>{% if duty.activity.work_last_time() != 0.0 %}{{ duty.activity.work_last_time() }}{% endif %}</td>
+  <td><span class="label label-{{ duty.activity.venue|venuecolor }}">{{ duty.activity.venue|venuename }}</span></td>
+  <td><a href="{{url_for('activitydetail',activity_id=duty.aid)}}">{{ duty.activity.title }}</a></td>
+  <td><span class="label label-{{ duty.status|dutystatuscolor }}">{{ duty.status|dutystatusname }}</span></td>
+  <td><a class="btn btn-mini" href="{{ url_for('dutyedit',duty_id=duty.id) }}">编辑</a></td>
+  </tr>
+  {% endfor %}
+</table>
+
+
+{% if page_count > 1 %}
+<div class="pagination pagination-centered">
+  <ul>
+  <li{% if page_current == 1 %} class="active"{% endif %}>
+      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('dutymanage',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+  {% for page in range(1,page_count+1) %}
+  <li{% if page == page_current %} class="active"{% endif %}>
+      <a href="{{ url_for('dutymanage',pagenum=page) }}">{{ page }}</a></li>
+  {% endfor %}
+  <li{% if page_current == page_count %} class="active"{% endif %}>
+      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('dutymanage',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+  </ul>
+</div>
+{% endif %}
+
+{% else %}
+<p>你暂时没有消息。</p>
+{% endif %}
+
+{% endblock %}

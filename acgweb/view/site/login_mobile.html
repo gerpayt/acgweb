@@ -1,0 +1,38 @@
+{% extends "layout_mobile.html" %}
+
+
+{% block body %}
+
+<form class="form-horizontal" action="{{ url_for('login') }}" method="POST">
+
+<h4>请填写登录信息</h4><br />
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+  <div class="control-group">
+    <label class="control-label" for="inputUid">帐号</label>
+    <div class="controls"><input name="username" type="text" placeholder="帐号"></div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" for="inputPassword">密码</label>
+    <div class="controls"><input name="password" type="password" placeholder="密码"></div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls"><label class="checkbox"><input name="remberpassword" type="checkbox" value="">记住密码</label></div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn btn-primary">登录</button>
+      <a class="btn" href="{{ url_for('register') }}">注册</a>
+      <a class="btn" href="{{ url_for('forgetpassword') }}">忘记密码</a>
+    </div>
+  </div>
+
+
+</form>
+
+{% endblock %}
+
