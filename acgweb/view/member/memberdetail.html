@@ -8,6 +8,10 @@
   <h1>{{ member.name }}</h1>
 </div>
 
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
 <div class="row">
 <div class="span4">
 <h4>基本信息</h4>
@@ -48,6 +52,13 @@
 <p>{{ member.introduce }}</p>
 {% else %}
 <p>还没填写。</p>
+{% endif %}
+<hr />
+{% if session['is_arra_monitor'] %}
+    <a class="btn btn-small" href="{{ url_for('memberactas',member_uid=member.uid) }}">切换用户</a>
+    {% if session['ori_uid'] %}
+        <a class="btn btn-small" href="{{ url_for('memberactas',member_uid=session['ori_uid']) }}">切回{{ session['ori_name'] }}</a>
+    {% endif %}
 {% endif %}
 </div>
 

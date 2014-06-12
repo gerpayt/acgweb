@@ -28,7 +28,7 @@
 <script>
     $("#btn_activitysync").click(function(){
         $.get("{{ url_for('sync') }}",function(data){
-            console.log(data);
+            //console.log(data);
             $("#btn_activitysync").html("更新成功");
             $("#btn_activitysync").addClass("disabled");
             if (data!="Success")

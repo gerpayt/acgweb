@@ -24,8 +24,10 @@ article_per_page = 20
 activity_per_page = 15
 member_per_page = 20
 duty_per_page = 10
+dutylist_per_page = 20
 duty_index_page = 3
 message_per_page = 20
+schedule_per_page = 20
 activity_index_num = 6
 article_index_num = 5
 

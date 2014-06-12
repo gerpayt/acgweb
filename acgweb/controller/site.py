@@ -197,7 +197,7 @@ def imageupload():
         while os.path.exists(os.path.join(config.BASE_DIR, "data/member", filename)):
             filename = ori_filename[:ori_filename.rfind('.')]+'_'+str(i)+ori_filename[ori_filename.rfind('.'):]
             i+=1
-            print filename
+            #print filename
         tmp_filename = config.BASE_DIR+'temp/temp_image'
         #file.save(os.path.join(CONST.member_image_folder, tmp_filename))
         '''try:

@@ -40,3 +40,47 @@
 </div>
 {% endmacro %}
 
+{% macro navbar_mobile() %}
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/">音控组管理系统</a>
+    <ul class="nav pull-right">
+      {% if session.name %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }} <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <!-- <li><a href="mycenter">个人中心</a></li> -->
+          <li><a href="myactivity">我的活动</a></li>
+          <li><a href="myschedule">我的课表</a></li>
+          <li><a href="mymessage">我的消息</a></li>
+          <li><a href="myinfo">我的资料</a></li>
+          <li class="divider"></li>
+          <li><a href="logout">注销</a></li>
+        </ul>
+      </li>
+      {% else %}
+      <li><a href="{{ url_for('login') }}">登录</a></li>
+      {% endif %}
+    </ul>
+    {% if session.new_message %}
+    <ul class="nav pull-right">
+      <li><a href="{{url_for('mymessage')}}"><span class="badge badge-info">{{session.new_message}}</span> 新消息</a></li>
+    </ul>
+    {% endif %}
+  </div>
+  <div class="navbar-inner">
+    <ul class="nav">
+      <li{% if request.path == '/' %} class="active"{% endif %}><a href="{{ url_for('siteindex') }}">首页</a></li>
+      <li{% if request.path.startswith('/activity') %} class="active"{% endif %}><a href="{{ url_for('activitylist') }}">活动</a></li>
+      <li{% if request.path.startswith('/member') %} class="active"{% endif %}><a href="{{ url_for('memberlist') }}">成员</a></li>
+      <li{% if request.path.startswith('/duty') %} class="active"{% endif %}><a href="{{ url_for('dutylist') }}">记录</a></li>
+      <li{% if request.path.startswith('/article') %} class="active"{% endif %}><a href="{{ url_for('articlelist') }}">文章</a></li>
+      {% if session['is_arra_monitor'] %}
+        <li{% if request.path.startswith('/manage') %} class="active"{% endif %}><a href="{{ url_for('manage') }}">管理</a></li>
+      {% endif %}
+      <li{% if request.path.startswith('/help') %} class="active"{% endif %}><a href="{{ url_for('help') }}">帮助</a></li>
+    </ul>
+  </div>
+</div>
+{% endmacro %}
+

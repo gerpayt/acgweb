@@ -68,7 +68,7 @@ function drawVisualization() {
                 if (end == 0) end = start + 3 * 3600 * 1000;
                 var content = response[i].title+'<br />:'+response[i].remark;
                 var venue = venuename[response[i].venue];
-                console.log(new Date(start),new Date(end),content,venue);
+                //console.log(new Date(start),new Date(end),content,venue);
                 data.addRow([new Date(start), new Date(end), content, venue]);
             };
             timeline.draw(data, options);

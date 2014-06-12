@@ -12,7 +12,8 @@ class Schedule(db.Model):
     section = db.Column(db.String(8))
     classname = db.Column(db.String(8))
     classtype = db.Column(db.Integer)
-
+    member = db.relationship('Member',
+        backref=db.backref('schedule', lazy='dynamic'))
     def __repr__(self):
         return '<Schedule %s>' % self.id
 
@@ -28,10 +29,10 @@ class Schedule(db.Model):
 def _parsemystr(str):
     rtnlist = []
     tmp1 = str.split(',')
-    print 'tmp1',tmp1
+    #print 'tmp1',tmp1
     for i in tmp1:
         tmp2 = i.split('-');
-        print i,'tmp2',tmp2
+        #print i,'tmp2',tmp2
         if len(tmp2)==2:
             for j in range (int(tmp2[0]),int(tmp2[1])+1):
                 rtnlist.append(int(j))

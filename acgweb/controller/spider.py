@@ -40,7 +40,7 @@ def activity_spider():
         #if exist
 
         sql = 'select id,venue,title,remark,start_time from activity where oid = "%s";' % oid
-        print 'test oid:'+oid
+        #print 'test oid:'+oid
         res = db.session.execute(sql)
         db.session.commit()
         if not res.rowcount:
@@ -56,8 +56,8 @@ def activity_spider():
             d={}
             for r in res:
                 d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'time':r[4] }
-            print d
-            print str(title) , str(d['title']) , remark , d['remark'], venue , d['sid'] , start_time , d['time']
+            #print d
+            #print str(title) , str(d['title']) , remark , d['remark'], venue , d['sid'] , start_time , d['time']
             if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or str(start_time) != str(d['time']):
                 sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
                 db.session.execute(sql)

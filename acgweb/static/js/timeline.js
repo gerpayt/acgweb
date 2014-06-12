@@ -5963,7 +5963,7 @@ links.Timeline.StepDate.prototype.snap = function(date) {
         date.setMilliseconds(0);
     }
     else if (this.scale == links.Timeline.StepDate.SCALE.DAY) {
-			    console.log(date.getWeek());
+        //console.log(date.getWeek());
         switch (this.step) {
             case 2:
                 if(date.getWeek()%2==0)
