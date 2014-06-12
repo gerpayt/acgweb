@@ -49,7 +49,8 @@
 {% if activity.status >= 1 %}
 {% if activity.duties %}
 <table class="table table-striped">
-  <tr><th>姓名</th><th>电话号码</th><th>电话短号</th><th>状态</th><th>操作</th></tr>
+  <tr><th>姓名</th><th>电话号码</th><th>电话短号</th><th>状态</th><th>操作</th>
+      {% if session.is_arra_monitor %}<th>编辑</th>{% endif %}</tr>
   {% for duty in activity.duties %}
   <tr>
     <td><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a></td>
@@ -94,6 +95,7 @@
       {% endfor %}{% endif %}
       {% endif %}
     </td>
+  {% if session.is_arra_monitor %}<td><a href="{{ url_for('dutyedit',duty_id=duty.id) }}" class="btn btn-danger btn-mini">编辑</a></td>{% endif %}
   </tr>
   {% endfor %}
 </table>

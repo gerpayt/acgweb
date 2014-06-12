@@ -90,10 +90,10 @@ def activityopeartion(opeartion,duty_id):
         (session.get('is_arra_monitor') and opeartion in CONST.duty_status_opeartion_monitor_mapper[duty.status])):
         #print Article.query.filter(Article.title==article_title).statement
         if request.method=='POST':
-            content = request.form['content']
+            reason = request.form['content']
         else:
-            content = ''
-        if CONST.dutyoperationname[opeartion].has_key('require_input') and not content:
+            reason = ''
+        if CONST.dutyoperationname[opeartion].has_key('require_input') and not reason:
             flash({'type':'error', 'content':'请填写申请理由。'})
             return redirect(url_for('activitydetail',activity_id=duty.aid))
 
@@ -133,7 +133,6 @@ def activityopeartion(opeartion,duty_id):
             mail.send_mail(subject, content, duty.member.name, duty.member.email)
         elif opeartion == 'decline_duty':
             uname = session['name']
-            reason = content
             timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
             venue = venuename_filter(duty.activity.venue)
             title = duty.activity.title

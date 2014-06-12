@@ -1,8 +1,9 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json
+from flask import render_template, request, redirect, url_for, json, abort, session, flash
 from acgweb import app, db
 from acgweb.model.activity import Activity
 from acgweb.model.duty import Duty
+from acgweb.form.duty import DutyForm
 import template_filter
 from decorated_function import *
 import acgweb.const as CONST
@@ -32,13 +33,38 @@ def dutymanage(pagenum=1):
         page_count=(duty_count-1)/CONST.dutylist_per_page+1,page_current=pagenum)
 
 
-@app.route('/dutyedit-<int:duty_id>')
+@app.route('/dutyedit-<int:duty_id>', methods=['GET', 'POST'])
 @login_required
 def dutyedit(duty_id):
     """Page: all activitylist"""
-    duty = Duty.query.get_or_404(duty_id)
+    if request.method == 'POST':
+        form = DutyForm(request.form)
+        duty = Duty.query.get(form.id.data)
+        if form.validate_on_submit():
+            if not form.errors:
+                pass#form.username.errors.append('帐号已存在')
+        #print form.errors
+        if not form.errors:
+            if not session.get('is_arra_monitor'):
+                abort(403)
+            duty.aid=form.aid.data
+            duty.uid=form.uid.data
+            duty.status=form.status.data
+            #duty.process=form.process.data
+            #duty.log=form.log.data
+            db.session.add(duty)
+            db.session.commit()
 
-    return render_template('duty/dutyedit.html',
-        duty=duty,)
+            flash({'type':'success', 'content':'保存成功！'})
+            return redirect('/dutyedit-'+str(duty_id))
+        return render_template('duty/dutyedit.html', form=form, duty=duty)
 
+    else:
+        duty = Duty.query.get(duty_id)
+        if not session.get('is_arra_monitor'):
+            abort(403)
+        print duty
+        form = DutyForm(obj=duty)
+        print form
+        return render_template('duty/dutyedit.html', form=form, duty=duty)
 

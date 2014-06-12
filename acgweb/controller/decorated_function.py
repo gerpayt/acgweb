@@ -12,7 +12,8 @@ def login_required(f):
     return decorated_function
 
 def viewtype():
-    ua = request.headers.get('User-Agent')
+    ua = request.headers.get('User-Agent').lower()
+    print ua
     re = 0
     osArr = {'iphone' : 1, 'ipad' : 1, 'ipod' : 1, 'android' : 2, 'windows phone' : 3}
     touchArr = {1 : ['safari', 'crios', 'ucbrowser', 'mqqbrowser'], 2 : ['chrome', 'ucbrowser', 'mqqbrowser'], 3 : ['ie']}
