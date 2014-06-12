@@ -424,7 +424,7 @@ def activitycancle(activity_id):
 def activityterminate(activity_id):
     """Page: activity detail"""
     activity = Activity.query.get_or_404(activity_id)
-    if activity.status == 2 and Duty.query.filter(Duty.uid==session['uid'], Duty.aid==activity_id).count():
+    if activity.status == 2 and Duty.query.filter(Duty.uid==session['uid'], Duty.aid==activity_id, Duty.status==10).count():
         #print Article.query.filter(Article.title==article_title).statement
         last_time = int(request.form['end_time']) - activity.start_time
         if last_time < 30 * 60 or last_time > 6 * 3600:
@@ -432,7 +432,7 @@ def activityterminate(activity_id):
         else:
             activity.end_time = int(request.form['end_time'])
             activity.status = 3
-            duties = Duty.query.filter(Duty.aid==activity_id)
+            duties = Duty.query.filter(Duty.aid==activity_id, Duty.status==10)
             for duty in duties:
                 duty.status=11
                 db.session.add(duty)
