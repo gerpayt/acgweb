@@ -39,18 +39,18 @@ def send_mail(subject,content,toname,toemail):
 def send_async_email(msg,toemail):
     # send email
     #print config.SMTP_SERVER, config.SMTP_PORT,config.SMTP_USER, config.SMTP_PASSWORD,config.SMTP_USER, config.EMAIL_SALES, msg.as_string()
-    try:
-        s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
-        s.login(config.SMTP_USER, config.SMTP_PASSWORD)
-        s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
-        s.quit()
-    except Exception as e:
-        try:
-            fp = open(config.BASE_DIR+'log/error.log','a')
-        except:
-            fp = open(config.BASE_DIR+'log/error.log','w')
-        fp.write("%s\n"%e)
-        fp.close()
+    #try:
+    s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
+    s.login(config.SMTP_USER, config.SMTP_PASSWORD)
+    s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+    s.quit()
+    #except Exception as e:
+    #    try:
+    #        fp = open(config.BASE_DIR+'log/error.log','a')
+    #    except:
+    #        fp = open(config.BASE_DIR+'log/error.log','w')
+    #    fp.write("%s\n"%e)
+    #    fp.close()
 
 forgetpassword_tmpl = {'subject':"[音控组管理系统]重置密码",'content':'''
 点击下面链接来重置密码 <br />

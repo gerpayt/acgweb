@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for, json, session, ab
 from acgweb import app, db
 from acgweb.model.message import Message
 from acgweb.model.member import Member
+from acgweb.form.member import MemberForm
 
 import acgweb.const as CONST
 from acgweb import config
