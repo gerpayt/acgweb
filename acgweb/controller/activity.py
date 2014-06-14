@@ -580,7 +580,7 @@ def cron():
                 # TODO %d or %s ?
                 logs.append("%s : Activity almost end id:%d" % (nowstr,activity.id))
                 for duty in activity.duties:
-                    if duty.status==6 or duty.status==7:
+                    if duty.status==10:
                         #print subject, content
                         mail.send_mail(subject, content, duty.member.name, duty.member.email,
                             uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
