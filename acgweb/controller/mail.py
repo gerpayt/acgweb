@@ -9,8 +9,11 @@ import smtplib
 import imaplib,email
 from pprint import pprint
 from email.mime.text import MIMEText
-
+from decorated_function import *
 from threading import Thread
+from decorated_function import *
+from template_filter import *
+import md5
 
 def async(f):
     def wrapper(*args, **kwargs):
@@ -41,14 +44,24 @@ def send_mail(subject,content,toname,toemail,**header):
         msg['X-ACG-'+h.upper()] = str(v)
     send_async_email(msg,toemail)
 
-@async
+#@async
 def send_async_email(msg,toemail):
     # send email
     #print config.SMTP_SERVER, config.SMTP_PORT,config.SMTP_USER, config.SMTP_PASSWORD,config.SMTP_USER, config.EMAIL_SALES, msg.as_string()
+    now = int(time.time())
+    nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M:%S")
+    key = md5.new()
+    key.update(msg.as_string())
+    hash = key.hexdigest()
+    fp = open(config.BASE_DIR+'cache/mail_%s_%s.log'%(nowstr,hash),'w')
+    fp.write(msg.as_string())
+    fp.close()
+
     #try:
     s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
     s.login(config.SMTP_USER, config.SMTP_PASSWORD)
     res = s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+    print res
     if not res:
         try:
             fp = open(config.BASE_DIR+'log/error.log','a')
@@ -82,7 +95,7 @@ def get_out_box():
     for response_part in msg_data:
         if isinstance(response_part,tuple):
             msg = email.message_from_string(response_part[1])
-            if msg.get('X-ACG-MSGDOMAIN') == config.MAIL_DOMAIN or 1:
+            if msg.get('X-ACG-MSGDOMAIN') == config.MAIL_DOMAIN:
                 for header in ['subject','from','to','date','x-acg-msgid']:
                     res,ecode=email.Header.decode_header(msg.get(header))[0]
                     msg.set_param(header,res)
@@ -103,6 +116,16 @@ def get_out_box():
                 mail_list.append(m)
                 #print m
     return mail_list
+
+
+@app.route("/message_sendmail-<int:message_id>")
+@login_required
+def message_sendmail(message_id):
+    if not session.get('is_arra_monitor'):
+        abort(403)
+    message = Message.get_or_404(message_id)
+    send_mail(message.subject,message.content,message.tomember.name,message.tomember.email)
+    return redirect(url_for('/mymessage',message_id=message_id))
 
 
 register_tmpl = {'subject':"[音控组管理系统]注册成功",'content':'''

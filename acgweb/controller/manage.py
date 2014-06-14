@@ -32,7 +32,7 @@ def manage():
         param['last_cron'] = int(open(config.BASE_DIR+'data/last_cron.time','r').read())
     except:
         param['last_cron'] = 0
-    if config.DEBUG: print config.BASE_DIR+'data/last_cron.time'
+    #if config.DEBUG: print config.BASE_DIR+'data/last_cron.time'
     return render_template('manage/manage.html',count=count,param=param)
 
 @app.route('/salarymanage')
@@ -70,7 +70,7 @@ def salarymanage():
         wb = export_salary(rank_list,starttime,endtime)
         tmp_filename = config.BASE_DIR+'temp/salary.xls'
         wb.save(tmp_filename)
-        if config.DEBUG: print tmp_filename
+        #if config.DEBUG: print tmp_filename
         response = send_file(tmp_filename, as_attachment=True, attachment_filename='salary.xls')
         os.unlink(tmp_filename)
         return response
