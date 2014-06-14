@@ -9,6 +9,7 @@ from acgweb.model.duty import Duty
 import acgweb.const as CONST
 from acgweb import config
 from decorated_function import *
+from acgweb.controller.mail import get_out_box
 import os
 
 @app.route('/manage')
@@ -82,6 +83,33 @@ def salarymanage():
 def venuemanage():
     """Page: all activitylist"""
     return render_template('manage/managevenue.html')
+
+
+@app.route('/mailmanage')
+@login_required
+def mailmanage():
+    mail_list = get_out_box()
+    return render_template('manage/managemail.html', mail_list=mail_list)
+#邮件
+
+
+@app.route('/logmanage')
+@login_required
+def logmanage():
+    """Page: all activitylist"""
+    logs=[]
+    try:
+        fp = open(config.BASE_DIR+'log/sync.log','r')
+        logs = fp.readlines()[-100:]
+        fp.close()
+    except:
+        pass
+    try:
+        last_sync_time = int(open(config.BASE_DIR+'data/last_sync.time','r').read())
+    except:
+        last_sync_time = 0
+    logs.reverse()
+    return render_template('activity/activitysync.html', last_sync_time=last_sync_time, logs=logs)
 
 
 @app.route('/systemmanage')

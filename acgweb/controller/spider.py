@@ -126,7 +126,8 @@ def activity_spider():
         content = mail.spider_notice_tmpl['content'] % nowstr + '<hr />'.join(warnings)
         for uid in config.ARRA_MONITOR:
             member = Member.query.get(uid)
-            mail.send_message(uid,config.SYS_ADMIN,subject,content,2)
-            mail.send_mail(subject, content, member.name, member.email)
+            msg_id=mail.send_message(uid,config.SYS_ADMIN,subject,content,2)
+            mail.send_mail(subject, content, member.name, member.email,
+                msgid=msg_id)
 
     return log

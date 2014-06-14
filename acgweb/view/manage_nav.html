@@ -3,14 +3,15 @@
 <ul class="nav nav-tabs">
   <li{% if request.path.startswith('/manage') %} class="active"{% endif %}><a href="{{url_for('manage')}}">管理首页</a></li>
   <li{% if request.path.startswith('/activitymanage') %} class="active"{% endif %}><a href="{{ url_for('activitymanage') }}">活动管理</a></li>
-  <li{% if request.path.startswith('/activitysync') %} class="active"{% endif %}><a href="{{ url_for('activitysync') }}">活动同步</a></li>
   <li{% if request.path.startswith('/membermanage') %} class="active"{% endif %}><a href="{{ url_for('membermanage') }}">成员管理</a></li>
   <li{% if request.path.startswith('/dutymanage') %} class="active"{% endif %}><a href="{{ url_for('dutymanage') }}">任务管理</a></li>
   <li{% if request.path.startswith('/articlemanage') %} class="active"{% endif %}><a href="{{ url_for('articlemanage') }}">文章管理</a></li>
-  <li{% if request.path.startswith('/salarymanage') %} class="active"{% endif %}><a href="{{ url_for('salarymanage') }}">工资管理</a></li>
-  <li{% if request.path.startswith('/messagemanage') %} class="active"{% endif %}><a href="{{ url_for('messagemanage') }}">消息管理</a></li>
   <li{% if request.path.startswith('/schedulemanage') %} class="active"{% endif %}><a href="{{ url_for('schedulemanage') }}">课表管理</a></li>
-  <li{% if request.path.startswith('/venuemanage') %} class="active"{% endif %}><a href="{{ url_for('venuemanage') }}">场地管理</a></li>
+  <li{% if request.path.startswith('/messagemanage') %} class="active"{% endif %}><a href="{{ url_for('messagemanage') }}">消息管理</a></li>
+  <li{% if request.path.startswith('/salarymanage') %} class="active"{% endif %}><a href="{{ url_for('salarymanage') }}">工资管理</a></li>
+  <!--<li{% if request.path.startswith('/venuemanage') %} class="active"{% endif %}><a href="{{ url_for('venuemanage') }}">场地管理</a></li> -->
+  <li{% if request.path.startswith('/mailmanage') %} class="active"{% endif %}><a href="{{ url_for('mailmanage') }}">邮件管理</a></li>
+  <li{% if request.path.startswith('/activitysync') %} class="active"{% endif %}><a href="{{ url_for('logmanage') }}">日志管理</a></li>
   <li{% if request.path.startswith('/systemmanage') %} class="active"{% endif %}><a href="{{ url_for('systemmanage') }}">系统管理</a></li>
 </ul>
 

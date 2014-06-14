@@ -56,15 +56,29 @@ def dutyedit(duty_id):
             db.session.commit()
 
             flash({'type':'success', 'content':'保存成功！'})
-            return redirect('/dutyedit-'+str(duty_id))
+            return redirect(url_for('dutyedit',duty_id=duty_id))
         return render_template('duty/dutyedit.html', form=form, duty=duty)
 
     else:
-        duty = Duty.query.get(duty_id)
+        duty = Duty.query.get_or_404(duty_id)
         if not session.get('is_arra_monitor'):
             abort(403)
-        print duty
+        #print duty
         form = DutyForm(obj=duty)
-        print form
+        #print form
         return render_template('duty/dutyedit.html', form=form, duty=duty)
+
+@app.route('/dutydelete-<int:duty_id>')
+@login_required
+def dutydelete(duty_id):
+    """Page: all activitylist"""
+    duty = Duty.query.get(duty_id)
+    if not session.get('is_arra_monitor'):
+        abort(403)
+    db.session.delete(duty)
+    db.session.commit()
+
+    flash({'type':'success', 'content':'删除成功！'})
+    return redirect('/dutymanage')
+
 

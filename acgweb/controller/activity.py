@@ -111,8 +111,9 @@ def activityopeartion(opeartion,duty_id):
                 member_name = session['name']
                 subject = mail.cover_duty_tmpl['subject']
                 content = mail.cover_duty_tmpl['content'] % ( member_url, member_name, timestr, venue, title, remark, url , url )
-                mail.send_message(duty.uid,session['uid'],subject,content,2)
-                mail.send_mail(subject, content, duty.member.name, duty.member.email)
+                msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
+                mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                    msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
                 new_duty = Duty(aid=duty.aid,uid=session['uid'],status=6,log='')
                 new_duty.appendprocesse('cover_task','')
@@ -129,8 +130,9 @@ def activityopeartion(opeartion,duty_id):
             else:
                 subject = mail.decline_apply_tmpl['subject']
                 content = mail.decline_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
-            mail.send_message(duty.uid,session['uid'],subject,content,2)
-            mail.send_mail(subject, content, duty.member.name, duty.member.email)
+            msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
+            mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                    msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
         elif opeartion == 'decline_duty':
             uname = session['name']
             timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
@@ -142,8 +144,9 @@ def activityopeartion(opeartion,duty_id):
             content = mail.decline_duty_tmpl['content'] % ( uname, reason, timestr, venue, title, remark, url , url )
             for uid in config.ARRA_MONITOR:
                 member = Member.query.get(uid)
-                mail.send_message(uid,session['uid'],subject,content,2)
-                mail.send_mail(subject, content, member.name, member.email)
+                msg_id = mail.send_message(uid,session['uid'],subject,content,2)
+                mail.send_mail(subject, content, member.name, member.email,
+                    msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
         elif opeartion == 'cancle_task':
             pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
@@ -153,8 +156,8 @@ def activityopeartion(opeartion,duty_id):
             #url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
             #subject = mail.approve_apply_tmpl['subject']
             #content = mail.approve_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
-            #mail.send_message(duty.uid,session['uid'],subject,content,2)
-            #mail.send_mail(subject, content, duty.member.name, duty.member.email)
+            #msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
+            #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
 
         duty.status = CONST.duty_status_opeartion_next[opeartion]
         duty.appendprocesse(opeartion,reason)
@@ -217,8 +220,9 @@ def activityedit(activity_id=0):
                 subject = mail.activity_modify_tmpl['subject']
                 content = mail.activity_modify_tmpl['content'] % ( timestr, timestr_new, venue, venue_new, title, title_new, remark, url , url )
                 for duty in dutylist:
-                    mail.send_message(duty.uid,session['uid'],subject,content,2)
-                    mail.send_mail(subject, content, duty.member.name, duty.member.email)
+                    msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
+                    mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                        msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
             activity.title=form.title.data
             activity.remark=form.remark.data
@@ -354,8 +358,9 @@ def activityappoint(activity_id,member_uid):
             url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
             subject = mail.activity_appoint_tmpl['subject']
             content = mail.activity_appoint_tmpl['content'] % ( timestr, venue, title, remark, url , url, worktimestr )
-            mail.send_message(member_uid,session['uid'],subject,content,2)
-            mail.send_mail(subject, content, member.name, member.email)
+            msg_id = mail.send_message(member_uid,session['uid'],subject,content,2)
+            mail.send_mail(subject, content, member.name, member.email,
+                msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
         else:
             flash({'type':'danger', 'content':'此人已经安排过值班任务。'})
@@ -406,8 +411,9 @@ def activitycancle(activity_id):
         for duty in duties:
             # 通知音控员取消了活动 #TODO
 
-            mail.send_message(duty.uid,session['uid'],subject,content,2)
-            mail.send_mail(subject, content, duty.member.name, duty.member.email)
+            msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
+            mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
             duty.status=9
             db.session.add(duty)
@@ -446,19 +452,13 @@ def activityterminate(activity_id):
 @app.route('/activitysync')
 @login_required
 def activitysync():
-    logs=[]
     try:
-        fp = open(config.BASE_DIR+'log/sync.log','r')
-        logs = fp.readlines()[-100:]
-        fp.close()
-    except:
-        pass
-    try:
-        last_sync_time = int(open(config.BASE_DIR+'data/last_sync.time','r').read())
-    except:
-        last_sync_time = 0
-    logs.reverse()
-    return render_template('activity/activitysync.html', last_sync_time=last_sync_time, logs=logs)
+        logs = sync()
+        for log in logs:
+            flash({'type':'success', 'content':log})
+    except Exception as e:
+        flash({'type':'danger', 'content':e})
+    return redirect(url_for('activitymanage'))
 
 
 @app.route('/activityjson')
@@ -488,7 +488,7 @@ def sync():
     timestr = str(int(time.time()))
     fp.write(timestr)
     fp.close()
-    return '<br /> \n'.join(logs)
+    return logs
 
 
 # cron every half hour
@@ -504,7 +504,7 @@ def cron():
         now =  now / (30*60) * (30*60)
         logs = []
         # 2 hours before activity start
-        activitylist = Activity.query.filter(Activity.start_time>= now+7150, Activity.start_time<now+8950, Activity.status==1).all()
+        activitylist = Activity.query.filter(Activity.start_time==now+7200, Activity.status==1).all()
         for activity in activitylist:
             work_timestr = timeformat_filter(activity.work_start_time(),"%Y-%m-%d %H:%M")
             timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
@@ -518,12 +518,13 @@ def cron():
             logs.append("%s: Activity almost start id:%d" % (nowstr,activity.id))
             for duty in activity.duties:
                 #print subject, content, duty.member.name, duty.member.email, subject, content
-                mail.send_mail(subject, content, duty.member.name, duty.member.email)
+                mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                    uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
                 logs.append("%s: Send mail to %s" % (nowstr,duty.uid))
 
         # on activity start
-        activitylist = Activity.query.filter(Activity.start_time>= now-50 , Activity.start_time<now+1750, Activity.status==1).all()
-        dutylist = Duty.query.join(Activity).filter(Activity.start_time>= now-50 , Activity.start_time<now+1750, Activity.status==1, or_(Duty.status==6,Duty.status==7)).all()
+        activitylist = Activity.query.filter(Activity.start_time==now, Activity.status==1).all()
+        dutylist = Duty.query.join(Activity).filter(Activity.start_time==now, Activity.status==1, or_(Duty.status==6,Duty.status==7)).all()
         for activity in activitylist:
             logs.append("%s : Activity starts, change activity status id:%d" % (nowstr,activity.id))
             activity.status = 2
@@ -565,7 +566,8 @@ def cron():
                 logs.append("%s : Activity almost end id:%d" % (nowstr,activity.id))
                 for duty in activity.duties:
                     #print subject, content
-                    mail.send_mail(subject, content, duty.member.name, duty.member.email)
+                    mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                        uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
                     logs.append("%s : Send mail to %s" % (nowstr,duty.uid))
 
         return "now"+str(now)

@@ -173,6 +173,16 @@ def register():
             db.session.add(member)
             db.session.commit()
 
+            adminmember = Member.query.get(config.SYS_ADMIN)
+            readmeurl = url_for('articledetail',article_title=config.README_TITLE)
+            admin_url = url_for('memberdetail',member_uid=config.SYS_ADMIN)
+            admin_name = adminmember.name
+            subject = mail.register_tmpl['subject']
+            content = mail.register_tmpl['content'] % ( readmeurl, readmeurl, admin_url, admin_name )
+            msg_id = mail.send_message(member.uid,config.SYS_ADMIN,subject,content,2)
+            mail.send_mail(subject, content, member.name, member.email,
+                msgid=msg_id)
+
             flash({'type':'success', 'content':'注册成功，请登陆。'})
             if viewtype()==1:
                 return render_template('site/login_mobile.html',form=form)

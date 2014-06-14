@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+
+{% block body %}
+{{manage_nav()}}
+
+{% if mail_list %}
+<table class="table table-striped">
+  <tr><th width='50'>MID</th><th width='70'>发送时间</th><th width='50'>接收者</th><th width='50'>接收者</th><th>主题</th></tr>
+  {% for mail in mail_list %}
+  <tr><td>{{mail.msg_id}}</td>
+  <td>{{mail.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}</td>
+  <td>{{mail.tousername}}</td>
+  <td>{{mail.tousermail}}</td>
+  <td>{{mail.subject}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+
+{% else %}
+<p>你暂时没有消息。</p>
+{% endif %}
+
+{% endblock %}

@@ -4,8 +4,10 @@ from acgweb import app, db
 import acgweb.const as CONST
 from acgweb import config
 from acgweb.model.message import Message
-import os,md5
+import os,md5,time
 import smtplib
+import imaplib,email
+from pprint import pprint
 from email.mime.text import MIMEText
 
 from threading import Thread
@@ -27,12 +29,16 @@ def send_message(touid,fromuid,subject,content,type):
     message.status = 0
     db.session.add(message)
     db.session.commit()
+    return message.id
 
-def send_mail(subject,content,toname,toemail):
+def send_mail(subject,content,toname,toemail,**header):
     msg = MIMEText(content, 'html', 'utf-8')
     msg['From'] = "%s<%s>" % (config.SMTP_USERNAME, config.SMTP_USER)
     msg['To'] = "%s<%s>" % (toname, toemail)
     msg['Subject'] = subject
+    msg['X-ACG-MSGDOMAIN'] = config.MAIL_DOMAIN
+    for h,v in header.values:
+        msg['X-ACG-'+h.upper()] = str(v)
     send_async_email(msg,toemail)
 
 @async
@@ -51,6 +57,51 @@ def send_async_email(msg,toemail):
     #        fp = open(config.BASE_DIR+'log/error.log','w')
     #    fp.write("%s\n"%e)
     #    fp.close()
+
+def get_out_box():
+    imaplib.Debug = 4
+    con = imaplib.IMAP4_SSL(config.IMAP_SERVER)
+    con.login(config.SMTP_USER, config.SMTP_PASSWORD)
+    con.select('Sent Messages')
+    timestr = '"%s"' % time.strftime("%d-%b-%Y",time.localtime(time.time()-2*86400-8*3600))
+    #typ,msgidlist = con.search(None,"HEADER", '"X-ACG-MSGDOMAIN"', '"acg-test"' )
+    typ,msgidlist = con.search(None, 'SINCE', timestr )
+    msgids = msgidlist[0].split()[-20:]
+    msgids.reverse()
+    ids = ','.join(msgids)
+    typ,msg_data= con.fetch(ids,'(BODY.PEEK[HEADER])')
+    mail_list = []
+    for response_part in msg_data:
+        if isinstance(response_part,tuple):
+            msg = email.message_from_string(response_part[1])
+            if msg.get('X-ACG-MSGDOMAIN') == config.MAIL_DOMAIN or 1:
+                for header in ['subject','from','to','date','x-acg-msgid']:
+                    res,ecode=email.Header.decode_header(msg.get(header))[0]
+                    msg.set_param(header,res)
+                    print '%-8s: %s'%(header.upper(),msg.get_param(header))
+
+                fromusername,fromusermail = email.utils.parseaddr(msg.get_param('from'))
+                tousername,tousermail = email.utils.parseaddr(msg.get_param('to'))
+                sendtime = int(time.mktime(time.strptime(msg.get("date")[5:-6],'%d %b %Y %H:%M:%S')))
+                m = {}
+                m['subject'] = msg['subject']
+                m['fromusername'] = fromusername
+                m['fromusermail'] =fromusermail
+                m['tousername'] = tousername
+                m['tousermail'] = tousermail
+                if msg.has_key('x-acg-msgid'):
+                    m['msgid'] = int(msg['x-acg-msgid'])
+                m['sendtime'] = sendtime
+                mail_list.append(m)
+    return mail_list
+
+
+register_tmpl = {'subject':"[音控组管理系统]注册成功",'content':'''
+欢迎您注册音控组管理系统，新注册用户请先完善个人资料和课表。 <br />
+系统的使用说明参见 <a href="%s">%s</a> <br />
+如果遇到问题，请联系 <a href="%s">%s</a> <br />
+
+'''}
 
 forgetpassword_tmpl = {'subject':"[音控组管理系统]重置密码",'content':'''
 点击下面链接来重置密码 <br />

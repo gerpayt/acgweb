@@ -28,6 +28,7 @@
   {% endfor %}
 </table>
 <!-- TODO <a class="btn btn-mini" href="{{ url_for('activityedit') }}">添加活动</a> -->
+<a class="btn btn-mini btn-success" href="{{ url_for('activitysync') }}">同步活动</a>
 {% if page_count > 1 %}
 <div class="pagination pagination-centered">
   <ul>
