@@ -125,7 +125,7 @@ def message_sendmail(message_id):
         abort(403)
     message = Message.query.get_or_404(message_id)
     send_mail(message.subject,message.content,message.tomember.name,message.tomember.email)
-    return redirect(url_for('/mymessagedetail',message_id=message_id))
+    return redirect(url_for('mymessagedetail', message_id=message_id))
 
 
 register_tmpl = {'subject':"[音控组管理系统]注册成功",'content':'''
