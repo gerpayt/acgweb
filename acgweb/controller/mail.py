@@ -48,7 +48,15 @@ def send_async_email(msg,toemail):
     #try:
     s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
     s.login(config.SMTP_USER, config.SMTP_PASSWORD)
-    s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+    res = s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+    if not res:
+        try:
+            fp = open(config.BASE_DIR+'log/error.log','a')
+        except:
+            fp = open(config.BASE_DIR+'log/error.log','w')
+        fp.write(str(res)+"\n")
+        fp.close()
+
     s.quit()
     #except Exception as e:
     #    try:
@@ -59,7 +67,7 @@ def send_async_email(msg,toemail):
     #    fp.close()
 
 def get_out_box():
-    imaplib.Debug = 4
+    #imaplib.Debug = 4
     con = imaplib.IMAP4_SSL(config.IMAP_SERVER)
     con.login(config.SMTP_USER, config.SMTP_PASSWORD)
     con.select('Sent Messages')
@@ -78,7 +86,7 @@ def get_out_box():
                 for header in ['subject','from','to','date','x-acg-msgid']:
                     res,ecode=email.Header.decode_header(msg.get(header))[0]
                     msg.set_param(header,res)
-                    print '%-8s: %s'%(header.upper(),msg.get_param(header))
+                    #print '%-8s: %s'%(header.upper(),msg.get_param(header))
 
                 fromusername,fromusermail = email.utils.parseaddr(msg.get_param('from'))
                 tousername,tousermail = email.utils.parseaddr(msg.get_param('to'))
@@ -89,10 +97,11 @@ def get_out_box():
                 m['fromusermail'] =fromusermail
                 m['tousername'] = tousername
                 m['tousermail'] = tousermail
-                if msg.has_key('x-acg-msgid'):
-                    m['msgid'] = int(msg['x-acg-msgid'])
+                if msg.get('X-ACG-MSGID'):
+                    m['msgid'] = int(msg['X-ACG-MSGID'])
                 m['sendtime'] = sendtime
                 mail_list.append(m)
+                #print m
     return mail_list
 
 

@@ -61,10 +61,11 @@ def activitydetail(activity_id):
             is_success = duty.status==10
         else:
             is_success = False
+        now = int(time.time())
         if viewtype()==1:
-            return render_template('activity/activitydetail_mobile.html', activity=activity, is_busy=is_busy, is_success=is_success)
+            return render_template('activity/activitydetail_mobile.html', activity=activity, is_busy=is_busy, is_success=is_success,now=now)
         else:
-            return render_template('activity/activitydetail.html', activity=activity, is_busy=is_busy, is_success=is_success)
+            return render_template('activity/activitydetail.html', activity=activity, is_busy=is_busy, is_success=is_success,now=now)
     else:
         activity = Activity.query.get(activity_id)
         if activity.status == 2 or activity.status == 3:
@@ -432,9 +433,9 @@ def activitystart(activity_id):
     """Page: activity detail"""
     activity = Activity.query.get_or_404(activity_id)
     now = int(time.time())
-    if activity.status == 1 and activity.start_time >= now and session.get('is_arra_monitor'):
+    if activity.status == 1 and activity.start_time <= now and session.get('is_arra_monitor'):
         #print Article.query.filter(Article.title==article_title).statement
-        flash({'type':'success', 'content':'活动已经就绪。'})
+        flash({'type':'success', 'content':'活动已经开始。'})
         activity = Activity.query.get_or_404(activity_id)
         activity.status = 2
         db.session.add(activity)
@@ -562,16 +563,6 @@ def cron():
 
         # 6 hours after activity start
 
-        open(config.BASE_DIR+'data/last_cron.time','w').write(str(now))
-
-        try:
-            fp = open(config.BASE_DIR+'log/cron.log','a')
-        except:
-            fp = open(config.BASE_DIR+'log/cron.log','w')
-        for log in logs:
-            fp.write("%s\n"%log)
-        fp.close()
-
         ts = time.localtime(now)
         if ts.tm_hour == 22 and ts.tm_min == 0 and ts.tm_sec == 0:
             # auto sync
@@ -594,7 +585,24 @@ def cron():
                         uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
                     logs.append("%s : Send mail to %s" % (nowstr,duty.uid))
 
+        open(config.BASE_DIR+'data/last_cron.time','w').write(str(now))
+
+        try:
+            fp = open(config.BASE_DIR+'log/cron.log','a')
+        except:
+            fp = open(config.BASE_DIR+'log/cron.log','w')
+        fp.write("crontab %s : %d\n" % (nowstr,now))
+        for log in logs:
+            fp.write("%s\n"%log)
+        fp.close()
+
         return "now"+str(now)
     else:
+        try:
+            fp = open(config.BASE_DIR+'log/cron.log','a')
+        except:
+            fp = open(config.BASE_DIR+'log/cron.log','w')
+        fp.write("crontab_last %s : %d\n" % (nowstr,now))
+        fp.close()
         return "last_cron"+str(last_cron)
 
