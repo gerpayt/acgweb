@@ -40,8 +40,9 @@ def activitymanage(pagenum=1):
         abort(403)
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
-    activity_count = Activity.query.filter(Activity.start_time > todaytime-3*86400).count()
-    activity_list = Activity.query.filter(Activity.start_time > todaytime-3*86400).order_by('start_time ASC')\
+    #config.SEMASTER_BASE
+    activity_count = Activity.query.filter(Activity.start_time >= todaytime-3*86400).count()
+    activity_list = Activity.query.filter(Activity.start_time >= todaytime-3*86400).order_by('start_time ASC')\
         .limit(CONST.activity_per_page).offset(CONST.activity_per_page*(pagenum-1))
     return render_template('activity/activitymanage.html',
         activity_list=activity_list,
@@ -418,6 +419,29 @@ def activitycancle(activity_id):
             duty.status=9
             db.session.add(duty)
         db.session.add(activity)
+        db.session.commit()
+    else:
+        flash({'type':'danger', 'content':'非法操作，请重试。'})
+    return redirect(url_for('activitydetail',activity_id=activity_id))
+
+
+
+@app.route('/activitystart-<int:activity_id>')
+@login_required
+def activitystart(activity_id):
+    """Page: activity detail"""
+    activity = Activity.query.get_or_404(activity_id)
+    now = int(time.time())
+    if activity.status == 1 and activity.start_time >= now and session.get('is_arra_monitor'):
+        #print Article.query.filter(Article.title==article_title).statement
+        flash({'type':'success', 'content':'活动已经就绪。'})
+        activity = Activity.query.get_or_404(activity_id)
+        activity.status = 2
+        db.session.add(activity)
+        dutylist = Duty.query.filter(Duty.aid==activity_id, or_(Duty.status==6,Duty.status==7)).all()
+        for duty in dutylist:
+            duty.status = 10
+            db.session.add(duty)
         db.session.commit()
     else:
         flash({'type':'danger', 'content':'非法操作，请重试。'})

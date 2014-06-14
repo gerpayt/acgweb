@@ -37,7 +37,7 @@ def send_mail(subject,content,toname,toemail,**header):
     msg['To'] = "%s<%s>" % (toname, toemail)
     msg['Subject'] = subject
     msg['X-ACG-MSGDOMAIN'] = config.MAIL_DOMAIN
-    for h,v in header.values:
+    for h,v in header.values():
         msg['X-ACG-'+h.upper()] = str(v)
     send_async_email(msg,toemail)
 
