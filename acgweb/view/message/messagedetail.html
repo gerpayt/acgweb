@@ -22,6 +22,9 @@
   <tr><th>电子邮件</th><td>{{message.frommember.email}}</td></tr>
   <tr><th>QQ号码</th><td>{{message.frommember.qqnum}}</td></tr>
 </table>
+  {% if session['is_arra_monitor'] %}
+    <a class="btn btn-success" href="{{ url_for('message_sendmail',message_id=message.id) }}">发送邮件</a>
+  {% endif %}
 </div>
 <div class="span9">
   <h3>{{ message.subject }}</h3>

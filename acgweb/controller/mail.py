@@ -49,7 +49,7 @@ def send_async_email(msg,toemail):
     # send email
     #print config.SMTP_SERVER, config.SMTP_PORT,config.SMTP_USER, config.SMTP_PASSWORD,config.SMTP_USER, config.EMAIL_SALES, msg.as_string()
     now = int(time.time())
-    nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M:%S")
+    nowstr = timeformat_filter(now,"%Y-%m-%d_%H:%M:%S")
     key = md5.new()
     key.update(msg.as_string())
     hash = key.hexdigest()
@@ -123,9 +123,9 @@ def get_out_box():
 def message_sendmail(message_id):
     if not session.get('is_arra_monitor'):
         abort(403)
-    message = Message.get_or_404(message_id)
+    message = Message.query.get_or_404(message_id)
     send_mail(message.subject,message.content,message.tomember.name,message.tomember.email)
-    return redirect(url_for('/mymessage',message_id=message_id))
+    return redirect(url_for('/mymessagedetail',message_id=message_id))
 
 
 register_tmpl = {'subject':"[音控组管理系统]注册成功",'content':'''
