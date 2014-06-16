@@ -564,7 +564,7 @@ def cron():
         # 6 hours after activity start
 
         ts = time.localtime(now)
-        if ts.tm_hour == 22 and ts.tm_min == 0 and ts.tm_sec == 0:
+        if ts.tm_hour == 20 and ts.tm_min == 0 and ts.tm_sec == 0:
             # auto sync
             sync()
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
