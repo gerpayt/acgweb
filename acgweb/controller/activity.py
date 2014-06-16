@@ -390,7 +390,7 @@ def activityready(activity_id):
 
 
 
-@app.route('/activitycancle-<int:activity_id>')
+@app.route('/activitycancle-<int:activity_id>', methods=['GET','POST'])
 @login_required
 def activitycancle(activity_id):
     """Page: activity detail"""
