@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% from "manage_nav.html" import manage_nav %}
+
+{% block body %}
+
+{{manage_nav()}}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+<div class="tabbable tabs-left"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Cron Logs</a></li>
+    <li><a href="#tab2" data-toggle="tab">Sync Logs</a></li>
+    <li><a href="#tab3" data-toggle="tab">Error Logs</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+        {% for log in cronlogs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+    <div class="tab-pane" id="tab2">
+        {% for log in synclogs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+    <div class="tab-pane" id="tab3">
+        {% for log in errorlogs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

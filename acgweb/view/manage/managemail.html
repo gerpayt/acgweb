@@ -6,10 +6,11 @@
 
 {% if mail_list %}
 <table class="table table-striped">
-  <tr><th width='50'>MID</th><th width='110'>发送时间</th><th width='50'>接收者</th><th width='50'>接收者</th><th>主题</th></tr>
+  <tr><th width='30'>MID</th><th width='150'>发送时间</th><th width='60'>接收者</th><th>接收邮箱</th><th>主题</th></tr>
   {% for mail in mail_list %}
   <tr><td>{{mail.msgid}}</td>
   <td>{{mail.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}</td>
+  <td>{% if mail.uid %}<a href="{{ url_for('memberdetail',member_uid=mail.uid) }}">{{mail.tousername}}</a>{% else %}{{mail.tousername}}{% endif %}</td>
   <td>{{mail.tousername}}</td>
   <td>{{mail.tousermail}}</td>
   <td>{% if mail.msgid %}<a href="{{ url_for('mymessagedetail',message_id=mail.msgid) }}">{{mail.subject}}</a>{% else %}{{mail.subject}}{% endif %}</td>

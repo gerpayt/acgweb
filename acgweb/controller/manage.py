@@ -97,19 +97,19 @@ def mailmanage():
 @login_required
 def logmanage():
     """Page: all activitylist"""
-    logs=[]
-    try:
-        fp = open(config.BASE_DIR+'log/sync.log','r')
-        logs = fp.readlines()[-100:]
-        fp.close()
-    except:
-        pass
-    try:
-        last_sync_time = int(open(config.BASE_DIR+'data/last_sync.time','r').read())
-    except:
-        last_sync_time = 0
-    logs.reverse()
-    return render_template('activity/activitysync.html', last_sync_time=last_sync_time, logs=logs)
+    logdict={}
+    for t in ['cron','sync','error']:
+        logs=[]
+        try:
+            fp = open(config.BASE_DIR+'log/%s.log'%t,'r')
+            logs = fp.readlines()[-100:]
+            fp.close()
+        except:
+            pass
+        logs.reverse()
+        logdict[t]=logs
+
+    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], errorlog=logdict['error'])
 
 
 @app.route('/systemmanage')

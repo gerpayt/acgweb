@@ -25,8 +25,12 @@ def dutylist(pagenum=1):
 @login_required
 def dutymanage(pagenum=1):
     """Page: all activitylist"""
-    duty_count = Duty.query.count()
-    duty_list = Duty.query.join(Activity).order_by(Activity.start_time).limit(CONST.dutylist_per_page).offset(CONST.dutylist_per_page*(pagenum-1))
+    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    #config.SEMASTER_BASE
+
+    duty_count = Duty.query.join(Activity).filter(Activity.start_time >= todaytime-3*86400).count()
+    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= todaytime-3*86400)\
+        .order_by(Activity.start_time).limit(CONST.dutylist_per_page).offset(CONST.dutylist_per_page*(pagenum-1))
 
     return render_template('duty/dutymanage.html',
         duty_list=duty_list,

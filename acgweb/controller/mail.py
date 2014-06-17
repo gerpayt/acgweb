@@ -61,7 +61,6 @@ def send_async_email(msg,toemail):
     s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
     s.login(config.SMTP_USER, config.SMTP_PASSWORD)
     res = s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
-    print res
     if not res:
         try:
             fp = open(config.BASE_DIR+'log/error.log','a')

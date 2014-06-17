@@ -11,7 +11,7 @@
   <li{% if request.path.startswith('/salarymanage') %} class="active"{% endif %}><a href="{{ url_for('salarymanage') }}">工资管理</a></li>
   <!--<li{% if request.path.startswith('/venuemanage') %} class="active"{% endif %}><a href="{{ url_for('venuemanage') }}">场地管理</a></li> -->
   <li{% if request.path.startswith('/mailmanage') %} class="active"{% endif %}><a href="{{ url_for('mailmanage') }}">邮件管理</a></li>
-  <li{% if request.path.startswith('/activitysync') %} class="active"{% endif %}><a href="{{ url_for('logmanage') }}">日志管理</a></li>
+  <li{% if request.path.startswith('/logmanage') %} class="active"{% endif %}><a href="{{ url_for('logmanage') }}">日志管理</a></li>
   <li{% if request.path.startswith('/systemmanage') %} class="active"{% endif %}><a href="{{ url_for('systemmanage') }}">系统管理</a></li>
 </ul>
 

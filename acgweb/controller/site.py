@@ -22,6 +22,7 @@ def login():
         member = Member.query.filter(Member.uid==username, Member.password==key.hexdigest()).first()
         #print user
         if member:
+            session.permanent = True
             session['uid'] = username
             session['name'] = member.name
             session['is_arra_monitor'] = session['uid'] in config.ARRA_MONITOR
@@ -44,6 +45,7 @@ def logout():
     """Page: activity detail"""
     session.pop('uid',None)
     session.pop('name',None)
+    session.pop('is_arra_monitor',None)
     flash({'type':'success', 'content':'注销成功。'})
     return redirect(url_for('login'))
 
