@@ -22,7 +22,8 @@ def login():
         member = Member.query.filter(Member.uid==username, Member.password==key.hexdigest()).first()
         #print user
         if member:
-            session.permanent = True
+            if request.form.has_key('remberpassword'):
+                session.permanent = True
             session['uid'] = username
             session['name'] = member.name
             session['is_arra_monitor'] = session['uid'] in config.ARRA_MONITOR
@@ -46,6 +47,7 @@ def logout():
     session.pop('uid',None)
     session.pop('name',None)
     session.pop('is_arra_monitor',None)
+    session.clear()
     flash({'type':'success', 'content':'注销成功。'})
     return redirect(url_for('login'))
 
