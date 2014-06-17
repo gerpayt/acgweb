@@ -115,7 +115,7 @@ def activityopeartion(opeartion,duty_id):
                 content = mail.cover_duty_tmpl['content'] % ( member_url, member_name, timestr, venue, title, remark, url , url )
                 msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                 mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                    msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                    msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
                 new_duty = Duty(aid=duty.aid,uid=session['uid'],status=6,log='')
                 new_duty.appendprocesse('cover_task','')
@@ -134,7 +134,7 @@ def activityopeartion(opeartion,duty_id):
                 content = mail.decline_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
             msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                    msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                    msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
         elif opeartion == 'decline_duty':
             uname = session['name']
             timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
@@ -148,7 +148,7 @@ def activityopeartion(opeartion,duty_id):
                 member = Member.query.get(uid)
                 msg_id = mail.send_message(uid,session['uid'],subject,content,2)
                 mail.send_mail(subject, content, member.name, member.email,
-                    msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                    msgid=msg_id,touid=uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
         elif opeartion == 'cancle_task':
             pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
@@ -224,7 +224,7 @@ def activityedit(activity_id=0):
                 for duty in dutylist:
                     msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                     mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                        msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                        msgid=msg_id,uid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
             activity.title=form.title.data
             activity.remark=form.remark.data
@@ -362,7 +362,7 @@ def activityappoint(activity_id,member_uid):
             content = mail.activity_appoint_tmpl['content'] % ( timestr, venue, title, remark, url , url, worktimestr )
             msg_id = mail.send_message(member_uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, member.name, member.email,
-                msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
         else:
             flash({'type':'danger', 'content':'此人已经安排过值班任务。'})
@@ -415,7 +415,7 @@ def activitycancle(activity_id):
 
             msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                msgid=msg_id,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
             duty.status=9
             db.session.add(duty)
@@ -544,7 +544,7 @@ def cron():
             for duty in activity.duties:
                 #print subject, content, duty.member.name, duty.member.email, subject, content
                 mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                    uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                    touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
                 logs.append("%s: Send mail to %s" % (nowstr,duty.uid))
 
         # on activity start
@@ -583,7 +583,7 @@ def cron():
                     if duty.status==10:
                         #print subject, content
                         mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                            uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                            touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
                         logs.append("%s : Send mail to %s" % (nowstr,duty.uid))
 
         open(config.BASE_DIR+'data/last_cron.time','w').write(str(now))

@@ -64,7 +64,8 @@ def forgetpassword():
             url = config.BASE_URL + url_for('resetpassword',token=token)
             subject = mail.forgetpassword_tmpl['subject']
             content = mail.forgetpassword_tmpl['content'] % ( url , url )
-            mail.send_mail(subject, content, username, email)
+            mail.send_mail(subject, content, username, email,
+                           touid=username, uid=username)
             #subject,content,toname,toemail
             flash({'type':'success', 'content':'已经向邮箱中发送了电子邮件，请查收！'})
         else:
@@ -183,7 +184,7 @@ def register():
             content = mail.register_tmpl['content'] % ( readmeurl, readmeurl, admin_url, admin_name )
             msg_id = mail.send_message(member.uid,config.SYS_ADMIN,subject,content,2)
             mail.send_mail(subject, content, member.name, member.email,
-                msgid=msg_id)
+                msgid=msg_id, touid=member.uid, uid=member.uid)
 
             flash({'type':'success', 'content':'注册成功，请登陆。'})
             if viewtype()==1:
