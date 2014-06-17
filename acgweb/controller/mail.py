@@ -111,6 +111,8 @@ def get_out_box():
                 m['tousermail'] = tousermail
                 if msg.get('X-ACG-MSGID'):
                     m['msgid'] = int(msg['X-ACG-MSGID'])
+                if msg.get('X-ACG-UID'):
+                    m['uid'] = msg['X-ACG-UID']
                 m['sendtime'] = sendtime
                 mail_list.append(m)
                 #print m

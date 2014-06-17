@@ -11,7 +11,6 @@
   <tr><td>{{mail.msgid}}</td>
   <td>{{mail.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}</td>
   <td>{% if mail.uid %}<a href="{{ url_for('memberdetail',member_uid=mail.uid) }}">{{mail.tousername}}</a>{% else %}{{mail.tousername}}{% endif %}</td>
-  <td>{{mail.tousername}}</td>
   <td>{{mail.tousermail}}</td>
   <td>{% if mail.msgid %}<a href="{{ url_for('mymessagedetail',message_id=mail.msgid) }}">{{mail.subject}}</a>{% else %}{{mail.subject}}{% endif %}</td>
   </tr>
