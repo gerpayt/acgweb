@@ -109,7 +109,7 @@ def logmanage():
         logs.reverse()
         logdict[t]=logs
 
-    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], errorlog=logdict['error'])
+    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], errorlogs=logdict['error'])
 
 
 @app.route('/systemmanage')
