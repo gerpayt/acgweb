@@ -224,7 +224,7 @@ def activityedit(activity_id=0):
                 for duty in dutylist:
                     msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                     mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                        msgid=msg_id,uid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
+                        msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
             activity.title=form.title.data
             activity.remark=form.remark.data
