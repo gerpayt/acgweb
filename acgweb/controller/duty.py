@@ -26,6 +26,7 @@ def dutylist(pagenum=1):
 @login_required
 def dutymanage(pagenum=1):
     """Page: all activitylist"""
+    ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
     #config.SEMASTER_BASE
 
