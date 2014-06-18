@@ -34,6 +34,7 @@ SMTP_PASSWORD = ""
 HTTP_PROXY = ''
 MAIL_DOMAIN = 'acg-test'
 
+SITE_TITLE = u'音控组管理系统'
 README_TITLE = u"系统功能简介"
 
 SEMESTER = '201302'

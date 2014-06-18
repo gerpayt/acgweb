@@ -21,9 +21,14 @@ def articlelist(pagenum=1,cateid=0):
     else:
         article_count = Article.query.count()
         article_list = Article.query.order_by('posttime DESC').limit(CONST.article_per_page).offset(CONST.article_per_page*(pagenum-1)).all()
-    return render_template('article/articlelist.html',
-        article_list=article_list,
-        page_count=(article_count-1)/CONST.article_per_page+1,page_current=pagenum,cateid=cateid,category_list=category_list)
+    if viewtype()==1:
+        return render_template('article/articlelist_mobile.html',
+            article_list=article_list,
+            page_count=(article_count-1)/CONST.article_per_page+1,page_current=pagenum,cateid=cateid,category_list=category_list)
+    else:
+        return render_template('article/articlelist.html',
+            article_list=article_list,
+            page_count=(article_count-1)/CONST.article_per_page+1,page_current=pagenum,cateid=cateid,category_list=category_list)
 
 
 
@@ -52,7 +57,10 @@ def articledetail(article_title):
     except:
         abort(404)
     #print Article.query.filter(Article.title==article_title).statement
-    return render_template('article/articledetail.html', article_detail=article_detail,category_list=category_list)
+    if viewtype()==1:
+        return render_template('article/articledetail_mobile.html', article_detail=article_detail,category_list=category_list)
+    else:
+        return render_template('article/articledetail.html', article_detail=article_detail,category_list=category_list)
 
 
 

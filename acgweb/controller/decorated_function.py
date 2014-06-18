@@ -12,6 +12,9 @@ def login_required(f):
     return decorated_function
 
 def viewtype():
+    vt = request.cookies.get('vt')
+    if vt!=None:
+        return int(vt)
     ua = request.headers.get('User-Agent').lower()
     #print ua
     re = 0

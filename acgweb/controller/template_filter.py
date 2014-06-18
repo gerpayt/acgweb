@@ -6,6 +6,10 @@ import acgweb.const as CONST
 def reverse_filter(s):
     return s[::-1]
 
+@app.template_filter('substr')
+def substr_filter(s,a,b):
+    return s[a:b]
+
 import time
 @app.template_filter('timeformat')
 def timeformat_filter(t,formatstr):

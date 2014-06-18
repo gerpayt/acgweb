@@ -20,7 +20,12 @@ def mymessage(pagenum=1):
     message_count = Message.query.filter(Message.touid==session[u'uid']).count()
     message_list = Message.query.filter(Message.touid==session[u'uid']).order_by('sendtime DESC').\
         limit(CONST.message_per_page).offset(CONST.message_per_page*(pagenum-1))
-    return render_template('message/messagelist.html',
+    if viewtype()==1:
+        return render_template('message/messagelist_mobile.html',
+        message_list=message_list,
+        page_count=(message_count-1)/CONST.message_per_page+1,page_current=pagenum)
+    else:
+        return render_template('message/messagelist.html',
         message_list=message_list,
         page_count=(message_count-1)/CONST.message_per_page+1,page_current=pagenum)
 
@@ -74,8 +79,12 @@ def mymessagedetail(message_id=0):
         message.update_readtime()
         db.session.add(message)
         db.session.commit()
-    return render_template('message/messagedetail.html',
+    if viewtype()==1:
+        return render_template('message/messagedetail_mobile.html',
         message=message)
+    else:
+        return render_template('message/messagedetail.html',
+            message=message)
 
 
 @app.route('/mymessagesend', methods=['GET', 'POST'])
@@ -86,6 +95,8 @@ def mymessagesend():
         sendto = request.form.getlist('sendto')
         subject = request.form['subject']
         content = request.form['content']
+        if request.form.has_key('mobile'):
+            content = content.replace('\n','<br />\n')
         for uid in sendto:
             message = Message()
             message.fromuid = session[u'uid']

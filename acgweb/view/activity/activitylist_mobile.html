@@ -6,14 +6,20 @@
 
   {% for activity in activity_list %}
   <div class="activity-item">
-  <p>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}
-  {{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}
-  <span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></p>
-  <p><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a>
-  {% for duty in activity.duties %}
+  <div class="activity-time">{{ activity.start_time|timeformat('%m-%d') }} <br />
+    {{ activity.start_time|timeformat('%H:%M') }} <br />
+    {{ activity.start_time|dayname }}
+  </div>
+  <div class="activity-content">
+  <div class="activity-title"> <a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></div>
+  <span class="label label-{{ activity.venue|venuecolor }} pull-left">{{ activity.venue|venuename }}</span>
+  <span class="activity-members">
+    {% for duty in activity.duties %}
       {% if duty.is_success() %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a> {% endif %}
     {% endfor %}
-  <span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></p>
+  </span>
+  <span class="label label-{{ activity.status|activitystatuscolor }} pull-right">{{ activity.status|activitystatusname }}</span>
+  </div>
   </div>
   {% endfor %}
 

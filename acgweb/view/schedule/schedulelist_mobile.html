@@ -1,0 +1,25 @@
+{% extends "layout_mobile.html" %}
+
+
+{% block body %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+{% if schedule_list %}
+<table class="table table-striped">
+  <tr><th>课程名称</th><th>操作</th></tr>
+  {% for schedule in schedule_list %}
+  <tr data-id="{{ schedule.id }}">
+    <td class="sch-classname">{{ schedule.classname }}</td>
+    <td><a href="{{ url_for('myschedule_form', schedule_id=schedule.id) }}" class="btn btn-default btn-mini">编辑</a>
+    <a href="{{ url_for('myschedule_delete', schedule_id=schedule.id) }}" class="btn btn-danger btn-mini">删除</a></td></tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>你还没添加任何课程。</p>
+{% endif %}
+<a href="{{ url_for('myschedule_form') }}" class="btn btn-primary btn-mini">添加课程</a>
+
+{% endblock %}

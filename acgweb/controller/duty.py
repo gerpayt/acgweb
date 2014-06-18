@@ -17,9 +17,14 @@ def dutylist(pagenum=1):
     activity_count = Activity.query.filter(Activity.end_time != 0).count()
     activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(CONST.duty_per_page).offset(CONST.duty_per_page*(pagenum-1))
 
-    return render_template('duty/dutylist.html',
-        activity_list=activity_list,
-        page_count=(activity_count-1)/CONST.duty_per_page+1,page_current=pagenum)
+    if viewtype()==1:
+        return render_template('duty/dutylist_mobile.html',
+            activity_list=activity_list,
+            page_count=(activity_count-1)/CONST.duty_per_page+1,page_current=pagenum)
+    else:
+        return render_template('duty/dutylist.html',
+            activity_list=activity_list,
+            page_count=(activity_count-1)/CONST.duty_per_page+1,page_current=pagenum)
 
 @app.route('/dutymanage-p<int:pagenum>')
 @app.route('/dutymanage')

@@ -38,7 +38,7 @@ def send_mail(subject,content,toname,toemail,**header):
     msg = MIMEText(content, 'html', 'utf-8')
     msg['From'] = "%s<%s>" % (config.SMTP_USERNAME, config.SMTP_USER)
     msg['To'] = "%s<%s>" % (toname, toemail)
-    msg['Subject'] = subject
+    msg['Subject'] = "[%s]%s" % (config.SITE_TITLE, subject)
     msg['X-ACG-MSGDOMAIN'] = config.MAIL_DOMAIN
     for h,v in header.items():
         msg['X-ACG-'+h.upper()] = str(v)
@@ -60,15 +60,7 @@ def send_async_email(msg,toemail):
     #try:
     s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
     s.login(config.SMTP_USER, config.SMTP_PASSWORD)
-    res = s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
-    if not res:
-        try:
-            fp = open(config.BASE_DIR+'log/error.log','a')
-        except:
-            fp = open(config.BASE_DIR+'log/error.log','w')
-        fp.write(str(res)+"\n")
-        fp.close()
-
+    s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
     s.quit()
     #except Exception as e:
     #    try:
@@ -129,20 +121,20 @@ def message_sendmail(message_id):
     return redirect(url_for('mymessagedetail', message_id=message_id))
 
 
-register_tmpl = {'subject':"[音控组管理系统]注册成功",'content':'''
+register_tmpl = {'subject':"注册成功",'content':'''
 欢迎您注册音控组管理系统，新注册用户请先完善个人资料和课表。 <br />
 系统的使用说明参见 <a href="%s">%s</a> <br />
 如果遇到问题，请联系 <a href="%s">%s</a> <br />
 
 '''}
 
-forgetpassword_tmpl = {'subject':"[音控组管理系统]重置密码",'content':'''
+forgetpassword_tmpl = {'subject':"重置密码",'content':'''
 点击下面链接来重置密码 <br />
 <a href="%s">%s</a>
 
 '''}
 
-activity_appoint_tmpl = {'subject':"[音控组管理系统]安排值班",'content':'''
+activity_appoint_tmpl = {'subject':"安排值班",'content':'''
 排班班长给你指派了一个活动 <br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -155,7 +147,7 @@ activity_appoint_tmpl = {'subject':"[音控组管理系统]安排值班",'conten
 '''}
 
 
-activity_cancle_tmpl = {'subject':"[音控组管理系统]活动取消",'content':'''
+activity_cancle_tmpl = {'subject':"活动取消",'content':'''
 你值班的活动被取消了<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -166,7 +158,7 @@ activity_cancle_tmpl = {'subject':"[音控组管理系统]活动取消",'content
 
 '''}
 
-activity_modify_tmpl = {'subject':"[音控组管理系统]活动信息变化",'content':'''
+activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
 你值班的活动信息发生了变化<br />
 活动时间 %s 修改为 %s <br />
 活动地点 %s 修改为 %s <br />
@@ -177,7 +169,7 @@ activity_modify_tmpl = {'subject':"[音控组管理系统]活动信息变化",'c
 
 '''}
 
-approve_apply_tmpl = {'subject':"[音控组管理系统]批准值班申请",'content':'''
+approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
 排班班长批准了你的值班申请<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -188,7 +180,7 @@ approve_apply_tmpl = {'subject':"[音控组管理系统]批准值班申请",'con
 
 '''}
 
-decline_apply_tmpl = {'subject':"[音控组管理系统]拒绝值班申请",'content':'''
+decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
 排班班长拒绝了你的值班申请<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -199,7 +191,7 @@ decline_apply_tmpl = {'subject':"[音控组管理系统]拒绝值班申请",'con
 
 '''}
 
-cover_duty_tmpl = {'subject':"[音控组管理系统]找人代班成功",'content':'''
+cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 你的带班申请成功处理<br />
 代班人 <a href="%s">%s</a> <br />
 活动时间 %s <br />
@@ -211,7 +203,7 @@ cover_duty_tmpl = {'subject':"[音控组管理系统]找人代班成功",'conten
 
 '''}
 
-activity_nearly_begin_tmpl = {'subject':"[音控组管理系统]活动即将开始",'content':'''
+activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
 还有两个小时活动就要开始了，请准时赶往活动场地<br />
 值班时间 %s <br />
 活动时间 %s <br />
@@ -223,7 +215,7 @@ activity_nearly_begin_tmpl = {'subject':"[音控组管理系统]活动即将开�
 
 '''}
 
-activity_mark_endtime_tmpl = {'subject':"[音控组管理系统]标记活动结束时间",'content':'''
+activity_mark_endtime_tmpl = {'subject':"标记活动结束时间",'content':'''
 你值班的活动已经结束了，请标记活动结束时间<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -234,7 +226,7 @@ activity_mark_endtime_tmpl = {'subject':"[音控组管理系统]标记活动结�
 
 '''}
 
-decline_duty_tmpl = {'subject':"[音控组管理系统]拒绝排班",'content':'''
+decline_duty_tmpl = {'subject':"拒绝排班",'content':'''
 %s 拒绝了你的排班<br />
 原因 %s <br />
 活动时间 %s <br />
@@ -246,7 +238,7 @@ decline_duty_tmpl = {'subject':"[音控组管理系统]拒绝排班",'content':'
 
 '''}
 
-notice_activity_modify_tmpl = {'subject':"[音控组管理系统]有一个活动信息变化",'content':'''
+notice_activity_modify_tmpl = {'subject':"有一个活动信息变化",'content':'''
 有一个活动信息发生了变化<br />
 活动时间 %s 修改为 %s <br />
 活动地点 %s 修改为 %s <br />
@@ -257,7 +249,7 @@ notice_activity_modify_tmpl = {'subject':"[音控组管理系统]有一个活动
 
 '''}
 
-notice_activity_cancle_tmpl = {'subject':"[音控组管理系统]有一个活动已删除",'content':'''
+notice_activity_cancle_tmpl = {'subject':"有一个活动已删除",'content':'''
 有一个活动已删除<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -267,7 +259,7 @@ notice_activity_cancle_tmpl = {'subject':"[音控组管理系统]有一个活动
 
 '''}
 
-spider_notice_tmpl = {'subject':"[音控组管理系统]自动同步通知",'content':'''
+spider_notice_tmpl = {'subject':"自动同步通知",'content':'''
 自动同步操作于 %s 进行 <br />
 <hr />
 

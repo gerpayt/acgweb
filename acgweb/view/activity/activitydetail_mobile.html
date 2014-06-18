@@ -8,17 +8,14 @@
 {% endfor %}
 
 <h4>活动信息</h4>
-  <div class="activity-item">
-  <p>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}
-  {{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}
-  <span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></p>
-  <p><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a>
-  {% for duty in activity.duties %}
-      {% if duty.is_success() %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a> {% endif %}
-    {% endfor %}
-  <span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></p>
-  </div>
-
+  <p>时间: {{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}
+  {{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}</p>
+  <p>地点: <span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span>
+      状态: <span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></p>
+  <hr />
+<h4>活动名称</h4>
+  <p>{{ activity.title }}</p>
+<hr />
 <h4>活动备注</h4>
 <p>{% if activity.remark %}{{ activity.remark }}{% else %}没有备注{% endif %}</p>
 
@@ -35,24 +32,25 @@
   {% if session.is_arra_monitor %}<a class="btn btn-danger btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
     data-href="{{ url_for('activitycancle',activity_id=activity.id) }}"
     data-label="真的要取消活动吗?" data-content="取消活动会通知所有值班的音控员">取消活动</a>{% endif %}</p>
+    {% if activity.start_time <= now %}<a class="btn btn-success btn-mini" href="{{ url_for('activitystart',activity_id=activity.id) }}">开始活动</a>{% endif %}
 {% elif activity.status == 4 %}
 <p>活动已取消。</p>
 {% else %}
 <p>活动尚未就绪。<a href="{{url_for('activityready',activity_id=activity.id)}}" class="btn btn-success btn-mini">活动就绪</a></p>
 {% endif %}
 
-
+<hr />
 
 <h4>音控员</h4>
 {% if activity.status >= 1 %}
 {% if activity.duties %}
-<table class="table table-striped">
-  <tr><th>姓名</th><th>电话号码</th><th>电话短号</th><th>状态</th><th>操作</th></tr>
   {% for duty in activity.duties %}
-  <tr>
-    <td><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a></td>
-    <td>{{duty.member.mobile_num}}</td><td>{{duty.member.mobile_short}}</td><td>{{ duty.status|dutystatusname() }}</td>
-    <td>
+  <div class="duty-item">
+    <div class="member-name"><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a></div>
+    <div class="member-mobileshort">{{duty.member.mobile_short}}</div><div class="member-mobile">{{duty.member.mobile_num}}</div>
+    <br />
+    <div class="member-dutystatus">{{ duty.status|dutystatusname() }}</div>
+    <div class="member-dutyopeartion">
       {% if activity.status == 1 %}
       {% if session.uid == duty.member.uid %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %} 
         {% if config.CONST.dutyoperationname[op].content %}
@@ -91,12 +89,12 @@
         {% endif %}
       {% endfor %}{% endif %}
       {% endif %}
-    </td>
-  </tr>
+    </div>
+  </div>
   {% endfor %}
-</table>
 {% else %}
 <p>没有音控员被分派到此活动。</p>{% endif %}
+<hr />
 {% if not is_busy and activity.status == 1 %}<p>你有空闲时间，可以申请此次活动。
   <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
    data-href="{{url_for('activityapply',activity_id=activity.id)}}"
@@ -110,10 +108,10 @@
 {% if activity.duties %}
 <table class="table table-striped">
 <!-- # TODO bug but not care  -->
-  <tr><th width='60'>音控员</th><th width='120'>发表时间</th><th width='90'>类型</th><th>内容</th></tr>
   {% for duty in activity.duties %}
   {% for log in duty.getlogs() %}
-  <tr><td>{{ duty.member.name }}</td><td>{{ log.time|timeformat('%Y-%m-%d %H:%M') }}</td><td>{{ log.type|dutylogtypename() }}</td><td>{{ log.content }}</td></tr>
+  <tr><td>{{ duty.member.name }}</td><td>{{ log.time|timeformat('%Y-%m-%d %H:%M') }}</td><td>{{ log.type|dutylogtypename() }}</td></tr>
+  <tr><td colspan="3">{{ log.content }}</td></tr>
   {% endfor %}
   {% endfor %}
 </table>
@@ -123,15 +121,17 @@
 <!-- # TODO -->
 {% if is_busy and ( activity.status == 2 or activity.status == 3 ) %}
 <div class="alert alert-error hide" id="submit_message_notice"> </div>
-<div class="input-prepend input-append">
+<div class="input-prepend">
   <span class="add-on">类型</span>
-  <select class="span2" id="submit_message_type">
+  <select class="" id="submit_message_type">
   <option value="">选择类型</option>
   {% for a in config.CONST.dutylogtypename.keys() %}
   <option value="{{ a }}">{{ config.CONST.dutylogtypename[a] }}</option>
   {% endfor %}
   </select>
-  <input class="span5" id="submit_message_input" type="text">
+</div>
+<div class="input-append">
+  <input class="" id="submit_message_input" type="text">
   <a class="btn dropdown-toggle" id="submit_message_button">提交</a>
 </div>
 

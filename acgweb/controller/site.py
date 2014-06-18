@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, flash, jsonify, abort
+from flask import render_template, request, redirect, url_for, json, session, flash, jsonify, abort, make_response
 from acgweb import app, db
 from acgweb.model.member import Member
 from acgweb.form.register import RegisterForm
@@ -136,7 +136,10 @@ def changepassword():
             key.update(request.form['password_old'])
             if member.password != key.hexdigest():
                 flash({'type':'danger', 'content':'旧密码不正确。'})
-                return render_template('site/changepassword.html')
+                if viewtype()==1:
+                    return render_template('site/changepassword_mobile.html')
+                else:
+                    return render_template('site/changepassword.html')
             key = md5.new()
             key.update(request.form['password_new'])
             member.password = key.hexdigest()
@@ -144,9 +147,15 @@ def changepassword():
             db.session.commit()
             flash({'type':'success', 'content':'修改密码成功。'})
             return redirect(url_for('myinfo'))
-        return render_template('site/changepassword.html')
+        if viewtype()==1:
+            return render_template('site/changepassword_mobile.html')
+        else:
+            return render_template('site/changepassword.html')
     else:
-        return render_template('site/changepassword.html')
+        if viewtype()==1:
+            return render_template('site/changepassword_mobile.html')
+        else:
+            return render_template('site/changepassword.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -254,4 +263,22 @@ def imagedelete():
             member.photo += i+'\n'
         db.session.add(member)
         db.session.commit()
-    return '';
+    return ''
+
+
+@app.route('/set-<key>-<value>')
+@app.route('/set-<key>')
+@login_required
+def set(key,value=None):
+    """Page: all articles"""
+    referer = request.referrer
+    if not referer:
+        referer =url_for('index')
+
+    if value==None:
+        response = make_response(redirect(referer))
+        response.set_cookie(key, expires=0)
+    else:
+        response = make_response(redirect(referer))
+        response.set_cookie(key, value)
+    return response

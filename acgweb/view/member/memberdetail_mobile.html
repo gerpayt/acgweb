@@ -1,0 +1,55 @@
+{% extends "layout_mobile.html" %}
+
+{% block body %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<h4>基本信息</h4>
+<table class="table table-striped">
+  <tr><th>姓名</th><td>{{ member.name }}</td></tr>
+  <tr><th>学号</th><td>{{ member.uid }}</td></tr>
+  <tr><th>姓名</th><td>{{ member.name }}</td></tr>
+  <tr><th>性别</th><td>{{ member.sex|sexname() }}</td></tr>
+  <tr><th>专业</th><td>{{ member.school }}</td></tr>
+  <tr><th>电话号码</th><td>{{ member.mobile_num }}</td></tr>
+  <tr><th>电话类型</th><td>{{ member.mobile_type|mobiletypename() }}</td></tr>
+  <tr><th>电话短号</th><td>{{ member.mobile_short }}</td></tr>
+  <tr><th>QQ</th><td>{{ member.qqnum }}</td></tr>
+  <tr><th>邮箱</th><td>{{ member.email }}</td></tr>
+  <tr><th>住址</th><td>{{ member.address }}</td></tr>
+  <tr><th>最近登录</th><td>{{ member.lastlogin_time|timeformat('%Y-%m-%d %H:%M:%S') }}</td></tr>
+  <tr><th>状态</th><td>{{ member.type|membertypename }}</td></tr>
+</table>
+
+
+<h4>照片</h4>
+{% if member.photo %}
+<div id="member-images-box">
+  {% for photo in member.getphotos() %}
+  {% if photo %}
+    <img src="{{photo}}" class="img-polaroid" />
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<p>还没上传。</p>
+{% endif %}
+<hr />
+
+<h4>个人简介</h4>
+{% if member.introduce %}
+<p>{{ member.introduce }}</p>
+{% else %}
+<p>还没填写。</p>
+{% endif %}
+<hr />
+{% if session['is_arra_monitor'] %}
+    <a class="btn btn-small" href="{{ url_for('memberactas',member_uid=member.uid) }}">切换用户</a>
+    {% if session['ori_uid'] %}
+        <a class="btn btn-small" href="{{ url_for('memberactas',member_uid=session['ori_uid']) }}">切回{{ session['ori_name'] }}</a>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

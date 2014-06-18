@@ -1,0 +1,39 @@
+{% extends "layout_mobile.html" %}
+
+{% block body %}
+
+<form id="form" action="{{url_for('mymessagesend')}}" method="POST">
+
+  <h4>{{ message.subject }}</h4>
+  <hr />
+  <p>{{message.content|safe}}</p>
+  <hr />
+  <input type="hidden" name="sendto" value="{{message.fromuid}}">
+  <input type="hidden" name="mobile" value="1">
+  <div class="input-prepend input-append">
+    <span class="add-on">主题</span>
+    <input type="text" name="subject" value="回复：{{message.subject}}">
+    <button class="btn btn-primary" type="submit">回复</button>
+  </div>
+  <textarea name="content" rows="5"></textarea>
+
+</form>
+
+<hr />
+
+<h4>消息信息</h4>
+<table class="table table-striped">
+  <tr><th width='60'>发送时间</th><td><span title="{{message.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}">{{message.sendtime|friendlytime}}</span></td></tr>
+  <tr><th>发送者</th><td><a href="{{url_for('memberdetail', member_uid=message.fromuid)}}">{{message.frommember.name}}</a></td></tr>
+  <tr><th>电话号码</th><td>{{message.frommember.mobile_num}}</td></tr>
+  <tr><th>电话类型</th><td>{{message.frommember.mobile_type|mobiletypename}}</td></tr>
+  <tr><th>电话短号</th><td>{{message.frommember.mobile_short}}</td></tr>
+  <tr><th>电子邮件</th><td>{{message.frommember.email}}</td></tr>
+  <tr><th>QQ号码</th><td>{{message.frommember.qqnum}}</td></tr>
+</table>
+  {% if session['is_arra_monitor'] %}
+    <a class="btn btn-mini btn-success" href="{{ url_for('message_sendmail',message_id=message.id) }}">发送邮件</a>
+  {% endif %}
+
+{% endblock %}
+

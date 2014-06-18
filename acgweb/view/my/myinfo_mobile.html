@@ -1,0 +1,199 @@
+{% extends "layout_mobile.html" %}
+{% set script_list = ['jquery.uploadify.min'] %}
+
+{% block body %}
+
+<form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<h4>基本信息</h4>
+
+  <div class="control-group">
+    <label class="control-label" for="inputUid">学号</label>
+    <div class="controls"><span class="uneditable-input">{{session['uid']}}</span></div>
+  </div>
+  
+  <div class="control-group{% if form.name.errors %} error{% endif %}">
+    <label class="control-label" for="inputName">姓名</label>
+    <div class="controls">{{form.name()}}
+    {% if form.name.errors %}
+      <span class="help-inline">{% for message in form.name.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.sex.errors %} error{% endif %}">
+    <label class="control-label" for="inputSex">性别</label>
+    <div class="controls">{{form.sex()}}
+    {% if form.sex.errors %}
+      <span class="help-inline">{% for message in form.sex.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+
+  <div class="control-group{% if form.school.errors %} error{% endif %}">
+    <label class="control-label" for="inputSchool">专业</label>
+    <div class="controls">{{form.school(placeholder='2-3个字')}}
+    {% if form.school.errors %}
+      <span class="help-inline">{% for message in form.school.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.mobile_num.errors %} error{% endif %}">
+    <label class="control-label" for="inputMobile_num">电话号码</label>
+    <div class="controls">{{form.mobile_num()}}
+    {% if form.mobile_num.errors %}
+      <span class="help-inline">{% for message in form.mobile_num.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.mobile_type.errors %} error{% endif %}">
+    <label class="control-label" for="inputMobile_type">电话类型</label>
+    <div class="controls">{{form.mobile_type()}} 
+    {% if form.mobile_type.errors %}
+      <span class="help-inline">{% for message in form.mobile_type.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.mobile_short.errors %} error{% endif %}">
+    <label class="control-label" for="inputMobile_short">电话短号</label>
+    <div class="controls">{{form.mobile_short()}} 
+    {% if form.mobile_short.errors %}
+      <span class="help-inline">{% for message in form.mobile_short.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.qqnum.errors %} error{% endif %}">
+    <label class="control-label" for="inputQQnum">QQ</label>
+    <div class="controls">{{form.qqnum()}} 
+    {% if form.qqnum.errors %}
+      <span class="help-inline">{% for message in form.qqnum.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.email.errors %} error{% endif %}">
+    <label class="control-label" for="inputEmail">电子邮箱</label>
+    <div class="controls">{{form.email()}}
+    {% if form.email.errors %}
+      <span class="help-inline">{% for message in form.email.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+     </div>
+  </div>
+  
+  <div class="control-group{% if form.address.errors %} error{% endif %}">
+    <label class="control-label" for="inputAddress">住址</label>
+    <div class="controls">{{form.address(placeholder='yy01#111')}} 
+    {% if form.address.errors %}
+      <span class="help-inline">{% for message in form.address.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+  
+  <div class="control-group{% if form.credit_card.errors %} error{% endif %}">
+    <label class="control-label" for="inputCredit_card">银行卡号</label>
+    <div class="controls">{{form.credit_card(placeholder='不会公开')}} 
+    {% if form.credit_card.errors %}
+      <span class="help-inline">{% for message in form.credit_card.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+
+  <input type="hidden" name="type" value="{{form.type.data}}">
+
+
+  <h4>照片</h4>
+  <p><a class="btn btn-success btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal">管理照片</a></p>
+
+<div id="member-images-box">
+{% for photo in member.getphotos() %}
+  {% if photo %}<img src="{{photo}}" class="img-polaroid" title="{{photo}}">{% endif %}
+{% endfor %}
+</div>
+<hr />
+
+<h4>个人简介</h4>
+{{form.introduce(rows="8")}}
+</div>
+</div>
+
+<div class="form-actions">
+  {{ form.csrf_token }}
+  <button type="submit" class="btn btn-primary">保存</button>
+  <a class="btn btn-danger" href="{{url_for('changepassword')}}">更改密码</a>
+</div>
+
+</form>
+
+<!-- Modal -->
+
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+    <h3 id="myModalLabel">管理图片</h3>
+  </div>
+  <div class="modal-body" id="myModalContent">
+    <table class="table table-striped" id="member-images-table">
+      <tr><th>文件名</th><th>操作</th></tr>
+      {% for photo in member.getphotos() %}
+        {% if photo %}
+        <tr><td>{{photo|substr(12,None)}}</td><td><a href="javascript:void(0)" data-url="{{photo}}" class="btn btn-mini btn-danger delete-image">删除图片</a></td></tr>
+        {% endif %}
+      {% endfor %}
+    </table>
+    <div class="upload_choose">
+      <form id="uploadForm" enctype="multipart/form-data" method="post" action="">
+        <input type="file" name="file_upload" id="file_upload">
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer"></div>
+</div>
+
+{% endblock %}
+
+{% block custom_script %}
+<script>
+$(function() {
+    $("#file_upload").uploadify({
+        width         : 200,
+        buttonClass   : 'btn btn-primary',
+        buttonText    : '选择图片',
+        'fileTypeDesc': 'Image Files',
+        'fileTypeExts': '*.gif; *.jpg; *.jpeg; *.bmp; *.png',
+        swf           : "{{ url_for('static',filename='swf/uploadify.swf') }}",
+        uploader      : "{{ url_for('imageupload') }}",
+        onUploadSuccess:function(file, data, response){
+            $('#member-images-box').append('<img src="'+data+'" class="img-polaroid" title="'+data+'" >');
+            $('#member-images-table').append('<tr><td>'+data.substr(12)+'</td><td><a href="javascript:void(0)" data-url="'+data+'" class="btn btn-mini btn-danger delete-image">删除图片</a></td></tr>\n');
+            delete_listen();
+        }
+    });
+});
+
+function delete_listen(){
+    $('.delete-image').click(function(){
+        //console.log($(this));
+        var url = $(this).data('url');
+        //console.log(url);
+        $('#member-images-box img').each(function(){
+            //console.log($('#member-images-table img'));
+            //console.log($(this))
+            if ($(this).attr('src')==url)
+                $(this).remove()
+        });
+        $(this).parent().parent().fadeOut();
+        $.post("{{ url_for('imagedelete') }}",{url:url});
+    });
+}
+
+delete_listen();
+
+</script>
+{% endblock %}

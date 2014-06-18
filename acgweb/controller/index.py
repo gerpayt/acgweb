@@ -32,8 +32,13 @@ def siteindex():
         d = {'uid':r[0],'rank':i+1,'name':r[1],'time':r[2]}
         rank_list.append(d)
     #if config.DEBUG: print rank_list
-    return render_template('site/index.html',
-        article_notice=article_notice,activity_list=activity_list, article_list=article_list, duty_list=duty_list, rank_list=rank_list
-        )
+    if viewtype()==1:
+        return render_template('site/index_mobile.html',
+            article_notice=article_notice,activity_list=activity_list, article_list=article_list, duty_list=duty_list, rank_list=rank_list
+            )
+    else:
+        return render_template('site/index.html',
+            article_notice=article_notice,activity_list=activity_list, article_list=article_list, duty_list=duty_list, rank_list=rank_list
+            )
 
 

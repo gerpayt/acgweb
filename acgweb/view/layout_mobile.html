@@ -24,6 +24,12 @@
 {{ navbar_mobile() }}
 {% block body %}
 {% endblock %}
+<div class="footer text-center">
+    音控组管理系统
+    <a href="{{ url_for('set',key='vt',value='1') }}">手机版</a>
+    <a href="{{ url_for('set',key='vt',value='0') }}">电脑版</a>
+    <a href="{{ url_for('set',key='vt') }}">自动选择</a>
+</div>
 </div>
     <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
     <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>

@@ -38,7 +38,7 @@ function update_select() {
     //console.log(weekdaylist);
     for (weekday in weekdaylist) {
         //console.log(weekdaylist[weekday]);
-        if (weekdaylist[weekday]) {
+        if (weekdaylist[weekday]>=0) {
             $(".chk-weekday")[(weekdaylist[weekday])].checked=1;
         }
     }

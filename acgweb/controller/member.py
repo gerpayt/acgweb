@@ -16,7 +16,12 @@ def memberlist(pagenum=1):
     """Page: all activitylist"""
     member_count = Member.query.count()
     member_list = Member.query.order_by('uid DESC').limit(CONST.member_per_page).offset(CONST.member_per_page*(pagenum-1))
-    return render_template('member/memberlist.html',
+    if viewtype()==1:
+        return render_template('member/memberlist_mobile.html',
+        member_list=member_list,
+        page_count=(member_count-1)/CONST.member_per_page+1,page_current=pagenum)
+    else:
+        return render_template('member/memberlist.html',
         member_list=member_list,
         page_count=(member_count-1)/CONST.member_per_page+1,page_current=pagenum)
 
@@ -44,7 +49,10 @@ def memberdetail(member_uid):
             schedule_content = line[11:].split('\t')
             schedule_table[timestr] = schedule_content
     #print schedule_table
-    return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table, weekstart=weekstart, weeknum=weeknum)
+    if viewtype()==1:
+        return render_template('member/memberdetail_mobile.html', member=member)
+    else:
+        return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table, weekstart=weekstart, weeknum=weeknum)
 
 
 @app.route('/membermanage-p<int:pagenum>')

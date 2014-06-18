@@ -64,7 +64,7 @@
     </ul>
     {% if session.new_message %}
     <ul class="nav pull-right">
-      <li><a href="{{url_for('mymessage')}}"><span class="badge badge-info">{{session.new_message}}</span> 新消息</a></li>
+      <li><a href="{{url_for('mymessage')}}"><span class="badge badge-info">{{session.new_message}}</span> </a></li>
     </ul>
     {% endif %}
   </div>
@@ -75,9 +75,9 @@
       <li{% if request.path.startswith('/member') %} class="active"{% endif %}><a href="{{ url_for('memberlist') }}">成员</a></li>
       <li{% if request.path.startswith('/duty') %} class="active"{% endif %}><a href="{{ url_for('dutylist') }}">记录</a></li>
       <li{% if request.path.startswith('/article') %} class="active"{% endif %}><a href="{{ url_for('articlelist') }}">文章</a></li>
-      {% if session['is_arra_monitor'] %}
+      <!--{% if session['is_arra_monitor'] %}
         <li{% if request.path.startswith('/manage') %} class="active"{% endif %}><a href="{{ url_for('manage') }}">管理</a></li>
-      {% endif %}
+      {% endif %}-->
       <li{% if request.path.startswith('/help') %} class="active"{% endif %}><a href="{{ url_for('help') }}">帮助</a></li>
     </ul>
   </div>

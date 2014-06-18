@@ -18,8 +18,12 @@ import time
 def myschedule():
     """Page: all activitylist"""
     schedule_list = Schedule.query.filter(Schedule.uid==session[u'uid']).all()
-    return render_template('schedule/schedulelist.html',
-        schedule_list=schedule_list,)
+    if viewtype()==1:
+        return render_template('schedule/schedulelist_mobile.html',
+            schedule_list=schedule_list,)
+    else:
+        return render_template('schedule/schedulelist.html',
+            schedule_list=schedule_list,)
 
 @app.route('/schedulemanage-p<int:pagenum>')
 @app.route('/schedulemanage')
@@ -107,7 +111,10 @@ def myschedule_form(schedule_id=0):
             flash({'type':'success', 'content':'保存成功！'})
             update_schedule_cache(session[u'uid'])
             return redirect('/myschedule')
-        return render_template('schedule/schedule-form.html', form=form)
+        if viewtype()==1:
+            return render_template('schedule/schedule-form_mobile.html', form=form)
+        else:
+            return render_template('schedule/schedule-form.html', form=form)
     else:
         if schedule_id:
             schedule = Schedule.query.get_or_404(schedule_id)
@@ -116,7 +123,10 @@ def myschedule_form(schedule_id=0):
             form = ScheduleForm(obj=schedule)
         else:
             form = ScheduleForm()
-        return render_template('schedule/schedule-form.html', form=form)
+        if viewtype()==1:
+            return render_template('schedule/schedule-form_mobile.html', form=form)
+        else:
+            return render_template('schedule/schedule-form.html', form=form)
 
 
 @app.route('/myschedule_delete-<int:schedule_id>')

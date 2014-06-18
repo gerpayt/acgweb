@@ -19,9 +19,14 @@ def myactivity(pagenum=1):
     # TODO status!=0
     duty_count = Duty.query.filter(Duty.uid==session[u'uid']).count()
     duty_list = Duty.query.filter(Duty.uid==session[u'uid']).order_by('activity_1_start_time ASC').limit(CONST.activity_per_page).offset(CONST.activity_per_page*(pagenum-1))
-    return render_template('my/myactivity.html',
-        duty_list=duty_list,
-        page_count=(duty_count-1)/CONST.activity_per_page+1,page_current=pagenum)
+    if viewtype()==1:
+        return render_template('my/myactivity_mobile.html',
+            duty_list=duty_list,
+            page_count=(duty_count-1)/CONST.activity_per_page+1,page_current=pagenum)
+    else:
+        return render_template('my/myactivity.html',
+            duty_list=duty_list,
+            page_count=(duty_count-1)/CONST.activity_per_page+1,page_current=pagenum)
 
 
 @app.route('/myinfo', methods=['GET', 'POST'])
@@ -60,14 +65,20 @@ def myinfo():
             flash({'type':'success', 'content':'保存成功！'})
             return redirect('/myinfo')
         #print form.errors
-        return render_template('my/myinfo.html', form=form, member=member)
+        if viewtype()==1:
+            return render_template('my/myinfo_mobile.html', form=form, member=member)
+        else:
+            return render_template('my/myinfo.html', form=form, member=member)
     else:
         member = Member.query.get_or_404(session['uid'])
         if member.uid != session[u'uid']:
             abort(403)
         form = MemberForm(obj=member)
 
-        return render_template('my/myinfo.html', form=form, member=member)
+        if viewtype()==1:
+            return render_template('my/myinfo_mobile.html', form=form, member=member)
+        else:
+            return render_template('my/myinfo.html', form=form, member=member)
 
 
 @app.before_request
