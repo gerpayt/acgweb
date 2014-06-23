@@ -78,7 +78,7 @@ def get_out_box():
     timestr = '"%s"' % time.strftime("%d-%b-%Y",time.localtime(time.time()-2*86400-8*3600))
     #typ,msgidlist = con.search(None,"HEADER", '"X-ACG-MSGDOMAIN"', '"acg-test"' )
     typ,msgidlist = con.search(None, 'SINCE', timestr )
-    msgids = msgidlist[0].split()[-20:]
+    msgids = msgidlist[0].split()[-50:]
     msgids.reverse()
     ids = ','.join(msgids)
     typ,msg_data= con.fetch(ids,'(BODY.PEEK[HEADER])')
@@ -261,6 +261,32 @@ notice_activity_cancle_tmpl = {'subject':"有一个活动已删除",'content':''
 
 spider_notice_tmpl = {'subject':"自动同步通知",'content':'''
 自动同步操作于 %s 进行 <br />
+<hr />
+
+'''}
+
+todo_duty_tmpl = {'subject':"近期未完成的操作",'content':'''
+音控员 <a href="%s">%s</a> <br />
+活动时间 %s <br />
+活动地点 %s <br />
+活动内容 %s <br />
+<a href="%s">%s</a> <br />
+任务状态 %s <br />
+请及时完成相关操作。 <br />
+
+'''}
+
+todo_activity_tmpl = {'subject':"近期未完成的操作",'content':'''
+活动时间 %s <br />
+活动地点 %s <br />
+活动内容 %s <br />
+<a href="%s">%s</a> <br />
+活动没有安排足够的音控员，请继续安排。 <br />
+
+'''}
+
+todo_notice_tmpl = {'subject':"近期未完成的操作",'content':'''
+最近未完成的操作 <br />
 <hr />
 
 '''}

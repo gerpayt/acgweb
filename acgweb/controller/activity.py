@@ -567,6 +567,46 @@ def cron():
         if ts.tm_hour == 20 and ts.tm_min == 0 and ts.tm_sec == 0:
             # auto sync
             sync()
+        if ts.tm_hour == 21 and ts.tm_min == 30 and ts.tm_sec == 0:
+            range_start = 86400 + now-21*3600-1800
+            range_end = 2*86400 + now+2*3600+1800
+            activitylist = Activity.query.filter(Activity.start_time >= range_start, Activity.start_time < range_end, Activity.status==1).all()
+            warnings = []
+            for activity in activitylist:
+                ready_num = 0
+                for duty in activity.duties:
+                    if duty.status in [1, 2, 4, 6, 7]:
+                        ready_num += 1
+                    if duty.status in [1, 2, 4]:
+                        membername = duty.member.name
+                        memberurl = url_for('memberdetail', member_uid=duty.uid)
+                        timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
+                        venue = venuename_filter(activity.venue)
+                        title = activity.title
+                        url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
+                        statusname = dutystatusname_filter(duty.status)
+                        content = mail.todo_duty_tmpl['content'] % (memberurl, membername, timestr, venue, title, url,url, statusname)
+                        warnings.append(content)
+                if ready_num == 0:
+                    timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
+                    venue = venuename_filter(activity.venue)
+                    title = activity.title
+                    url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
+                    content = mail.todo_activity_tmpl['content'] % (timestr, venue, title, url, url)
+                    warnings.append(content)
+
+            if warnings:
+                now = int(time.time())
+                nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M:%S")
+
+                subject = mail.todo_notice_tmpl['subject']
+                content = mail.todo_notice_tmpl['content'] + '<hr />'.join(warnings)
+                for uid in config.ARRA_MONITOR:
+                    member = Member.query.get(uid)
+                    msg_id=mail.send_message(uid,config.SYS_ADMIN,subject,content,2)
+                    mail.send_mail(subject, content, member.name, member.email,
+                        msgid=msg_id)
+
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
             activitylist = Activity.query.filter(Activity.start_time>= now-22*3600-1800, Activity.start_time<now+3600+1800, Activity.status==2).all()
             for activity in activitylist:
