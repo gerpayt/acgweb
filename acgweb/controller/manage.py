@@ -67,7 +67,7 @@ def salarymanage():
     if endtime == CONST.max_time: endtime = ''
     if export:
         from acgweb.controller.export import export_salary
-        wb = export_salary(rank_list,starttime,endtime)
+        wb = export_salary(rank_list,starttime, endtime)
         tmp_filename = config.BASE_DIR+'temp/salary.xls'
         wb.save(tmp_filename)
         #if config.DEBUG: print tmp_filename
@@ -98,16 +98,16 @@ def mailmanage():
 def logmanage():
     """Page: all activitylist"""
     logdict={}
-    for t in ['cron','sync','error']:
-        logs=[]
+    for t in ['cron', 'sync', 'error']:
+        logs = []
         try:
-            fp = open(config.BASE_DIR+'log/%s.log'%t,'r')
+            fp = open(config.BASE_DIR+'log/%s.log'%t, 'r')
             logs = fp.readlines()[-100:]
             fp.close()
         except:
             pass
         logs.reverse()
-        logdict[t]=logs
+        logdict[t] = logs
 
     return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], errorlogs=logdict['error'])
 
