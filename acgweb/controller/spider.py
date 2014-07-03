@@ -61,8 +61,15 @@ def activity_spider():
             for r in res:
                 d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'time':r[4] }
             #print d
-            #print str(title) , str(d['title']) , remark , d['remark'], venue , d['sid'] , start_time , d['time']
-            if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or str(start_time) != str(d['time']):
+            print str(title)[:32]
+            print str(d['title'])[:32]
+            print str(remark)
+            print str(d['remark'])
+            print str(venue)
+            print str(d['sid'])
+            print int(start_time)
+            print int(d['time'])
+            if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or int(start_time) != int(d['time']):
                 #sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
                 #db.session.execute(sql)
                 #db.session.commit()
