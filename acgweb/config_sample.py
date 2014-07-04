@@ -20,12 +20,12 @@ DB_USER = "root"
 DB_PASSWORD = ""
 DB_NAME = "acgweb"
 
-# SMTP config
-SMTP_SERVER = ""
+# MAIL config
+SMTP_SERVER = "smtp.exmail.qq.com"
 SMTP_PORT = 25
 SMTP_USE_TLS = False
 SMTP_USE_SSL = False
-IMAP_SERVER = ""
+IMAP_SERVER = "imap.exmail.qq.com"
 IMAP_PORT = 25
 SMTP_USER = ""
 SMTP_USERNAME = ""

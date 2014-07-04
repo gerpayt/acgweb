@@ -14,6 +14,9 @@ from decorated_function import *
 from template_filter import *
 import md5
 
+mutex = Lock()
+
+
 def async(f):
     def wrapper(*args, **kwargs):
         thr = Thread(target = f, args = args, kwargs = kwargs)
@@ -33,6 +36,7 @@ def send_message(touid,fromuid,subject,content,type):
     db.session.commit()
     return message.id
 
+
 def send_mail(subject,content,toname,toemail,**header):
     msg = MIMEText(content, 'html', 'utf-8')
     msg['From'] = "%s<%s>" % (config.SMTP_USERNAME, config.SMTP_USER)
@@ -46,9 +50,7 @@ def send_mail(subject,content,toname,toemail,**header):
 
 @async
 def send_async_email(msg,toemail):
-    mutex = Lock()
     if mutex.acquire():
-
         now = int(time.time())
         nowstr = timeformat_filter(now, "%Y-%m-%d_%H:%M:%S")
         key = md5.new()
