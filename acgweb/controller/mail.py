@@ -9,8 +9,7 @@ import smtplib
 import imaplib,email
 from pprint import pprint
 from email.mime.text import MIMEText
-from decorated_function import *
-from threading import Thread
+from threading import Thread, Lock
 from decorated_function import *
 from template_filter import *
 import md5
@@ -44,31 +43,35 @@ def send_mail(subject,content,toname,toemail,**header):
         msg['X-ACG-'+h.upper()] = str(v)
     send_async_email(msg,toemail)
 
-#@async
-def send_async_email(msg,toemail):
-    # send email
-    #print config.SMTP_SERVER, config.SMTP_PORT,config.SMTP_USER, config.SMTP_PASSWORD,config.SMTP_USER, config.EMAIL_SALES, msg.as_string()
-    now = int(time.time())
-    nowstr = timeformat_filter(now,"%Y-%m-%d_%H:%M:%S")
-    key = md5.new()
-    key.update(msg.as_string())
-    hash = key.hexdigest()
-    fp = open(config.BASE_DIR+'cache/mail_%s_%s.log'%(nowstr,hash),'w')
-    fp.write(msg.as_string())
-    fp.close()
 
-    #try:
-    s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
-    s.login(config.SMTP_USER, config.SMTP_PASSWORD)
-    s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
-    s.quit()
-    #except Exception as e:
-    #    try:
-    #        fp = open(config.BASE_DIR+'log/error.log','a')
-    #    except:
-    #        fp = open(config.BASE_DIR+'log/error.log','w')
-    #    fp.write("%s\n"%e)
-    #    fp.close()
+@async
+def send_async_email(msg,toemail):
+    mutex = Lock()
+    if mutex.acquire():
+
+        now = int(time.time())
+        nowstr = timeformat_filter(now, "%Y-%m-%d_%H:%M:%S")
+        key = md5.new()
+        key.update(msg.as_string())
+        hash = key.hexdigest()
+        fp = open(config.BASE_DIR+'cache/mail_%s_%s.log'%(nowstr,hash),'w')
+        fp.write(msg.as_string())
+        fp.close()
+
+        #try:
+        s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
+        s.login(config.SMTP_USER, config.SMTP_PASSWORD)
+        s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+        s.quit()
+        #except Exception as e:
+        #    try:
+        #        fp = open(config.BASE_DIR+'log/error.log','a')
+        #    except:
+        #        fp = open(config.BASE_DIR+'log/error.log','w')
+        #    fp.write("%s\n"%e)
+        #    fp.close()
+        mutex.release()
+
 
 def get_out_box():
     #imaplib.Debug = 4
