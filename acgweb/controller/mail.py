@@ -242,7 +242,8 @@ notice_activity_modify_tmpl = {'subject':"有一个活动信息变化",'content'
 有一个活动信息发生了变化<br />
 活动时间 %s 修改为 %s <br />
 活动地点 %s 修改为 %s <br />
-活动内容 %s 修改为 %s <br />
+活动内容 ‘%s’ 修改为 ‘%s’ <br />
+活动备注 ‘%s’ 修改为 ‘%s’ <br />
 请点击这个链接查看详细内容 <br />
 <a href="%s">%s</a> <br />
 请手动更改活动信息 <br />

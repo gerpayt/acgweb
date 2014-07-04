@@ -61,14 +61,6 @@ def activity_spider():
             for r in res:
                 d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'time':r[4] }
             #print d
-            print str(title)[:32]
-            print str(d['title'])[:32]
-            print str(remark)
-            print str(d['remark'])
-            print str(venue)
-            print str(d['sid'])
-            print int(start_time)
-            print int(d['time'])
             if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or int(start_time) != int(d['time']):
                 #sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
                 #db.session.execute(sql)
@@ -80,10 +72,12 @@ def activity_spider():
                 venue_new = venuename_filter(venue)
                 title_old = d['title']
                 title_new = title
+                remark_old = d['remark']
+                remark_new = remark
                 activity = Activity.query.get(d['id'])
                 url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
                 #subject = mail.notice_activity_modify_tmpl['subject']
-                content = mail.notice_activity_modify_tmpl['content'] % ( timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, url, url )
+                content = mail.notice_activity_modify_tmpl['content'] % (timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, remark_old, remark_new, url, url)
                 warnings.append(content)
                 #duty_list = Duty.query.filter(Duty.aid==d['id']).all()
 
