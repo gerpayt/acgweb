@@ -9,12 +9,10 @@ import smtplib
 import imaplib,email
 from pprint import pprint
 from email.mime.text import MIMEText
-from threading import Thread, Lock
+from threading import Thread
 from decorated_function import *
 from template_filter import *
 import md5
-
-mutex = Lock()
 
 
 def async(f):
@@ -48,31 +46,29 @@ def send_mail(subject,content,toname,toemail,**header):
     send_async_email(msg,toemail)
 
 
-@async
+#@async
 def send_async_email(msg,toemail):
-    if mutex.acquire():
-        now = int(time.time())
-        nowstr = timeformat_filter(now, "%Y-%m-%d_%H:%M:%S")
-        key = md5.new()
-        key.update(msg.as_string())
-        hash = key.hexdigest()
-        fp = open(config.BASE_DIR+'cache/mail_%s_%s.log'%(nowstr,hash),'w')
-        fp.write(msg.as_string())
-        fp.close()
+    now = int(time.time())
+    nowstr = timeformat_filter(now, "%Y-%m-%d_%H:%M:%S")
+    key = md5.new()
+    key.update(msg.as_string())
+    hash = key.hexdigest()
+    fp = open(config.BASE_DIR+'cache/mail_%s_%s.log'%(nowstr,hash),'w')
+    fp.write(msg.as_string())
+    fp.close()
 
-        #try:
-        s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
-        s.login(config.SMTP_USER, config.SMTP_PASSWORD)
-        s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
-        s.quit()
-        #except Exception as e:
-        #    try:
-        #        fp = open(config.BASE_DIR+'log/error.log','a')
-        #    except:
-        #        fp = open(config.BASE_DIR+'log/error.log','w')
-        #    fp.write("%s\n"%e)
-        #    fp.close()
-        mutex.release()
+    #try:
+    s = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
+    s.login(config.SMTP_USER, config.SMTP_PASSWORD)
+    s.sendmail(config.SMTP_USER, [toemail], msg.as_string())
+    s.quit()
+    #except Exception as e:
+    #    try:
+    #        fp = open(config.BASE_DIR+'log/error.log','a')
+    #    except:
+    #        fp = open(config.BASE_DIR+'log/error.log','w')
+    #    fp.write("%s\n"%e)
+    #    fp.close()
 
 
 def get_out_box():
