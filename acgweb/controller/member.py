@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, flash, abort, session
+from flask import render_template, request, redirect, url_for, json, flash, abort, session, make_response
 from acgweb import app, db
 from acgweb.model.member import Member
 import template_filter
@@ -24,6 +24,33 @@ def memberlist(pagenum=1):
         return render_template('member/memberlist.html',
         member_list=member_list,
         page_count=(member_count-1)/CONST.member_per_page+1,page_current=pagenum)
+
+
+@app.route('/api/memberlist')
+#@login_required
+def memberlistapi():
+    member_list = Member.query.order_by('convert(name using gb2312) ASC').all()
+    res = []
+    for member in member_list:
+        d = {}
+        d['uid'] = member.uid
+        d['name'] = member.name
+        d['mobile'] = member.mobile_num
+        res.append(d)
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/api/memberdetail-<member_uid>')
+#@login_required
+def memberdetailapi(member_uid):
+    member = Member.query.get(member_uid)
+    res = {}
+    res['uid'] = member.uid
+    res['name'] = member.name
+    return json.dumps(res)
+
 
 @app.route('/member-<member_uid>')
 @login_required

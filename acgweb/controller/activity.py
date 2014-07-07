@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, flash, session, jsonify, abort
+from flask import render_template, request, redirect, url_for, json, flash, session, jsonify, abort, make_response
 from acgweb import app, db
 from sqlalchemy import or_
 from acgweb.model.activity import Activity
@@ -29,6 +29,28 @@ def activitylist(pagenum=1):
         return render_template('activity/activitylist_mobile.html', activity_list=activity_list, page_count=(activity_count-1)/CONST.activity_per_page+1,page_current=pagenum)
     else:
         return render_template('activity/activitylist.html', activity_list=activity_list, page_count=(activity_count-1)/CONST.activity_per_page+1,page_current=pagenum)
+
+
+@app.route('/api/activitylist')
+#@login_required
+def activitylistapi():
+    ts = time.localtime()
+    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0)\
+        .order_by('start_time ASC').all()
+    res = []
+    for activity in activity_list:
+        d = {}
+        d['id'] = activity.id
+        d['title'] = activity.title
+        d['venue'] = activity.venue
+        d['status'] = activity.status
+        d['start_time'] = activity.start_time
+        d['member'] = [{'uid': x.member.uid, 'name': x.member.name, 'status': x.status} for x in activity.duties]
+        res.append(d)
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/activitymanage-p<int:pagenum>')
