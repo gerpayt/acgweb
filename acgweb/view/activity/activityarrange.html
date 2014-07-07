@@ -62,7 +62,11 @@
       {% endif %}</td>
     <td><span class="class_tooltip" data-toggle="tooltip" title="{{ member.name }}{{ activity.start_time|timeformat('%Y年%m月%d日') }}({{ activity.start_time|dayname() }})课表"
               data-content="<table class='table table-striped table-condensed' width='800'>
-             {% for i in range(0,12,2) %}<tr><td>{{ i+1 }}-{{ i+2 }}</td><td>{{ schedule_content[member.uid][i] }}<td><td>{{ schedule_content[member.uid][i+1] }}<td></tr>{% endfor %}
+             {% for i in range(0,12,2) %}<tr>
+             <td>{{ i+1 }}-{{ i+2 }}</td>
+             <td>{% if schedule_content.has_key('member.uid') %}{{ schedule_content[member.uid][i] }}{% endif %}<td>
+             <td>{% if schedule_content.has_key('member.uid') %}{{ schedule_content[member.uid][i+1] }}{% endif %}<td>
+             </tr>{% endfor %}
            </table>"><a class="btn btn-mini{% if member.available==0 %} btn-success{% endif %} modal-trigger" role="button" href="#myModal" data-toggle="modal"
          data-href="{{url_for('activityappoint',activity_id=activity.id,member_uid=member.uid)}}"
          data-label="确定要将此值班任务安排给{{ member.name }}吗？"

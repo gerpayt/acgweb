@@ -15,7 +15,7 @@ import md5,time
 def memberlist(pagenum=1):
     """Page: all activitylist"""
     member_count = Member.query.count()
-    member_list = Member.query.order_by('uid DESC').limit(CONST.member_per_page).offset(CONST.member_per_page*(pagenum-1))
+    member_list = Member.query.order_by('convert(name using gb2312) ASC').limit(CONST.member_per_page).offset(CONST.member_per_page*(pagenum-1))
     if viewtype()==1:
         return render_template('member/memberlist_mobile.html',
         member_list=member_list,
@@ -63,7 +63,7 @@ def membermanage(pagenum=1):
     if not session.get('is_arra_monitor'):
         abort(403)
     member_count = Member.query.count()
-    member_list = Member.query.order_by('uid DESC').limit(CONST.member_per_page).offset(CONST.member_per_page*(pagenum-1))
+    member_list = Member.query.order_by('convert(name using gb2312) ASC').limit(CONST.member_per_page).offset(CONST.member_per_page*(pagenum-1))
     return render_template('member/membermanage.html',
         member_list=member_list,
         page_count=(member_count-1)/CONST.member_per_page+1,page_current=pagenum)

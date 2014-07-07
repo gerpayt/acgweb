@@ -262,7 +262,7 @@ def activityarrange(activity_id):
     schedule_content={}
     if activity.status == 1 and session.get('is_arra_monitor'):
         schedulelist = Schedule.query.all()
-        memberlist = Member.query.filter(or_(Member.type==1, Member.type==3)).all()
+        memberlist = Member.query.filter(or_(Member.type==1, Member.type==3)).order_by('convert(name using gb2312) ASC').all()
         busymember={}
         scheduletable={}
         for s in schedulelist:
