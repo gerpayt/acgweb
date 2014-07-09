@@ -1,5 +1,5 @@
 Flask
 Flask-SQLAlchemy
 Flask-WTF
-MySQL-python
+MySQL-python==1.2.3
 xlwt
