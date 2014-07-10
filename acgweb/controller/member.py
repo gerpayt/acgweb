@@ -36,6 +36,8 @@ def memberlistapi():
         d['uid'] = member.uid
         d['name'] = member.name
         d['mobile'] = member.mobile_num
+        d['mobile_type'] = member.mobile_type
+        d['mobile_short'] = member.mobile_short
         res.append(d)
     resp = make_response(json.dumps(res))
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -49,7 +51,23 @@ def memberdetailapi(member_uid):
     res = {}
     res['uid'] = member.uid
     res['name'] = member.name
-    return json.dumps(res)
+    res['type'] = member.type
+    res['sex'] = member.sex
+    res['school'] = member.school
+    res['mobile'] = member.mobile_num
+    res['mobile_type'] = member.mobile_type
+    res['mobile_short'] = member.mobile_short
+    res['email'] = member.email
+    res['qqnum'] = member.qqnum
+    res['address'] = member.address
+    res['introduce'] = member.introduce
+    res['photo'] = member.photo
+    res['register_time'] = member.register_time
+    res['lastlogin_time'] = member.lastlogin_time
+
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/member-<member_uid>')

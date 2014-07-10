@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, abort, session, flash
+from flask import render_template, request, redirect, url_for, json, abort, session, flash, make_response
 from acgweb import app, db
 from acgweb.model.activity import Activity
 from acgweb.model.duty import Duty
@@ -25,6 +25,30 @@ def dutylist(pagenum=1):
         return render_template('duty/dutylist.html',
             activity_list=activity_list,
             page_count=(activity_count-1)/CONST.duty_per_page+1,page_current=pagenum)
+
+
+@app.route('/api/dutylist')
+#@login_required
+def dutylistapi():
+    activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(50)
+    res = []
+    for activity in activity_list:
+        d = {}
+        d['id'] = activity.id
+        d['title'] = activity.title
+        d['start_time'] = activity.start_time
+        d['work_start_time'] = activity.work_start_time()
+        d['venue'] = activity.venue
+        d['end_time'] = activity.end_time
+        d['logs'] = []
+        for duty in activity.duties:
+            for log in duty.getlogs():
+                d['logs'].append({'uid': duty.member.uid, 'name': duty.member.name, 'type': log['type'], 'content': log['content']})
+        res.append(d)
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route('/dutymanage-p<int:pagenum>')
 @app.route('/dutymanage')

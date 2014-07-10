@@ -46,7 +46,7 @@ def activitylistapi():
         d['venue'] = activity.venue
         d['status'] = activity.status
         d['start_time'] = activity.start_time
-        d['member'] = [{'uid': x.member.uid, 'name': x.member.name, 'status': x.status} for x in activity.duties]
+        d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'status': x.status} for x in activity.duties]
         res.append(d)
     resp = make_response(json.dumps(res))
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -102,6 +102,48 @@ def activitydetail(activity_id):
             return jsonify(result='ok',msg='成功')
         else:
             return jsonify(result='err',msg='非法操作，请重试。')
+
+
+@app.route('/api/activitydetail-<int:activity_id>', methods=['GET', 'POST'])
+#@login_required
+def activitydetailapi(activity_id):
+    """Page: activity detail"""
+    if request.method == 'GET':
+        activity = Activity.query.get(activity_id)
+        #is_busy = Duty.query.filter(Duty.uid==session['uid'], Duty.aid==activity_id).count()
+        #duty = Duty.query.filter(Duty.uid==session['uid'], Duty.aid==activity_id).first()
+        #if duty:
+        #    is_success = duty.status==10
+        #else:
+        #    is_success = False
+        #now = int(time.time())
+        d = {}
+        d['id'] = activity.id
+        d['title'] = activity.title
+        d['venue'] = activity.venue
+        d['remark'] = activity.remark
+        d['status'] = activity.status
+        d['start_time'] = activity.start_time
+        d['end_time'] = activity.end_time
+        d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'mobile': x.member.mobile_num, 'status': x.status} for x in activity.duties]
+        res = d#, 'is_busy': is_busy, 'is_success': is_success, 'now': now}
+        resp = make_response(json.dumps(res))
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    else:
+        activity = Activity.query.get(activity_id)
+        if activity.status == 2 or activity.status == 3:
+            duty = Duty.query.filter(Duty.aid==activity_id, Duty.uid==session['uid']).first()
+
+            type = request.form['type']
+            content = request.form['content']
+            duty.appendlog(type, content)
+            db.session.add(activity)
+            db.session.commit()
+            # 根据不同的类型来通知不同的人 #TODO
+            return jsonify(result='ok', msg='成功')
+        else:
+            return jsonify(result='err', msg='非法操作，请重试。')
 
 @app.route('/activityopeartion-<opeartion>-<int:duty_id>', methods=['GET', 'POST'])
 @login_required

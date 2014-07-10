@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, abort, flash, session
+from flask import render_template, request, redirect, url_for, json, abort, flash, session, make_response
 from acgweb import app, db
 from acgweb.model.article import Article
 #from acgweb.model.category import Category
@@ -31,6 +31,21 @@ def articlelist(pagenum=1,cateid=0):
             page_count=(article_count-1)/CONST.article_per_page+1,page_current=pagenum,cateid=cateid,category_list=category_list)
 
 
+@app.route('/api/articlelist')
+#@login_required
+def articlelistapi():
+    article_list = Article.query.order_by('posttime DESC').all()
+    res = []
+    for article in article_list:
+        d = {}
+        d['id'] = article.id
+        d['title'] = article.title
+        d['cate_id'] = article.cate_id
+        res.append(d)
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route('/articlemanage-p<int:pagenum>')
 @app.route('/articlemanage')
@@ -53,7 +68,7 @@ def articledetail(article_title):
     """Page: article detail"""
     category_list = CONST.article_category
     try:
-        article_detail = Article.query.filter(Article.title==article_title).one()
+        article_detail = Article.query.filter(Article.title == article_title).one()
     except:
         abort(404)
     #print Article.query.filter(Article.title==article_title).statement
@@ -62,6 +77,21 @@ def articledetail(article_title):
     else:
         return render_template('article/articledetail.html', article_detail=article_detail,category_list=category_list)
 
+
+@app.route('/api/articledetail-<article_title>')
+#@login_required
+def articledetailapi(article_title):
+    article = Article.query.filter(Article.title == article_title).one()
+    d = {}
+    d['id'] = article.id
+    d['title'] = article.title
+    d['cate_id'] = article.cate_id
+    d['posttime'] = article.posttime
+    d['content'] = article.content
+    res = d
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/articleedit', methods=['GET', 'POST'])

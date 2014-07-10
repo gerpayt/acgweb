@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, abort, flash
+from flask import render_template, request, redirect, url_for, json, session, abort, flash, make_response
 from acgweb import app, db
 from acgweb.model.message import Message
 from acgweb.model.member import Member
@@ -28,6 +28,24 @@ def mymessage(pagenum=1):
         return render_template('message/messagelist.html',
         message_list=message_list,
         page_count=(message_count-1)/CONST.message_per_page+1,page_current=pagenum)
+
+
+@app.route('/api/messagelist')
+#@login_required
+def messageapi():
+    uid = request.args.get('uid')
+    message_list = Message.query.filter(Message.touid == uid)
+    res = []
+    for message in message_list:
+        d = {}
+        d['id'] = message.id
+        d['subject'] = message.subject
+        d['readtime'] = message.readtime
+        res.append(d)
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route('/messagemanage-p<int:pagenum>')
 @app.route('/messagemanage')
@@ -69,6 +87,7 @@ def mymessage(member_uid=''):
         message_list=message_list)
 '''
 
+
 @app.route('/mymessagedetail-<int:message_id>')
 @login_required
 def mymessagedetail(message_id=0):
@@ -85,6 +104,35 @@ def mymessagedetail(message_id=0):
     else:
         return render_template('message/messagedetail.html',
             message=message)
+
+
+@app.route('/api/messagedetail-<int:message_id>')
+#@login_required
+def messagedetailapi(message_id=0):
+    uid = request.args.get('uid')
+    message = Message.query.get(message_id)
+    if uid != message.touid and not session.get('is_arra_monitor'):
+        abort(403)
+    if uid == message.touid and not message.readtime:
+        message.update_readtime()
+        db.session.add(message)
+        db.session.commit()
+    res = {}
+    res['id'] = message.id
+    res['fromuid'] = message.fromuid
+    res['touid'] = message.touid
+    res['subject'] = message.subject
+    res['content'] = message.content
+    res['sendtime'] = message.sendtime
+    res['readtime'] = message.readtime
+    res['type'] = message.type
+    res['status'] = message.status
+    res['frommember'] = {'name': message.frommember.name, 'mobile': message.frommember.mobile_num}
+    res['tomember'] = {'name': message.tomember.name, 'mobile': message.tomember.mobile_num}
+
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/mymessagesend', methods=['GET', 'POST'])

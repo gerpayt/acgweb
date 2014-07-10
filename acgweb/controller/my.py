@@ -32,7 +32,6 @@ def myactivity(pagenum=1):
 @app.route('/myinfo', methods=['GET', 'POST'])
 @login_required
 def myinfo():
-
     if request.method == 'POST':
         member = Member.query.get_or_404(session['uid'])
         form = MemberForm(request.form)
