@@ -34,13 +34,14 @@ def mymessage(pagenum=1):
 #@login_required
 def messageapi():
     uid = request.args.get('uid')
-    message_list = Message.query.filter(Message.touid == uid)
+    message_list = Message.query.filter(Message.touid == uid).order_by('sendtime DESC').all()
     res = []
     for message in message_list:
         d = {}
         d['id'] = message.id
         d['subject'] = message.subject
         d['readtime'] = message.readtime
+        d['type'] = message.type
         res.append(d)
     resp = make_response(json.dumps(res))
     resp.headers['Access-Control-Allow-Origin'] = '*'

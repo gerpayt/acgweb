@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, abort, flash
+from flask import render_template, request, redirect, url_for, json, session, abort, flash, make_response
 from acgweb import app, db
 from acgweb.model.duty import Duty
 from acgweb.model.message import Message
@@ -17,13 +17,34 @@ import time
 @login_required
 def myschedule():
     """Page: all activitylist"""
-    schedule_list = Schedule.query.filter(Schedule.uid==session[u'uid']).all()
+    schedule_list = Schedule.query.filter(Schedule.uid==session[u'uid'], Schedule.semester==config.SEMESTER).all()
     if viewtype()==1:
         return render_template('schedule/schedulelist_mobile.html',
             schedule_list=schedule_list,)
     else:
         return render_template('schedule/schedulelist.html',
             schedule_list=schedule_list,)
+
+
+@app.route('/myschedule')
+@login_required
+def myscheduleapi():
+    uid = request.args.get('uid')
+    schedule_list = Schedule.query.filter(Schedule.uid == uid).all()
+    res = []
+    for schedule in schedule_list:
+        d = {}
+        d['id'] = schedule.id
+        d['classname'] = schedule.classname
+        d['classtype'] = schedule.classtype
+        d['week'] = schedule.week
+        d['weekday'] = schedule.weekday
+        d['section'] = schedule.section
+        res.append(d)
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route('/schedulemanage-p<int:pagenum>')
 @app.route('/schedulemanage')

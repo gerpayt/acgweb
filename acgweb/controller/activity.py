@@ -110,14 +110,17 @@ def activitydetailapi(activity_id):
     """Page: activity detail"""
     if request.method == 'GET':
         activity = Activity.query.get(activity_id)
-        #is_busy = Duty.query.filter(Duty.uid==session['uid'], Duty.aid==activity_id).count()
-        #duty = Duty.query.filter(Duty.uid==session['uid'], Duty.aid==activity_id).first()
-        #if duty:
-        #    is_success = duty.status==10
-        #else:
-        #    is_success = False
-        #now = int(time.time())
+        uid = request.args.get('uid')
+        is_busy = Duty.query.filter(Duty.uid==uid, Duty.aid==activity_id).count()
+        duty = Duty.query.filter(Duty.uid==uid, Duty.aid==activity_id).first()
+        if duty:
+            is_success = duty.status==10
+        else:
+            is_success = False
+        now = int(time.time())
         d = {}
+        d['is_busy'] = is_busy
+        d['is_success'] = is_success
         d['id'] = activity.id
         d['title'] = activity.title
         d['venue'] = activity.venue
