@@ -77,7 +77,15 @@ def memberdetail(member_uid):
     member = Member.query.get_or_404(member_uid)
     schedule_table = {}
     weeknum = int((time.time())-config.SEMASTER_BASE )/ (7*86400) + 1
+    if weeknum < 1:
+        weeknum = 1
+    elif weeknum > 25:
+        weeknum = 25
     weekstart = int(time.time())-86400 * (time.localtime().tm_wday+1)
+    if weekstart < config.SEMASTER_BASE:
+        weekstart = config.SEMASTER_BASE
+    elif weekstart > config.SEMASTER_BASE+25*7*86400:
+        weekstart = config.SEMASTER_BASE+25*7*86400
     startstr = time.strftime("%Y-%m-%d", time.localtime(weekstart))
     endstr = time.strftime("%Y-%m-%d", time.localtime(weekstart+7*86400))
 

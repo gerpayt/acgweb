@@ -30,7 +30,7 @@ def myschedule():
 @login_required
 def myscheduleapi():
     uid = request.args.get('uid')
-    schedule_list = Schedule.query.filter(Schedule.uid == uid).all()
+    schedule_list = Schedule.query.filter(Schedule.uid == uid, Schedule.semester==config.SEMESTER).all()
     res = []
     for schedule in schedule_list:
         d = {}
@@ -52,7 +52,7 @@ def myscheduleapi():
 def schedulemanage(pagenum=1):
     """Page: all activitylist"""
     schedule_count = Schedule.query.count()
-    schedule_list = Schedule.query.limit(CONST.schedule_per_page).offset(CONST.schedule_per_page*(pagenum-1))
+    schedule_list = Schedule.query.filter(Schedule.semester==config.SEMESTER).limit(CONST.schedule_per_page).offset(CONST.schedule_per_page*(pagenum-1))
     return render_template('schedule/schedulemanage.html',
         schedule_list=schedule_list,page_count=(schedule_count-1)/CONST.message_per_page+1,page_current=pagenum)
 
@@ -71,10 +71,10 @@ def update_schedule_cache(uid=''):
         uidlist = [uid]
 
     for uid in uidlist:
-        schedule_list = Schedule.query.filter(Schedule.uid==uid).all()
+        schedule_list = Schedule.query.filter(Schedule.uid==uid, Schedule.semester==config.SEMESTER).all()
         fp = open(config.BASE_DIR+'cache/st_%s.log' % uid,'w')
         schedule_table = {}
-        for i in range(1,25):
+        for i in range(1,27):
             for j in range(7):
                 dayint = config.SEMASTER_BASE + ((i-1)*7 + j) * 86400
                 daystr = time.strftime('%Y-%m-%d',time.localtime(dayint))
