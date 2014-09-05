@@ -19,12 +19,12 @@ def activity_spider():
     #Fetch contents
     try:
         if config.HTTP_PROXY:
-            proxy_handler = urllib2.ProxyHandler({"http" : config.HTTP_PROXY})  
+            proxy_handler = urllib2.ProxyHandler({"http": config.HTTP_PROXY})
             opener = urllib2.build_opener(proxy_handler)
             urllib2.install_opener(opener)
         content = urllib2.urlopen(url).read()
     except:
-        log.append('Can\'t fetch vrs api' )
+        log.append('Can\'t fetch vrs api')
         content = ''
     #print content
     #Parse contents
@@ -48,6 +48,8 @@ def activity_spider():
         res = db.session.execute(sql)
         db.session.commit()
         if not res.rowcount:
+            title = title.replace(':', '\:')
+            remark = remark.replace(':', '\:')
             sql = 'insert into activity ( oid, title, remark, venue, start_time, type, status) values ("%s", "%s", "%s", "%s", "%s", "%s", "1");' % (oid, title, remark, venue, start_time, type)
             #print sql
             # help! Done
