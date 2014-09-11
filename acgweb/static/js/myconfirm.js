@@ -30,12 +30,13 @@ $('.modal-trigger').click(function(){
     $('#myModalLabel').html($(this).data('label'));
     $('#myModalContent').html($(this).data('content'));
     $('#myModalButton').html($(this).html());
+    $('#myModalButton').data('loading-text', $(this).data('modal-loading-text'));
     //$('#myModalButton').attr('href',$(this).data('href'));
-    if ($(this).data('require_input')) $('#myModalInput').show()
+    if ($(this).data('require_input')) $('#myModalInput').show();
     else $('#myModalInput').hide()
     $('#myModalform').attr('action',$(this).data('href'));
     if ($(this).data('require_select')) {
-        $('#myModalSelect').html('')
+        $('#myModalSelect').html('');
         var base_time = $(this).data('start_time');
         var i=1;
         for(i=1;i<13;i++){

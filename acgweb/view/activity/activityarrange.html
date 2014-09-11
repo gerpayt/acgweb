@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% set script_list = ['myconfirm'] %}
+{% set script_list = ['btn-loading', 'myconfirm'] %}
 
 {% block body %}
 
@@ -69,8 +69,8 @@
              </tr>{% endfor %}
            </table>"><a class="btn btn-mini{% if member.available==0 %} btn-success{% endif %} modal-trigger" role="button" href="#myModal" data-toggle="modal"
          data-href="{{url_for('activityappoint',activity_id=activity.id,member_uid=member.uid)}}"
-         data-label="确定要将此值班任务安排给{{ member.name }}吗？"
-         data-content="请确认音控员的空闲时间再安排值班。" >排班</a></span>
+         data-label="确定要将此值班任务安排给{{ member.name }}吗？" data-content="请确认音控员的空闲时间再安排值班。"
+         data-modal-loading-text="正在排班">排班</a></span>
     <!-- <a class="btn btn-mini btn-primary" href="{{url_for('mymessagesend',activity_id=activity.id,member_uid=member.uid)}}">交流</a> --> </td></tr>
   {% endfor %}
 </table>
@@ -93,7 +93,7 @@
   </div>
   <div class="modal-footer">
     <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
-    <button id="myModalButton" href="#" class="btn"></button>
+    <button id="myModalButton" href="#" class="btn" data-loading-text ></button>
   </div>
   </form>
 </div>

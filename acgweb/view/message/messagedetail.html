@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% from "wysiwyg.html" import wysiwyg %}
 {% set css_list = ['font-awesome'] %}
-{% set script_list = ['bootstrap-wysiwyg','jquery.hotkeys','mybootstrap-wysiwyg'] %}
+{% set script_list = ['btn-loading', 'bootstrap-wysiwyg','jquery.hotkeys','mybootstrap-wysiwyg'] %}
 
 {% block body %}
 
@@ -23,7 +23,7 @@
   <tr><th>QQ号码</th><td>{{message.frommember.qqnum}}</td></tr>
 </table>
   {% if session['is_arra_monitor'] %}
-    <a class="btn btn-success" href="{{ url_for('message_sendmail',message_id=message.id) }}">发送邮件</a>
+    <a class="btn btn-success" href="{{ url_for('message_sendmail',message_id=message.id) }}" data-loading-text="正在发送">发送邮件</a>
   {% endif %}
 </div>
 <div class="span9">

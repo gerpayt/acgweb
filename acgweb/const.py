@@ -55,18 +55,17 @@ dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认',
 dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'warning', 'success', 'warning', 'default', 'default', 'success', 'default', 'default']
 
 dutyoperationname = {
-        'activity_appoint': {'color':'success', 'title':'安排值班'},
+        'activity_appoint': {'color':'success', 'title':'安排值班', 'loading':'正在排班'},
         'apply_duty'    : {'color':'success', 'title':'申请值班', 'content':'申请值班成功后不可以拒绝', 'require_input':True},
-        'approve_apply' : {'color':'success', 'title':'批准值班'},
-        'decline_apply' : {'color':'danger' , 'title':'拒绝值班'},
+        'approve_apply' : {'color':'success', 'title':'批准值班', 'loading':'正在处理'},
+        'decline_apply' : {'color':'danger' , 'title':'拒绝值班', 'loading':'正在处理'},
         'confirm_apply' : {'color':'success', 'title':'确认值班', 'content':'核对日期时间无误后确认值班'},
         'accept_duty'   : {'color':'success', 'title':'接受值班'},
-        'decline_duty'  : {'color':'danger' , 'title':'不能值班', 'content':'填写你不能值班的原因', 'require_input':True},
+        'decline_duty'  : {'color':'danger' , 'title':'不能值班', 'content':'填写你不能值班的原因', 'loading':'正在处理', 'require_input':True},
         'request_cover' : {'color':'danger' , 'title':'请求代班', 'content':'填写需要代班的原因','require_input':True},
         'cancle_cover'  : {'color':'danger' , 'title':'取消带班'},
-        'cover_duty'    : {'color':'success', 'title':'代他值班'},
+        'cover_duty'    : {'color':'success', 'title':'代他值班', 'loading':'正在处理'},
         'term_activity' : {'color':'danger' , 'title':'结束活动'},
-        'cover_task'    : {'color':'default', 'title':'代TA值班'},
         'cancle_task'   : {'color':'danger',  'title':'取消任务', 'content':'确定要取消排班吗？'},
     }
 

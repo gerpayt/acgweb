@@ -185,7 +185,7 @@ def activityopeartion(opeartion,duty_id):
                     msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
                 new_duty = Duty(aid=duty.aid,uid=session['uid'],status=6,log='')
-                new_duty.appendprocesse('cover_task','')
+                new_duty.appendprocesse('cover_duty','')
                 db.session.add(new_duty)
         elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
             timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")

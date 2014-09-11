@@ -1,5 +1,5 @@
 {% extends "layout_mobile.html" %}
-{% set script_list = ['myconfirm'] %}
+{% set script_list = ['btn-loading', 'myconfirm'] %}
 
 {% block body %}
 
@@ -19,10 +19,12 @@
           <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
             data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"
             data-label="{{config.CONST.dutyoperationname[op].title}}" data-content="{{config.CONST.dutyoperationname[op].content}}"
-            {% if config.CONST.dutyoperationname[op].require_input %}data-require_input='1'{% endif %}>
+            {% if config.CONST.dutyoperationname[op].require_input %}data-require_input='1'{% endif %}
+            {% if config.CONST.dutyoperationname[op].loading %}data-modal-loading-text="{{config.CONST.dutyoperationname[op].loading}}"{% endif %}>
           {{config.CONST.dutyoperationname[op].title}}</a>
         {% else %}
-          <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini">
+          <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini"
+             {% if config.CONST.dutyoperationname[op].loading %}data-loading-text="{{config.CONST.dutyoperationname[op].loading}}"{% endif %}>
           {{config.CONST.dutyoperationname[op].title}}</a>
         {% endif %}
     {% endfor %}{% endif %}
@@ -66,7 +68,7 @@
   </div>
   <div class="modal-footer">
     <a data-dismiss="modal" aria-hidden="true" class="btn">取消</a>
-    <button id="myModalButton" href="#" class="btn"></button>
+    <button id="myModalButton" href="#" class="btn" data-loading-text ></button>
   </div>
   </form>
 </div>

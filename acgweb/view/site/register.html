@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+{% set script_list = ['btn-loading'] %}
 
 {% block body %}
 
@@ -30,7 +30,7 @@
 
   <div class="control-group">
     <div class="controls">
-      <button type="submit" class="btn btn-primary">确认注册</button>
+      <button type="submit" class="btn btn-primary" data-loading-text="正在注册">确认注册</button>
       <a class="btn" href="{{ url_for('login') }}">登录</a>
     </div>
   </div>
