@@ -10,7 +10,7 @@
 
 {% if duty_list %}
 <table class="table table-striped">
-  <tr><th width='120'>日期</th><th width='90'>时间</th><th width='30'>地点</th><th>活动</th><th>状态</th><th>操作</th></tr>
+  <tr><th width='120'>日期</th><th width='90'>活动时间</th><th width='30'>地点</th><th>活动</th><th>状态</th><th>操作</th></tr>
   {% for duty in duty_list %}
   <tr><td>{{ duty.activity.start_time|timeformat('%Y-%m-%d') }} {{ duty.activity.start_time|dayname }}</td>
   <td>{{ duty.activity.start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>

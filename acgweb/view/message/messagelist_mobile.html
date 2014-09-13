@@ -10,7 +10,7 @@
 
 {% if message_list %}
 <table class="table table-striped">
-  <tr><th>时间</th><th>主题</th></tr>
+  <tr><th>发送时间</th><th>主题</th></tr>
   {% for message in message_list %}
   <tr>
   <td><span title="{{message.sendtime|timeformat('%Y-%m-%d %H:%M:%S')}}">{{message.sendtime|friendlytime()}}</span></td>

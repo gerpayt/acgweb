@@ -9,7 +9,7 @@
 
 {% if duty_list %}
 <table class="table table-striped">
-  <tr><th width='50'>姓名</th><th width='80'>日期</th><th width='90'>时间</th><th width='30'>时长</th><th width='30'>场地</th><th>活动名称</th><th width='70'>任务状态</th><th>操作</th></tr>
+  <tr><th width='50'>姓名</th><th width='80'>日期</th><th width='90'>值班时间</th><th width='30'>时长</th><th width='30'>场地</th><th>活动名称</th><th width='70'>任务状态</th><th>操作</th></tr>
   {% for duty in duty_list %}
   <tr><td><a href="{{url_for('memberdetail',member_uid=duty.uid)}}">{{duty.member.name}}</a></td>
   <td>{{ duty.activity.work_start_time|timeformat('%Y-%m-%d') }}</td>

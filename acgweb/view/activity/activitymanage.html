@@ -10,7 +10,7 @@
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
 {% endfor %}
 <table class="table table-striped">
-  <tr><th width='75'>日期</th><th width='40'>时间</th><th width='30'>地点</th><th>活动</th><th width="200">音控员</th><th>状态</th><th width='80'>操作</th></tr>
+  <tr><th width='75'>日期</th><th width='40'>活动时间</th><th width='30'>地点</th><th>活动</th><th width="200">音控员</th><th>状态</th><th width='80'>操作</th></tr>
   {% for activity in activity_list %}
   <tr><td>{{ activity.start_time|timeformat('%Y-%m-%d') }}</td>
   <td>{{ activity.start_time|timeformat('%H:%M') }}</td>

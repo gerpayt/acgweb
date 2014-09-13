@@ -8,7 +8,7 @@
 {% endfor %}
 
 <table class="table table-striped">
-  <tr><th width='50'>姓名</th><th width='80'>日期</th><th width='90'>时间</th><th width='30'>时长</th><th width='30'>场地</th><th>活动名称</th><th width='70'>任务状态</th></tr>
+  <tr><th width='50'>姓名</th><th width='80'>日期</th><th width='90'>值班时间</th><th width='30'>时长</th><th width='30'>场地</th><th>活动名称</th><th width='70'>任务状态</th></tr>
   <tr><td><a href="{{url_for('memberdetail',member_uid=duty.uid)}}">{{duty.member.name}}</a></td>
   <td>{{ duty.activity.work_start_time|timeformat('%Y-%m-%d') }}</td>
   <td>{{ duty.activity.work_start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>

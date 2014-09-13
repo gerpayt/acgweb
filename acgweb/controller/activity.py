@@ -376,21 +376,22 @@ def activityarrange(activity_id):
 
 
         # get last duty time and venue
-        sql = "select a.uid, b.venue, max(b.start_time) as start_time from duty as a left join activity as b on a.aid = b.id where a.status=11 group by a.uid"
+        sql = "select a.uid, b.venue, max(b.work_start_time) as start_time from duty as a left join activity as b on a.aid = b.id where a.status=11 group by a.uid"
         res = db.session.execute(sql)
         for r in res:
-            (uid,venue,start_time) = r
+            (uid, venue, work_start_time) = r
             if uid in available_member.keys():
                 available_member[uid]['venue'] = venue
-                available_member[uid]['start_time'] = start_time
+                available_member[uid]['work_start_time'] = work_start_time
 
 
-        # get lst week and last month count
-        sql = "select a.uid, count(1) as count from duty as a left join activity as b on a.aid = b.id where a.status=11 and b.start_time> %d and b.start_time< %d group by a.uid"
+        # get last week and last month count
+        sql = "select a.uid, count(1) as count from duty as a left join activity as b on a.aid = b.id where a.status=11 and b.start_time<= %d and b.start_time>= %d group by a.uid"
         now = int(time.time())
         last_week = now - 7 * 86400
         last_month = now - 30 * 86400
         res = db.session.execute(sql%(now, last_week))
+        print sql%(now, last_week)
         for r in res:
             (uid,weekcount) = r
             if uid in available_member.keys():

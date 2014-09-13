@@ -51,7 +51,7 @@
   {% for member in available_member %}
   <tr><td><a href="{{url_for('memberdetail',member_uid=member.uid)}}">{{ member.name }}</a></td>
     <td>{{ member.mobile_num }}</td><td>{{ member.email }}</td><td>{{ member.qqnum }}</td>
-    <td>{% if member.start_time %}<span title="{{ member.start_time|timeformat('%Y-%m-%d %H:%M') }}">{{ member.start_time|friendlytime }}</span>
+    <td>{% if member.work_start_time %}<span title="{{ member.work_start_time|timeformat('%Y-%m-%d %H:%M') }}">{{ member.work_start_time|friendlytime }}</span>
       {% else %}从未{% endif %}</td>
     <td>{{ member.venue|venuename }}</td><td>{{ member.monthcount }}次</td><td>{{ member.weekcount }}次</td>
     <td>

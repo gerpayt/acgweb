@@ -20,5 +20,5 @@ class ActivityForm(Form):
     type = SelectField('type', coerce=int, description='活动类型', choices=zip(range(len(CONST.activitytypename)),CONST.activitytypename))
     status = SelectField('status', coerce=int, description='活动状态', choices=zip(range(len(CONST.activitystatusname)),CONST.activitystatusname))
     
-    hostname = TextField('introduce', description='主办法')
+    hostname = TextField('introduce', description='主办方')
 
