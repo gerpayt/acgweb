@@ -51,7 +51,7 @@ def myscheduleapi():
 @login_required
 def schedulemanage(pagenum=1):
     """Page: all activitylist"""
-    schedule_count = Schedule.query.count()
+    schedule_count = Schedule.query.filter(Schedule.semester==config.SEMESTER).count()
     schedule_list = Schedule.query.filter(Schedule.semester==config.SEMESTER).limit(CONST.schedule_per_page).offset(CONST.schedule_per_page*(pagenum-1))
     return render_template('schedule/schedulemanage.html',
         schedule_list=schedule_list,page_count=(schedule_count-1)/CONST.message_per_page+1,page_current=pagenum)

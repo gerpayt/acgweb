@@ -210,7 +210,7 @@ cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 '''}
 
 activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
-还有两个小时活动就要开始了，请准时赶往活动场地<br />
+距离值班时间还有一个小时，请准时赶往活动场地<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
