@@ -391,7 +391,7 @@ def activityarrange(activity_id):
         last_week = now - 7 * 86400
         last_month = now - 30 * 86400
         res = db.session.execute(sql%(now, last_week))
-        print sql%(now, last_week)
+        #print sql%(now, last_week)
         for r in res:
             (uid,weekcount) = r
             if uid in available_member.keys():
@@ -406,6 +406,7 @@ def activityarrange(activity_id):
     else:
         flash({'type':'danger', 'content':'非法操作，请重试。'})
     #print available_member.values()
+    # TODO sort name list
     return render_template('activity/activityarrange.html', activity=activity, schedule_content=schedule_content, available_member=available_member.values())
 
 

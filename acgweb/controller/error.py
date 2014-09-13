@@ -11,6 +11,7 @@ def error404(error):
     else:
         return render_template('site/error404.html'), 404
 
+
 @app.errorhandler(403)
 def error403(error):
     if viewtype()==1:
