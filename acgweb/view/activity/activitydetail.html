@@ -117,7 +117,7 @@
 {% if not is_busy and activity.status == 1 %}<p>你有空闲时间，可以申请此次活动。
   <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
    data-href="{{url_for('activityapply',activity_id=activity.id)}}"
-   data-label="申请值班" data-content="申请值班成功后不可以拒绝" data-require_input='1'>申请值班</a>
+   data-label="申请值班" data-content="申请值班成功后不可以拒绝" data-require_input='1' data-modal-loading-text="正在申请">申请值班</a>
 </p>{% endif %}
 {% else %}
 <p>活动尚未就绪。</p>
