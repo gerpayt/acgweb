@@ -1,5 +1,7 @@
-$(".btn[data-loading-text]").click(function() {
+$(".btn[data-loading-text]").click(function(e) {
     var $btn = $(this);
-    $btn.button('loading');
-
+    if ($btn.attr('disabled')) {
+        e.preventDefault();
+    }
+    $btn.button('loading').attr('disabled',"true");
 });

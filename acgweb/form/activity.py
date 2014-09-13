@@ -14,6 +14,7 @@ class ActivityForm(Form):
     remark = TextAreaField('remark', description='注释')
     venue = SelectField('venue', coerce=int, description='场地', choices=zip(range(len(CONST.venuename)),CONST.venuename))
     #date_str = DateField('date_str', description='活动日期', validators=[validators.DataRequired(message="开始时间不能为空")], format='%Y-%m-%d')
+    work_start_time = HiddenField('work_start_time', description='值班时间', validators=[validators.DataRequired(message="值班时间不能为空")])
     start_time = HiddenField('start_time', description='开始时间', validators=[validators.DataRequired(message="开始时间不能为空")])
     end_time = HiddenField('end_time', description='结束时间')
     type = SelectField('type', coerce=int, description='活动类型', choices=zip(range(len(CONST.activitytypename)),CONST.activitytypename))

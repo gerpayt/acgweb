@@ -12,7 +12,7 @@
 <div class="span1">
 <p class="calendar"><span class="month">{{ activity.start_time|monthname() }}</span>{{ activity.start_time|timeformat('%d') }}<span class="weekday">{{ activity.start_time|dayname() }}</span></p> 
 </div>
-<span class="span3"><strong> [ {{ activity.venue|venuename() }} ] </strong> {{ activity.work_start_time()|timeformat('%H:%M') }} - {% if activity.end_time %}{{ activity.end_time|timeformat('%H:%M') }}{% else %}?{% endif %} <br />{{activity.title}}<br />{{activity.hostname}}</span>
+<span class="span3"><strong> [ {{ activity.venue|venuename() }} ] </strong> {{ activity.work_start_time|timeformat('%H:%M') }} - {% if activity.end_time %}{{ activity.end_time|timeformat('%H:%M') }}{% else %}?{% endif %} <br />{{activity.title}}<br />{{activity.hostname}}</span>
 <div class="span8">
 <p>
 {% for duty in activity.duties %}

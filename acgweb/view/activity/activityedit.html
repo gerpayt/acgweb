@@ -64,19 +64,34 @@
 <div class="span8">
 <h4>活动时间</h4>
 
+{{form.work_start_time( id="form_workstarttime_hidden" )}}
+{{form.start_time( id="form_starttime_hidden" )}}
+{{form.end_time( id="form_endtime_hidden" )}}
+
 <div class="row">
-  {{form.start_time( id="form_starttime_hidden" )}}
-  {{form.end_time( id="form_endtime_hidden" )}}
   <div class="control-group span3{% if form.start_time.errors %} error{% endif %}">
     <label class="control-label" for="inputDate">日期</label>
     <div class="controls input-append date pull-left form_date">
       <input class="input-small" id="form_date_timepicker" type="text" placeholder="日期">
-      <span class="add-on"><i class="icon-th"></i></span>
+      <span class="add-on"><i class="icon-calendar"></i></span>
     </div>
   </div>
   
+  <div class="control-group span3">
+    <label class="control-label" for="inputWorkStartTime">值班时间</label>
+    <div class="controls input-append bootstrap-timepicker pull-left form_workstarttime">
+      <input id="form_workstarttime_timepicker" class="input-mini" type="text" placeholder="开始时间">
+      <span class="add-on"><i class="icon-time"></i></span>
+    </div>
+  </div>
+
+  <p class="control-group span2">
+    <small>默认活动开始前一个小时</small>
+  </p>
+</div>
+<div class="row">
   <div class="control-group span2">
-    <label class="control-label" for="inputPassword">时间</label>
+    <label class="control-label" for="inputStartTime">活动时间</label>
     <div class="controls input-append bootstrap-timepicker pull-left form_starttime">
       <input id="form_starttime_timepicker" class="input-mini" type="text" placeholder="开始时间">
       <span class="add-on"><i class="icon-time"></i></span>
@@ -84,7 +99,7 @@
   </div>
 
   <div class="control-group span3">
-    <label class="control-label" for="inputPassword">至</label>
+    <label class="control-label" for="inputEndTime">至</label>
     <div class="controls input-append bootstrap-timepicker pull-left form_endtime">
       <input id="form_endtime_timepicker" class="input-mini" type="text"  placeholder="结束时间">
       <span class="add-on"><i class="icon-time"></i></span>

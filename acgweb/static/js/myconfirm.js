@@ -8,7 +8,7 @@ Date.prototype.format =function(format)
         "s+" : this.getSeconds(), //second
         "q+" : Math.floor((this.getMonth()+3)/3), //quarter
         "S" : this.getMilliseconds() //millisecond
-    }
+    };
     if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
     (this.getFullYear()+"").substr(4- RegExp.$1.length));
     for(var k in o)if(new RegExp("("+ k +")").test(format))
@@ -16,7 +16,7 @@ Date.prototype.format =function(format)
     RegExp.$1.length==1? o[k] :
     ("00"+ o[k]).substr((""+ o[k]).length));
     return format;
-}
+};
 
 
 $('.modal-trigger').click(function(){
@@ -33,7 +33,7 @@ $('.modal-trigger').click(function(){
     $('#myModalButton').data('loading-text', $(this).data('modal-loading-text'));
     //$('#myModalButton').attr('href',$(this).data('href'));
     if ($(this).data('require_input')) $('#myModalInput').show();
-    else $('#myModalInput').hide()
+    else $('#myModalInput').hide();
     $('#myModalform').attr('action',$(this).data('href'));
     if ($(this).data('require_select')) {
         $('#myModalSelect').html('');
@@ -45,9 +45,9 @@ $('.modal-trigger').click(function(){
             var timestr = timeobj.format('hh:mm');
             $('#myModalSelect').append('<option value="'+time+'">'+timestr+'</option>\n');
         }
-        $('#myModalSelect').show()
+        $('#myModalSelect').show();
     }
     else
-        $('#myModalSelect').hide()
+        $('#myModalSelect').hide();
 
 });

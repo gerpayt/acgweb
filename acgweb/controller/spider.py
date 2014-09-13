@@ -39,18 +39,19 @@ def activity_spider():
         remark = act['remark']
         venue = sid2ven[act['sid']]
         start_time = act['time']
+        work_start_time = act['time'] - 3600
         #type = acttype(title)
         type = 0
         #if exist
 
-        sql = 'select id,venue,title,remark,start_time from activity where oid = "%s";' % oid
+        sql = 'select id,venue,title,remark,work_start_time,start_time from activity where oid = "%s";' % oid
         #print 'test oid:'+oid
         res = db.session.execute(sql)
         db.session.commit()
         if not res.rowcount:
             title = title.replace(':', '\:')
             remark = remark.replace(':', '\:')
-            sql = 'insert into activity ( oid, title, remark, venue, start_time, type, status) values ("%s", "%s", "%s", "%s", "%s", "%s", "1");' % (oid, title, remark, venue, start_time, type)
+            sql = 'insert into activity ( oid, title, remark, venue, work_start_time, start_time, type, status) values ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "1");' % (oid, title, remark, venue, work_start_time, start_time, type)
             #print sql
             # help! Done
             new_obj = db.session.execute(sql)
@@ -61,7 +62,7 @@ def activity_spider():
         else:
             d={}
             for r in res:
-                d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'time':r[4] }
+                d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'worktime':r[4], 'time':r[5] }
             #print d
             if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or int(start_time) != int(d['time']):
                 #sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
@@ -111,12 +112,13 @@ def activity_spider():
     res = db.session.execute(sql)
     for row in res:
         log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]) )
+        worktimestr = '-'
         timestr = timeformat_filter(row[2],"%Y-%m-%d %H:%M")
         venue = venuename_filter(row[3])
         title = row[4]
         url = config.BASE_URL + url_for('activitydetail',activity_id=row[0])
         #subject = mail.notice_activity_cancle_tmpl['subject']
-        content = mail.notice_activity_cancle_tmpl['content'] % ( timestr, venue, title, url, url )
+        content = mail.notice_activity_cancle_tmpl['content'] % (worktimestr, timestr, venue, title, url, url )
         warnings.append(content)
 
     log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S') )

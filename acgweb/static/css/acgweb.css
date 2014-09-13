@@ -2,7 +2,7 @@
 .form-horizontal .controls{*display:inline-block;*padding-left:20px;margin-left:80px;*margin-left:0;}
 .form-horizontal .controls:first-child{*padding-left:80px;}
 .dropdown-menu{min-width:60px;}
-.form_date, .form_starttime, .form_endtime{margin-top: -30px;}
+.form_date, .form_workstarttime, .form_starttime, .form_endtime{margin-top: -30px;}
 
 .calendar{  
     padding-top:4px;  

@@ -5,7 +5,7 @@
 
 {% for activity in activity_list %}
 <p>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname() }}
-{{ activity.work_start_time()|timeformat('%H:%M') }} - {% if activity.end_time %}{{ activity.end_time|timeformat('%H:%M') }}{% else %}?{% endif %} </p>
+{{ activity.work_start_time|timeformat('%H:%M') }} - {% if activity.end_time %}{{ activity.end_time|timeformat('%H:%M') }}{% else %}?{% endif %} </p>
 <p> 地点: {{ activity.venue|venuename() }} </p>
 <p> 活动: {{activity.title}} </p>
 <p>

@@ -14,6 +14,7 @@ class Activity(db.Model):
     title = db.Column(db.String(32), index = True)
     remark = db.Column(db.Text)
     venue = db.Column(db.Integer)
+    work_start_time = db.Column(db.Integer)
     start_time = db.Column(db.Integer)
     end_time = db.Column(db.Integer)
     type = db.Column(db.Integer)
@@ -35,12 +36,12 @@ class Activity(db.Model):
 
     def work_last_time(self):
         if self.end_time:
-            return (1.0*self.end_time-self.start_time)/3600 + 1
+            return (1.0*self.end_time-self.work_start_time)/3600
         else:
             return 0.0
 
-    def work_start_time(self):
-        return self.start_time - 3600
+#    def work_start_time(self):
+#        return self.start_time - 3600
 
     def from_time(self):
         secs = self.start_time-int(time.time())

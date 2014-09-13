@@ -1,9 +1,7 @@
-
 var cntdwn = $('#activity_from_time_int').html();
 
 function timer_run()
 {
-
     cntdwn -= 1;
     if (cntdwn <= 0) {
         $('#activity_from_time_str').html('活动正在进行中');
@@ -20,6 +18,4 @@ function timer_run()
     }
 }
 
-
 timer_run();
-

@@ -52,7 +52,7 @@ def salarymanage():
     for i in res1:
         if not salalist.has_key(i.uid):
             salalist[i.uid] = []
-        salalist[i.uid].append({'aid':i.id,'start_time':i.start_time-3600,'end_time':i.end_time,'venue':i.venue,'title':i.title,'work_last_time':i.last_time+3600})
+        salalist[i.uid].append({'aid':i.id,'start_time':i.start_time-3600,'end_time':i.end_time,'venue':i.venue,'title':i.title,'work_last_time':i.work_last_time})
     #print salalist
     sql2 = "select c.uid, c.name, c.credit_card, sum(b.end_time-b.start_time+3600) as totaltime from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' group by a.uid order by convert(c.name using gb2312) ASC " % (int(starttime), int(endtime))
     #print sql2

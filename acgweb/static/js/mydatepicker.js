@@ -1,4 +1,3 @@
-
 Date.prototype.format =function(format)
 {
     var o = {
@@ -9,7 +8,7 @@ Date.prototype.format =function(format)
         "s+" : this.getSeconds(), //second
         "q+" : Math.floor((this.getMonth()+3)/3), //quarter
         "S" : this.getMilliseconds() //millisecond
-    }
+    };
     if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
     (this.getFullYear()+"").substr(4- RegExp.$1.length));
     for(var k in o)if(new RegExp("("+ k +")").test(format))
@@ -17,15 +16,13 @@ Date.prototype.format =function(format)
     RegExp.$1.length==1? o[k] :
     ("00"+ o[k]).substr((""+ o[k]).length));
     return format;
-}
+};
 
-
-var starttime = parseInt($('#starttime_hidden').val())
+var starttime = parseInt($('#starttime_hidden').val());
 if (starttime)
     $('#starttime_timepicker').val( new Date(parseInt(starttime) * 1000).format('yyyy-MM-dd'));
 
-
-var endtime = parseInt($('#endtime_hidden').val())
+var endtime = parseInt($('#endtime_hidden').val());
 if (endtime)
     $('#endtime_timepicker').val( new Date(parseInt(endtime - 24 * 3600) * 1000).format('yyyy-MM-dd'));
 

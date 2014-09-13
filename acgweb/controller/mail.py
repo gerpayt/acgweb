@@ -137,19 +137,21 @@ forgetpassword_tmpl = {'subject':"重置密码",'content':'''
 
 activity_appoint_tmpl = {'subject':"安排值班",'content':'''
 排班班长给你指派了一个活动 <br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接来完成操作 <br />
 <a href="%s">%s</a> <br />
-请于活动开始前一个小时 (%s) 到达活动场地
+请于 %s 到达活动场地
 
 '''}
 
 
 activity_cancle_tmpl = {'subject':"活动取消",'content':'''
 你值班的活动被取消了<br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -161,6 +163,7 @@ activity_cancle_tmpl = {'subject':"活动取消",'content':'''
 
 activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
 你值班的活动信息发生了变化<br />
+<strong>值班时间 %s 修改为 %s </strong> <br />
 活动时间 %s 修改为 %s <br />
 活动地点 %s 修改为 %s <br />
 活动内容 %s 修改为 %s <br />
@@ -172,6 +175,7 @@ activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
 
 approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
 排班班长批准了你的值班申请<br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -183,6 +187,7 @@ approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
 
 decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
 排班班长拒绝了你的值班申请<br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -195,6 +200,7 @@ decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
 cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 你的带班申请成功处理<br />
 代班人 <a href="%s">%s</a> <br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -206,7 +212,7 @@ cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 
 activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
 还有两个小时活动就要开始了，请准时赶往活动场地<br />
-值班时间 %s <br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -218,6 +224,7 @@ activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
 
 activity_mark_endtime_tmpl = {'subject':"标记活动结束时间",'content':'''
 你值班的活动已经结束了，请标记活动结束时间<br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -230,6 +237,7 @@ activity_mark_endtime_tmpl = {'subject':"标记活动结束时间",'content':'''
 decline_duty_tmpl = {'subject':"拒绝排班",'content':'''
 %s 拒绝了你的排班<br />
 原因 %s <br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -269,6 +277,7 @@ spider_notice_tmpl = {'subject':"自动同步通知",'content':'''
 
 todo_duty_tmpl = {'subject':"近期未完成的操作",'content':'''
 音控员 <a href="%s">%s</a> <br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
@@ -279,6 +288,7 @@ todo_duty_tmpl = {'subject':"近期未完成的操作",'content':'''
 '''}
 
 todo_activity_tmpl = {'subject':"近期未完成的操作",'content':'''
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />

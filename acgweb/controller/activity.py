@@ -171,6 +171,7 @@ def activityopeartion(opeartion,duty_id):
                 flash({'type':'danger', 'content':'你在本时间段已经有此活动，请勿重复选班。'})
                 return redirect(url_for('activitydetail',activity_id=duty.aid))
             else:
+                worktimestr = timeformat_filter(duty.activity.work_start_time,"%Y-%m-%d %H:%M")
                 timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
                 venue = venuename_filter(duty.activity.venue)
                 title = duty.activity.title
@@ -179,7 +180,7 @@ def activityopeartion(opeartion,duty_id):
                 member_url = config.BASE_URL + url_for('memberdetail',member_uid=session['uid'])
                 member_name = session['name']
                 subject = mail.cover_duty_tmpl['subject']
-                content = mail.cover_duty_tmpl['content'] % ( member_url, member_name, timestr, venue, title, remark, url , url )
+                content = mail.cover_duty_tmpl['content'] % (member_url, member_name, worktimestr, timestr, venue, title, remark, url , url )
                 msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                 mail.send_mail(subject, content, duty.member.name, duty.member.email,
                     msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
@@ -188,6 +189,7 @@ def activityopeartion(opeartion,duty_id):
                 new_duty.appendprocesse('cover_duty','')
                 db.session.add(new_duty)
         elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
+            worktimestr = timeformat_filter(duty.activity.work_start_time,"%Y-%m-%d %H:%M")
             timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
             venue = venuename_filter(duty.activity.venue)
             title = duty.activity.title
@@ -195,22 +197,23 @@ def activityopeartion(opeartion,duty_id):
             url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
             if opeartion == 'approve_apply':
                 subject = mail.approve_apply_tmpl['subject']
-                content = mail.approve_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+                content = mail.approve_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
             else:
                 subject = mail.decline_apply_tmpl['subject']
-                content = mail.decline_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+                content = mail.decline_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
             msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, duty.member.name, duty.member.email,
                     msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
         elif opeartion == 'decline_duty':
             uname = session['name']
+            worktimestr = timeformat_filter(duty.activity.work_start_time,"%Y-%m-%d %H:%M")
             timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
             venue = venuename_filter(duty.activity.venue)
             title = duty.activity.title
             remark = duty.activity.remark
             url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
             subject = mail.decline_duty_tmpl['subject']
-            content = mail.decline_duty_tmpl['content'] % ( uname, reason, timestr, venue, title, remark, url , url )
+            content = mail.decline_duty_tmpl['content'] % (uname, reason, worktimestr, timestr, venue, title, remark, url , url )
             for uid in config.ARRA_MONITOR:
                 member = Member.query.get(uid)
                 msg_id = mail.send_message(uid,session['uid'],subject,content,2)
@@ -274,10 +277,12 @@ def activityedit(activity_id=0):
             if not session.get('is_arra_monitor'):
                 abort(403)
             if not activity: activity = Activity()
-            info_modify = str(activity.title)!=str(form.title.data) or str(activity.venue)!=str(form.venue.data) or str(activity.start_time)!=str(form.start_time.data)
+            info_modify = str(activity.title)!=str(form.title.data) or str(activity.venue)!=str(form.venue.data) or str(activity.work_start_time)!=str(form.work_start_time.data)
             if info_modify:
                 dutylist = Duty.query.filter(Duty.aid==activity_id).all()
 
+                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+                worktimestr_new = timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M")
                 timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
                 timestr_new = timeformat_filter(form.start_time.data,"%Y-%m-%d %H:%M")
                 venue = venuename_filter(activity.venue)
@@ -287,20 +292,21 @@ def activityedit(activity_id=0):
                 remark = activity.remark
                 url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
                 subject = mail.activity_modify_tmpl['subject']
-                content = mail.activity_modify_tmpl['content'] % ( timestr, timestr_new, venue, venue_new, title, title_new, remark, url , url )
+                content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url , url )
                 for duty in dutylist:
                     msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                     mail.send_mail(subject, content, duty.member.name, duty.member.email,
                         msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
 
-            activity.title=form.title.data
-            activity.remark=form.remark.data
-            activity.venue=form.venue.data
-            activity.start_time=form.start_time.data
-            activity.end_time=form.end_time.data
-            activity.type=form.type.data
-            activity.status=form.status.data
-            activity.hostname=form.hostname.data
+            activity.title = form.title.data
+            activity.remark = form.remark.data
+            activity.venue = form.venue.data
+            activity.work_start_time = form.work_start_time.data
+            activity.start_time = form.start_time.data
+            activity.end_time = form.end_time.data
+            activity.type = form.type.data
+            activity.status = form.status.data
+            activity.hostname = form.hostname.data
             db.session.add(activity)
             db.session.commit()
 
@@ -420,13 +426,13 @@ def activityappoint(activity_id,member_uid):
             db.session.commit()
             # need or not
             timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
-            worktimestr = timeformat_filter(activity.work_start_time(),"%Y-%m-%d %H:%M")
+            worktimestr = timeformat_filter(activity.work_start_time,"%Y-%m-%d %H:%M")
             venue = venuename_filter(activity.venue)
             title = activity.title
             remark = activity.remark
             url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
             subject = mail.activity_appoint_tmpl['subject']
-            content = mail.activity_appoint_tmpl['content'] % ( timestr, venue, title, remark, url , url, worktimestr )
+            content = mail.activity_appoint_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url , url)
             msg_id = mail.send_message(member_uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, member.name, member.email,
                 msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)
@@ -469,13 +475,14 @@ def activitycancle(activity_id):
         activity.status = 4
         duties = Duty.query.filter(Duty.aid==activity_id)
 
-        timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
+        worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+        timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
         venue = venuename_filter(activity.venue)
         title = activity.title
         remark = activity.remark
         url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
         subject = mail.activity_cancle_tmpl['subject']
-        content = mail.activity_cancle_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+        content = mail.activity_cancle_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url , url )
 
         for duty in duties:
             # 通知音控员取消了活动 #TODO
@@ -595,10 +602,10 @@ def cron():
     if last_cron / (30*60) < now / (30*60):
         now =  now / (30*60) * (30*60)
         logs = []
-        # 2 hours before activity start
-        activitylist = Activity.query.filter(Activity.start_time==now+7200, Activity.status==1).all()
+        # 1 hours before activity start
+        activitylist = Activity.query.filter(Activity.work_start_time==now+3600, Activity.status==1).all()
         for activity in activitylist:
-            work_timestr = timeformat_filter(activity.work_start_time(),"%Y-%m-%d %H:%M")
+            work_timestr = timeformat_filter(activity.work_start_time,"%Y-%m-%d %H:%M")
             timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
             venue = venuename_filter(activity.venue)
             title = activity.title
@@ -647,12 +654,13 @@ def cron():
                     if duty.status in [1, 2, 4]:
                         membername = duty.member.name
                         memberurl = url_for('memberdetail', member_uid=duty.uid)
+                        worktimestr = timeformat_filter(activity.work_start_time,"%Y-%m-%d %H:%M")
                         timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
                         venue = venuename_filter(activity.venue)
                         title = activity.title
                         url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
                         statusname = dutystatusname_filter(duty.status)
-                        content = mail.todo_duty_tmpl['content'] % (memberurl, membername, timestr, venue, title, url,url, statusname)
+                        content = mail.todo_duty_tmpl['content'] % (memberurl, membername, worktimestr, timestr, venue, title, url,url, statusname)
                         warnings.append(content)
                 if ready_num == 0:
                     timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
@@ -677,13 +685,14 @@ def cron():
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
             activitylist = Activity.query.filter(Activity.start_time>= now-22*3600-1800, Activity.start_time<now+3600+1800, Activity.status==2).all()
             for activity in activitylist:
+                worktimestr = timeformat_filter(activity.work_start_time,"%Y-%m-%d %H:%M")
                 timestr = timeformat_filter(activity.start_time,"%Y-%m-%d %H:%M")
                 venue = venuename_filter(activity.venue)
                 title = activity.title
                 remark = activity.remark
                 url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
                 subject = mail.activity_mark_endtime_tmpl['subject']
-                content = mail.activity_mark_endtime_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+                content = mail.activity_mark_endtime_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
                 # TODO %d or %s ?
                 logs.append("%s : Activity almost end id:%d" % (nowstr,activity.id))
                 for duty in activity.duties:

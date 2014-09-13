@@ -82,9 +82,9 @@
 <table class="table table-striped">
   <tr><th width='80'>日期</th><th width='90'>时间</th><th width='50'>时长</th><th width='30'>地点</th><th>活动</th><th>状态</th><th>记录</th></tr>
   {% for duty in member.duties %}{% if duty.is_success() %}
-  <tr><td>{{ duty.activity.work_start_time()|timeformat('%Y-%m-%d') }}</td>
-      <td>{{ duty.activity.work_start_time()|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
-      <td>{% if duty.activity.work_last_time() != 0.0 %}{{ duty.activity.work_last_time() }}{% endif %}</td>
+  <tr><td>{{ duty.activity.work_start_time|timeformat('%Y-%m-%d') }}</td>
+      <td>{{ duty.activity.work_start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
+      <td>{% if duty.activity.work_last_time != 0.0 %}{{ duty.activity.work_last_time }}{% endif %}</td>
       <td><span class="label label-{{ duty.activity.venue|venuecolor }}">{{ duty.activity.venue|venuename }}</span></td>
       <td><a href="{{url_for('activitydetail',activity_id=duty.aid)}}">{{ duty.activity.title }}</a></td>
       <td><span class="label label-{{ duty.status|dutystatuscolor }}">{{ duty.status|dutystatusname }}</span></td>

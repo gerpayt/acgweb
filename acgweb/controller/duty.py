@@ -37,7 +37,7 @@ def dutylistapi():
         d['id'] = activity.id
         d['title'] = activity.title
         d['start_time'] = activity.start_time
-        d['work_start_time'] = activity.work_start_time()
+        d['work_start_time'] = activity.work_start_time
         d['venue'] = activity.venue
         d['end_time'] = activity.end_time
         d['logs'] = []
