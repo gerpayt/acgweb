@@ -433,7 +433,7 @@ def activityappoint(activity_id,member_uid):
             remark = activity.remark
             url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
             subject = mail.activity_appoint_tmpl['subject']
-            content = mail.activity_appoint_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url , url)
+            content = mail.activity_appoint_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
             msg_id = mail.send_message(member_uid,session['uid'],subject,content,2)
             mail.send_mail(subject, content, member.name, member.email,
                 msgid=msg_id,touid=duty.uid,uid=duty.uid,dutyid=duty.id,activityid=duty.aid)

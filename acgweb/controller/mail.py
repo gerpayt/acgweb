@@ -144,7 +144,6 @@ activity_appoint_tmpl = {'subject':"安排值班",'content':'''
 活动备注 %s <br />
 请点击这个链接来完成操作 <br />
 <a href="%s">%s</a> <br />
-请于 %s 到达活动场地
 
 '''}
 
