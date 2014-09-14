@@ -3,6 +3,7 @@ from acgweb import db
 from datetime import datetime
 import time
 
+
 class Duty(db.Model):
     """Model for duty"""
     id = db.Column(db.Integer, primary_key=True)
@@ -19,13 +20,13 @@ class Duty(db.Model):
     logs = []
 
     def is_wait(self):
-        return self.status in [2,4]
+        return self.status in [2, 4]
 
     def is_abort(self):
-        return self.status in [3,5,8,9]
+        return self.status in [3, 5, 8, 9]
 
     def is_success(self):
-        return self.status in [6,7,10,11]
+        return self.status in [6, 7, 10, 11]
 
     def __repr__(self):
         return '<Duty %s>' % self.id
@@ -36,13 +37,13 @@ class Duty(db.Model):
         loglist = self.log.split('\n')
         for i in loglist:
             tmp = i.split('\t')
-            if len(tmp)==3:
-                obj = {'time':tmp[0], 'type':tmp[1], 'content':tmp[2]}
+            if len(tmp) == 3:
+                obj = {'time': tmp[0], 'type': tmp[1], 'content': tmp[2]}
                 self.logs.append(obj)
         return self.logs
 
     def appendlog(self, type, content):
-        self.logs.append({'time':int(time.time()), 'type':type, 'content':content})
+        self.logs.append({'time': int(time.time()), 'type': type, 'content': content})
         self.log += "%d\t%s\t%s\n" % (int(time.time()), type, content)
 
     def getprocesses(self):
@@ -51,13 +52,12 @@ class Duty(db.Model):
         processlist = self.process.split('\n')
         for i in processlist:
             tmp = i.split('\t')
-            if len(tmp)==3:
-                obj = {'time':tmp[0], 'op':tmp[1], 'content':tmp[2]}
+            if len(tmp) == 3:
+                obj = {'time': tmp[0], 'op': tmp[1], 'content': tmp[2]}
                 self.processes.append(obj)
         return self.processes
 
     def appendprocesse(self, op, content):
-        if type(self.process) == type(None): self.process=''
-        self.processes.append({'time':int(time.time()), 'op':op, 'content':content})
+        if type(self.process) == type(None): self.process = ''
+        self.processes.append({'time': int(time.time()), 'op': op, 'content': content})
         self.process += "%d\t%s\t%s\n" % (int(time.time()), op, content)
-

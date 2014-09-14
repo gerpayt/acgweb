@@ -6,5 +6,3 @@ import duty
 import member
 import schedule
 import message
-
-

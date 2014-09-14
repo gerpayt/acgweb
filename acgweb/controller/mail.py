@@ -15,12 +15,12 @@ from template_filter import *
 
 def async(f):
     def wrapper(*args, **kwargs):
-        thr = Thread(target = f, args = args, kwargs = kwargs)
+        thr = Thread(target=f, args=args, kwargs=kwargs)
         thr.start()
     return wrapper
 
 
-def send_message(touid,fromuid,subject,content,type):
+def send_message(touid, fromuid, subject, content, type):
     message = Message()
     message.fromuid = fromuid
     message.touid = touid
@@ -33,25 +33,25 @@ def send_message(touid,fromuid,subject,content,type):
     return message.id
 
 
-def send_mail(subject,content,toname,toemail,**header):
+def send_mail(subject, content, toname, toemail, **header):
     msg = MIMEText(content, 'html', 'utf-8')
     msg['From'] = "%s<%s>" % (config.SMTP_USERNAME, config.SMTP_USER)
     msg['To'] = "%s<%s>" % (toname, toemail)
     msg['Subject'] = "[%s]%s" % (config.SITE_TITLE, subject)
     msg['X-ACG-MSGDOMAIN'] = config.MAIL_DOMAIN
-    for h,v in header.items():
-        msg['X-ACG-'+h.upper()] = str(v)
-    send_async_email(msg,toemail)
+    for h, v in header.items():
+        msg['X-ACG-' + h.upper()] = str(v)
+    send_async_email(msg, toemail)
 
 
 #@async
-def send_async_email(msg,toemail):
+def send_async_email(msg, toemail):
     now = int(time.time())
     nowstr = timeformat_filter(now, "%Y-%m-%d_%H:%M:%S")
     key = md5.new()
     key.update(msg.as_string())
     hash = key.hexdigest()
-    fp = open(config.BASE_DIR+'cache/mail_%s_%s.log'%(nowstr,hash),'w')
+    fp = open(config.BASE_DIR + 'cache/mail_%s_%s.log' % (nowstr, hash), 'w')
     fp.write(msg.as_string())
     fp.close()
 
@@ -74,30 +74,30 @@ def get_out_box():
     con = imaplib.IMAP4_SSL(config.IMAP_SERVER)
     con.login(config.SMTP_USER, config.SMTP_PASSWORD)
     con.select('Sent Messages')
-    timestr = '"%s"' % time.strftime("%d-%b-%Y",time.localtime(time.time()-2*86400-8*3600))
+    timestr = '"%s"' % time.strftime("%d-%b-%Y", time.localtime(time.time() - 2 * 86400 - 8 * 3600))
     #typ,msgidlist = con.search(None,"HEADER", '"X-ACG-MSGDOMAIN"', '"acg-test"' )
-    typ,msgidlist = con.search(None, 'SINCE', timestr )
+    typ, msgidlist = con.search(None, 'SINCE', timestr)
     msgids = msgidlist[0].split()[-50:]
     msgids.reverse()
     ids = ','.join(msgids)
-    typ,msg_data= con.fetch(ids,'(BODY.PEEK[HEADER])')
+    typ, msg_data = con.fetch(ids, '(BODY.PEEK[HEADER])')
     mail_list = []
     for response_part in msg_data:
-        if isinstance(response_part,tuple):
+        if isinstance(response_part, tuple):
             msg = email.message_from_string(response_part[1])
             if msg.get('X-ACG-MSGDOMAIN') == config.MAIL_DOMAIN:
-                for header in ['subject','from','to','date','x-acg-msgid']:
-                    res,ecode=email.Header.decode_header(msg.get(header))[0]
-                    msg.set_param(header,res)
+                for header in ['subject', 'from', 'to', 'date', 'x-acg-msgid']:
+                    res, ecode = email.Header.decode_header(msg.get(header))[0]
+                    msg.set_param(header, res)
                     #print '%-8s: %s'%(header.upper(),msg.get_param(header))
 
-                fromusername,fromusermail = email.utils.parseaddr(msg.get_param('from'))
-                tousername,tousermail = email.utils.parseaddr(msg.get_param('to'))
-                sendtime = int(time.mktime(time.strptime(msg.get("date")[5:-6],'%d %b %Y %H:%M:%S')))
+                fromusername, fromusermail = email.utils.parseaddr(msg.get_param('from'))
+                tousername, tousermail = email.utils.parseaddr(msg.get_param('to'))
+                sendtime = int(time.mktime(time.strptime(msg.get("date")[5:-6], '%d %b %Y %H:%M:%S')))
                 m = {}
                 m['subject'] = msg['subject']
                 m['fromusername'] = fromusername
-                m['fromusermail'] =fromusermail
+                m['fromusermail'] = fromusermail
                 m['tousername'] = tousername
                 m['tousermail'] = tousermail
                 if msg.get('X-ACG-MSGID'):
@@ -116,24 +116,24 @@ def message_sendmail(message_id):
     if not session.get('is_arra_monitor'):
         abort(403)
     message = Message.query.get_or_404(message_id)
-    send_mail(message.subject,message.content,message.tomember.name,message.tomember.email)
+    send_mail(message.subject, message.content, message.tomember.name, message.tomember.email)
     return redirect(url_for('mymessagedetail', message_id=message_id))
 
 
-register_tmpl = {'subject':"注册成功",'content':'''
+register_tmpl = {'subject': "注册成功", 'content': '''
 欢迎您注册音控组管理系统，新注册用户请先完善个人资料和课表。 <br />
 系统的使用说明参见 <a href="%s">%s</a> <br />
 如果遇到问题，请联系 <a href="%s">%s</a> <br />
 
 '''}
 
-forgetpassword_tmpl = {'subject':"重置密码",'content':'''
+forgetpassword_tmpl = {'subject': "重置密码", 'content': '''
 点击下面链接来重置密码 <br />
 <a href="%s">%s</a>
 
 '''}
 
-activity_appoint_tmpl = {'subject':"安排值班",'content':'''
+activity_appoint_tmpl = {'subject': "安排值班", 'content': '''
 排班班长给你指派了一个活动 <br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -146,7 +146,7 @@ activity_appoint_tmpl = {'subject':"安排值班",'content':'''
 '''}
 
 
-activity_cancle_tmpl = {'subject':"活动取消",'content':'''
+activity_cancle_tmpl = {'subject': "活动取消", 'content': '''
 你值班的活动被取消了<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -158,7 +158,7 @@ activity_cancle_tmpl = {'subject':"活动取消",'content':'''
 
 '''}
 
-activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
+activity_modify_tmpl = {'subject': "活动信息变化", 'content': '''
 你值班的活动信息发生了变化<br />
 <strong>值班时间 %s 修改为 %s </strong> <br />
 活动时间 %s 修改为 %s <br />
@@ -170,7 +170,7 @@ activity_modify_tmpl = {'subject':"活动信息变化",'content':'''
 
 '''}
 
-approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
+approve_apply_tmpl = {'subject': "批准值班申请", 'content': '''
 排班班长批准了你的值班申请<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -182,7 +182,7 @@ approve_apply_tmpl = {'subject':"批准值班申请",'content':'''
 
 '''}
 
-decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
+decline_apply_tmpl = {'subject': "拒绝值班申请", 'content': '''
 排班班长拒绝了你的值班申请<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -194,7 +194,7 @@ decline_apply_tmpl = {'subject':"拒绝值班申请",'content':'''
 
 '''}
 
-cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
+cover_duty_tmpl = {'subject': "找人代班成功", 'content': '''
 你的带班申请成功处理<br />
 代班人 <a href="%s">%s</a> <br />
 <strong>值班时间 %s </strong> <br />
@@ -207,7 +207,7 @@ cover_duty_tmpl = {'subject':"找人代班成功",'content':'''
 
 '''}
 
-activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
+activity_nearly_begin_tmpl = {'subject': "活动即将开始", 'content': '''
 距离值班时间还有一个小时，请准时赶往活动场地<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -219,7 +219,7 @@ activity_nearly_begin_tmpl = {'subject':"活动即将开始",'content':'''
 
 '''}
 
-activity_mark_endtime_tmpl = {'subject':"标记活动结束时间",'content':'''
+activity_mark_endtime_tmpl = {'subject': "标记活动结束时间", 'content': '''
 你值班的活动已经结束了，请标记活动结束时间<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -231,7 +231,7 @@ activity_mark_endtime_tmpl = {'subject':"标记活动结束时间",'content':'''
 
 '''}
 
-decline_duty_tmpl = {'subject':"拒绝排班",'content':'''
+decline_duty_tmpl = {'subject': "拒绝排班", 'content': '''
 %s 拒绝了你的排班<br />
 原因 %s <br />
 <strong>值班时间 %s </strong> <br />
@@ -244,7 +244,7 @@ decline_duty_tmpl = {'subject':"拒绝排班",'content':'''
 
 '''}
 
-notice_activity_modify_tmpl = {'subject':"有一个活动信息变化",'content':'''
+notice_activity_modify_tmpl = {'subject': "有一个活动信息变化", 'content': '''
 有一个活动信息发生了变化<br />
 活动时间 %s 修改为 %s <br />
 活动地点 %s 修改为 %s <br />
@@ -256,7 +256,7 @@ notice_activity_modify_tmpl = {'subject':"有一个活动信息变化",'content'
 
 '''}
 
-notice_activity_cancle_tmpl = {'subject':"有一个活动已删除",'content':'''
+notice_activity_cancle_tmpl = {'subject': "有一个活动已删除", 'content': '''
 有一个活动已删除<br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -266,13 +266,13 @@ notice_activity_cancle_tmpl = {'subject':"有一个活动已删除",'content':''
 
 '''}
 
-spider_notice_tmpl = {'subject':"自动同步通知",'content':'''
+spider_notice_tmpl = {'subject': "自动同步通知", 'content': '''
 自动同步操作于 %s 进行 <br />
 <hr />
 
 '''}
 
-todo_duty_tmpl = {'subject':"近期未完成的操作",'content':'''
+todo_duty_tmpl = {'subject': "近期未完成的操作", 'content': '''
 音控员 <a href="%s">%s</a> <br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -284,7 +284,7 @@ todo_duty_tmpl = {'subject':"近期未完成的操作",'content':'''
 
 '''}
 
-todo_activity_tmpl = {'subject':"近期未完成的操作",'content':'''
+todo_activity_tmpl = {'subject': "近期未完成的操作", 'content': '''
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
@@ -294,7 +294,7 @@ todo_activity_tmpl = {'subject':"近期未完成的操作",'content':'''
 
 '''}
 
-todo_notice_tmpl = {'subject':"近期未完成的操作",'content':'''
+todo_notice_tmpl = {'subject': "近期未完成的操作", 'content': '''
 最近未完成的操作 <br />
 <hr />
 

@@ -2,6 +2,7 @@
 from acgweb import db
 import acgweb.config
 
+
 class Schedule(db.Model):
     """Model for duty"""
     id = db.Column(db.Integer, primary_key=True)
@@ -14,6 +15,7 @@ class Schedule(db.Model):
     classtype = db.Column(db.Integer)
     member = db.relationship('Member',
         backref=db.backref('schedule', lazy='dynamic'))
+
     def __repr__(self):
         return '<Schedule %s>' % self.id
 
@@ -21,9 +23,9 @@ class Schedule(db.Model):
         self.semester = acgweb.config.SEMESTER
 
     def strtolist(self):
-        self.weeklist =_parsemystr(self.week)
-        self.weekdaylist =_parsemystr(self.weekday)
-        self.sectionlist =_parsemystr(self.section)
+        self.weeklist = _parsemystr(self.week)
+        self.weekdaylist = _parsemystr(self.weekday)
+        self.sectionlist = _parsemystr(self.section)
 
 
 def _parsemystr(str):
@@ -33,8 +35,8 @@ def _parsemystr(str):
     for i in tmp1:
         tmp2 = i.split('-');
         #print i,'tmp2',tmp2
-        if len(tmp2)==2:
-            for j in range (int(tmp2[0]),int(tmp2[1])+1):
+        if len(tmp2) == 2:
+            for j in range(int(tmp2[0]), int(tmp2[1]) + 1):
                 rtnlist.append(int(j))
         else:
             rtnlist.append(int(i))

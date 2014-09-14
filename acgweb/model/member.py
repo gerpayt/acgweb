@@ -3,10 +3,11 @@ from acgweb import db
 from datetime import datetime
 import time
 
+
 class Member(db.Model):
     """Model for article"""
     uid = db.Column(db.String(12), primary_key=True)
-    name = db.Column(db.String(12), index = True)
+    name = db.Column(db.String(12), index=True)
     password = db.Column(db.String(32))
     type = db.Column(db.Integer)
     sex = db.Column(db.Integer)

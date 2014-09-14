@@ -16,7 +16,7 @@ import time
 def activity_spider():
     log = []
     url = 'http://vrs.husteye.cn/Api'
-    sid2ven = {u'5':1,u'8':2,u'10':3}
+    sid2ven = {u'5': 1, u'8': 2, u'10': 3}
     #Fetch contents
     try:
         if config.HTTP_PROXY:
@@ -59,19 +59,19 @@ def activity_spider():
             #print new_obj.lastrowid
             db.session.commit()
             new_id = new_obj.lastrowid
-            log.append('New record inserted new_id:%s oid=%s.' % (new_id, oid) )
+            log.append('New record inserted new_id:%s oid=%s.' % (new_id, oid))
         else:
-            d={}
+            d = {}
             for r in res:
-                d = {'id':r[0], 'sid':r[1], 'title':r[2], 'remark':r[3], 'worktime':r[4], 'time':r[5] }
+                d = {'id': r[0], 'sid': r[1], 'title': r[2], 'remark': r[3], 'worktime': r[4], 'time': r[5]}
             #print d
             if str(title)[:32] != str(d['title'])[:32] or str(remark) != str(d['remark']) or str(venue) != str(d['sid']) or int(start_time) != int(d['time']):
                 #sql = 'update activity set title = "%s", remark = "%s", venue = "%s", start_time = "%s" where oid = "%s";' % (title, remark, venue, start_time, oid)
                 #db.session.execute(sql)
                 #db.session.commit()
-                log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid) )
-                timestr_old = timeformat_filter(d['time'],"%Y-%m-%d %H:%M")
-                timestr_new = timeformat_filter(start_time,"%Y-%m-%d %H:%M")
+                log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid))
+                timestr_old = timeformat_filter(d['time'], "%Y-%m-%d %H:%M")
+                timestr_new = timeformat_filter(start_time, "%Y-%m-%d %H:%M")
                 venue_old = venuename_filter(d['sid'])
                 venue_new = venuename_filter(venue)
                 title_old = d['title']
@@ -79,7 +79,7 @@ def activity_spider():
                 remark_old = d['remark']
                 remark_new = remark
                 activity = Activity.query.get(d['id'])
-                url = config.BASE_URL + url_for('activitydetail',activity_id=activity.id)
+                url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
                 #subject = mail.notice_activity_modify_tmpl['subject']
                 content = mail.notice_activity_modify_tmpl['content'] % (timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, remark_old, remark_new, url, url)
                 warnings.append(content)
@@ -106,33 +106,33 @@ def activity_spider():
 
     #for oid in oidlist:
     ts = time.localtime()
-    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     oidstr = ','.join(oidlist)
     sql = 'select id, oid, start_time, venue, title from activity where status != "4" and start_time >= "%d" and oid not in( %s);' % (todaytime, oidstr)
     #print sql
     res = db.session.execute(sql)
     for row in res:
-        log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]) )
+        log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]))
         worktimestr = '-'
-        timestr = timeformat_filter(row[2],"%Y-%m-%d %H:%M")
+        timestr = timeformat_filter(row[2], "%Y-%m-%d %H:%M")
         venue = venuename_filter(row[3])
         title = row[4]
-        url = config.BASE_URL + url_for('activitydetail',activity_id=row[0])
+        url = config.BASE_URL + url_for('activitydetail', activity_id=row[0])
         #subject = mail.notice_activity_cancle_tmpl['subject']
-        content = mail.notice_activity_cancle_tmpl['content'] % (worktimestr, timestr, venue, title, url, url )
+        content = mail.notice_activity_cancle_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
         warnings.append(content)
 
-    log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S') )
+    log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S'))
 
     if warnings:
         now = int(time.time())
-        nowstr = timeformat_filter(now,"%Y-%m-%d %H:%M:%S")
+        nowstr = timeformat_filter(now, "%Y-%m-%d %H:%M:%S")
 
         subject = mail.spider_notice_tmpl['subject']
         content = mail.spider_notice_tmpl['content'] % nowstr + '<hr />'.join(warnings)
         for uid in config.ARRA_MONITOR:
             member = Member.query.get(uid)
-            msg_id=mail.send_message(uid,config.SYS_ADMIN,subject,content,2)
+            msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
             mail.send_mail(subject, content, member.name, member.email,
                 msgid=msg_id)
 

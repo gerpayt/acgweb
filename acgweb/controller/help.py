@@ -9,7 +9,7 @@ def help():
     """Page: all activitylist"""
     pass
 
-    if viewtype()==1:
+    if viewtype() == 1:
         return render_template('help/index_mobile.html')
     else:
         return render_template('help/index.html')

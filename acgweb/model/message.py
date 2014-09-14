@@ -2,6 +2,7 @@
 from acgweb import db
 import time
 
+
 class Message(db.Model):
     """Model for duty"""
     id = db.Column(db.Integer, primary_key=True)

@@ -13,7 +13,7 @@ def export_salary(rank_list, starttime, endtime):
     #style1 = xlwt.easyxf(num_format_str='D-MMM-YY')
 
     if starttime and endtime:
-        title = "%s 至 %s 工资统计" % (timeformat_filter(starttime, '%Y年%m月%d日'), timeformat_filter(int(endtime) - 24 * 3600, '%Y年%m月%d日') )
+        title = "%s 至 %s 工资统计" % (timeformat_filter(starttime, '%Y年%m月%d日'), timeformat_filter(int(endtime) - 24 * 3600, '%Y年%m月%d日'))
     elif starttime and not endtime:
         title = "%s 之后 工资统计" % timeformat_filter(starttime, '%Y年%m月%d日')
     elif not starttime and endtime:
@@ -34,14 +34,14 @@ def export_salary(rank_list, starttime, endtime):
     ws.write(1, 6, "银行卡号")
     ws.write(1, 7, "备注")
 
-    ws.col(0).set_width(256*12)
-    ws.col(1).set_width(256*7)
-    ws.col(2).set_width(256*6)
-    ws.col(3).set_width(256*8)
-    ws.col(4).set_width(256*8)
-    ws.col(5).set_width(256*8)
-    ws.col(6).set_width(256*26)
-    ws.col(7).set_width(256*20)
+    ws.col(0).set_width(256 * 12)
+    ws.col(1).set_width(256 * 7)
+    ws.col(2).set_width(256 * 6)
+    ws.col(3).set_width(256 * 8)
+    ws.col(4).set_width(256 * 8)
+    ws.col(5).set_width(256 * 8)
+    ws.col(6).set_width(256 * 26)
+    ws.col(7).set_width(256 * 20)
 
     i = 2
     for member in rank_list:
@@ -52,7 +52,7 @@ def export_salary(rank_list, starttime, endtime):
         ws.write(i, 2, member['time'] / 3600)
         ws.write(i, 3, CONST.salaperhour * member['time'] / 3600)
         ws.write(i, 4, extra_salary)
-        ws.write(i, 5, xlwt.Formula("D%d+E%d" % (i+1, i+1)))
+        ws.write(i, 5, xlwt.Formula("D%d+E%d" % (i + 1, i + 1)))
         ws.write(i, 6, member['credit_card'])
         i += 1
 
@@ -66,15 +66,15 @@ def export_salary(rank_list, starttime, endtime):
     ws.write(1, 3, "活动")
     ws.write(1, 4, "工时")
 
-    ws.col(0).set_width(256*7)
-    ws.col(1).set_width(256*16)
-    ws.col(2).set_width(256*5)
-    ws.col(3).set_width(256*60)
-    ws.col(4).set_width(256*5)
+    ws.col(0).set_width(256 * 7)
+    ws.col(1).set_width(256 * 16)
+    ws.col(2).set_width(256 * 5)
+    ws.col(3).set_width(256 * 60)
+    ws.col(4).set_width(256 * 5)
 
     i = 2
     for member in rank_list:
-       for duty in member['salalist']:
+        for duty in member['salalist']:
             ws.write(i, 0, member['name'])
             ws.write(i, 1, timeformat_filter(duty['start_time'], '%Y-%m-%d %H:%M'))
             ws.write(i, 2, venuename_filter(duty['venue']))

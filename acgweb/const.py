@@ -1,23 +1,23 @@
 # coding: utf-8
 
 salaperhour = 10
-max_time =  2147483647L
+max_time = 2147483647L
 
-article_category=[
+article_category = [
     #{'id':0,'name':'未知'},
-    {'id':1,'name':'新闻通知'},
-    {'id':2,'name':'经验分享'},
-    {'id':3,'name':'会议记录'},
-    {'id':4,'name':'规章制度'},
-    {'id':5,'name':'技术文档'},
-    {'id':6,'name':'其他文章'},
+    {'id': 1, 'name': '新闻通知'},
+    {'id': 2, 'name': '经验分享'},
+    {'id': 3, 'name': '会议记录'},
+    {'id': 4, 'name': '规章制度'},
+    {'id': 5, 'name': '技术文档'},
+    {'id': 6, 'name': '其他文章'},
 ]
 
-categorysellect=[(i['id'],i['name']) for i in article_category]
-categorysellect.insert(0,(0,'未分类'))
+categorysellect = [(i['id'], i['name']) for i in article_category]
+categorysellect.insert(0, (0, '未分类'))
 
-categoryname=[i['name'] for i in article_category]
-categoryname.insert(0,'未分类')
+categoryname = [i['name'] for i in article_category]
+categoryname.insert(0, '未分类')
 
 #pagination
 article_per_page = 20
@@ -37,8 +37,8 @@ mobiletypename = ['未知', '移动', '联通', '电信', '其他']
 membertypename = ['未知', '正常', '休班', '实习', '历史', '其他']
 
 classtypename = ['未知', '必修课', '选修课', '其他']
-messagetypename = {0:'未知', 1:'广播', 2:'排班', 9:'用户'}
-dutylogtypename = {'equip':'设备记录', 'disc':'报告纪律班长', 'tech':'报告技术班长', 'arra':'报告排班班长' ,'prev':'通知前音控员', 'next':'通知后音控员'}
+messagetypename = {0: '未知', 1: '广播', 2: '排班', 9: '用户'}
+dutylogtypename = {'equip': '设备记录', 'disc': '报告纪律班长', 'tech': '报告技术班长', 'arra': '报告排班班长', 'prev': '通知前音控员', 'next': '通知后音控员'}
 
 #venueid = [ '', '305', '513', 'd4' ]
 
@@ -55,18 +55,18 @@ dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认',
 dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'warning', 'success', 'warning', 'default', 'default', 'success', 'default', 'default']
 
 dutyoperationname = {
-        'activity_appoint': {'color':'success', 'title':'安排值班', 'loading':'正在排班'},
-        'apply_duty'    : {'color':'success', 'title':'申请值班', 'content':'申请值班成功后不可以拒绝', 'loading':'正在申请', 'require_input':True},
-        'approve_apply' : {'color':'success', 'title':'批准值班', 'loading':'正在处理'},
-        'decline_apply' : {'color':'danger' , 'title':'拒绝值班', 'loading':'正在处理'},
-        'confirm_apply' : {'color':'success', 'title':'确认值班', 'content':'核对日期时间无误后确认值班', 'loading':'正在处理'},
-        'accept_duty'   : {'color':'success', 'title':'接受值班', 'loading':'正在处理'},
-        'decline_duty'  : {'color':'danger' , 'title':'不能值班', 'content':'填写你不能值班的原因', 'loading':'正在处理', 'require_input':True},
-        'request_cover' : {'color':'danger' , 'title':'请求代班', 'content':'填写需要代班的原因', 'loading':'正在处理', 'require_input':True},
-        'cancle_cover'  : {'color':'danger' , 'title':'取消带班', 'loading':'正在处理'},
-        'cover_duty'    : {'color':'success', 'title':'代他值班', 'loading':'正在处理'},
-        'term_activity' : {'color':'danger' , 'title':'结束活动', 'loading':'正在处理'},
-        'cancle_task'   : {'color':'danger',  'title':'取消任务', 'content':'确定要取消排班吗？', 'loading':'正在处理'},
+        'activity_appoint': {'color': 'success', 'title': '安排值班', 'loading': '正在排班'},
+        'apply_duty': {'color': 'success', 'title': '申请值班', 'content': '申请值班成功后不可以拒绝', 'loading': '正在申请', 'require_input': True},
+        'approve_apply': {'color': 'success', 'title': '批准值班', 'loading': '正在处理'},
+        'decline_apply': {'color': 'danger', 'title': '拒绝值班', 'loading': '正在处理'},
+        'confirm_apply': {'color': 'success', 'title': '确认值班', 'content': '核对日期时间无误后确认值班', 'loading': '正在处理'},
+        'accept_duty': {'color': 'success', 'title': '接受值班', 'loading': '正在处理'},
+        'decline_duty': {'color': 'danger', 'title': '不能值班', 'content': '填写你不能值班的原因', 'loading': '正在处理', 'require_input': True},
+        'request_cover': {'color': 'danger', 'title': '请求代班', 'content': '填写需要代班的原因', 'loading': '正在处理', 'require_input': True},
+        'cancle_cover': {'color': 'danger', 'title': '取消带班', 'loading': '正在处理'},
+        'cover_duty': {'color': 'success', 'title': '代他值班', 'loading': '正在处理'},
+        'term_activity': {'color': 'danger', 'title': '结束活动', 'loading': '正在处理'},
+        'cancle_task': {'color': 'danger',  'title': '取消任务', 'content': '确定要取消排班吗？', 'loading': '正在处理'},
     }
 
 
@@ -86,13 +86,12 @@ dutyoperationname = {
 '''
 
 
-duty_status_opeartion_selfuser_mapper = {0:['apply_duty'],1:[],2:['confirm_apply'],3:[],4:['accept_duty','decline_duty'],5:[],6:['request_cover'],7:['cancle_cover'],8:[],9:['term_activity'],10:[],11:[],12:[]}
+duty_status_opeartion_selfuser_mapper = {0: ['apply_duty'], 1: [], 2: ['confirm_apply'], 3: [], 4: ['accept_duty', 'decline_duty'], 5: [], 6: ['request_cover'], 7: ['cancle_cover'], 8: [], 9: ['term_activity'], 10: [], 11: [], 12: []}
 
-duty_status_opeartion_otheruser_mapper = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:['cover_duty'],8:[],9:[],10:[],11:[],12:[]}
+duty_status_opeartion_otheruser_mapper = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: ['cover_duty'], 8: [], 9: [], 10: [], 11: [], 12: []}
 
-duty_status_opeartion_monitor_mapper = {0:['arrange_duty'],1:['approve_apply','decline_apply'],2:[],3:[],4:['cancle_task'],5:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[]}
+duty_status_opeartion_monitor_mapper = {0: ['arrange_duty'], 1: ['approve_apply', 'decline_apply'], 2: [], 3: [], 4: ['cancle_task'], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []}
 
-duty_status_opeartion_next = {'apply_duty':1,'confirm_apply':6,'accept_duty':6,'decline_duty':5,'request_cover':7,'cancle_cover':6,'term_activity':11,'cover_duty':8,'approve_apply':2,'decline_apply':3,'cancle_task':12}
+duty_status_opeartion_next = {'apply_duty': 1, 'confirm_apply': 6, 'accept_duty': 6, 'decline_duty': 5, 'request_cover': 7, 'cancle_cover': 6, 'term_activity': 11, 'cover_duty': 8, 'approve_apply': 2, 'decline_apply': 3, 'cancle_task': 12}
 
-dutylogtypename = {'equip':'设备记录', 'disc':'报告纪律班长', 'tech':'报告技术班长', 'arra':'报告排班班长' ,'prev':'通知前音控员', 'next':'通知后音控员', 'host':'活动方记录', 'blame':'抱怨吐槽'}
-
+dutylogtypename = {'equip': '设备记录', 'disc': '报告纪律班长', 'tech': '报告技术班长', 'arra': '报告排班班长', 'prev': '通知前音控员', 'next': '通知后音控员', 'host': '活动方记录', 'blame': '抱怨吐槽'}

@@ -16,16 +16,16 @@ import acgweb.const as CONST
 def dutylist(pagenum=1):
     """Page: all activitylist"""
     activity_count = Activity.query.filter(Activity.end_time != 0).count()
-    activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(CONST.duty_per_page).offset(CONST.duty_per_page*(pagenum-1))
+    activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(CONST.duty_per_page).offset(CONST.duty_per_page * (pagenum - 1))
 
-    if viewtype()==1:
+    if viewtype() == 1:
         return render_template('duty/dutylist_mobile.html',
             activity_list=activity_list,
-            page_count=(activity_count-1)/CONST.duty_per_page+1,page_current=pagenum)
+            page_count=(activity_count - 1) / CONST.duty_per_page + 1, page_current=pagenum)
     else:
         return render_template('duty/dutylist.html',
             activity_list=activity_list,
-            page_count=(activity_count-1)/CONST.duty_per_page+1,page_current=pagenum)
+            page_count=(activity_count - 1) / CONST.duty_per_page + 1, page_current=pagenum)
 
 
 @app.route('/api/dutylist')
@@ -57,16 +57,16 @@ def dutylistapi():
 def dutymanage(pagenum=1):
     """Page: all activitylist"""
     ts = time.localtime()
-    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     #config.SEMASTER_BASE
 
-    duty_count = Duty.query.join(Activity).filter(Activity.start_time >= todaytime-3*86400).count()
-    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= todaytime-3*86400)\
-        .order_by(Activity.start_time).limit(CONST.dutylist_per_page).offset(CONST.dutylist_per_page*(pagenum-1))
+    duty_count = Duty.query.join(Activity).filter(Activity.start_time >= todaytime - 3 * 86400).count()
+    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= todaytime - 3 * 86400)\
+        .order_by(Activity.start_time).limit(CONST.dutylist_per_page).offset(CONST.dutylist_per_page * (pagenum - 1))
 
     return render_template('duty/dutymanage.html',
         duty_list=duty_list,
-        page_count=(duty_count-1)/CONST.dutylist_per_page+1,page_current=pagenum)
+        page_count=(duty_count - 1) / CONST.dutylist_per_page + 1, page_current=pagenum)
 
 
 @app.route('/dutyedit-<int:duty_id>', methods=['GET', 'POST'])
@@ -83,16 +83,16 @@ def dutyedit(duty_id):
         if not form.errors:
             if not session.get('is_arra_monitor'):
                 abort(403)
-            duty.aid=form.aid.data
-            duty.uid=form.uid.data
-            duty.status=form.status.data
+            duty.aid = form.aid.data
+            duty.uid = form.uid.data
+            duty.status = form.status.data
             #duty.process=form.process.data
             #duty.log=form.log.data
             db.session.add(duty)
             db.session.commit()
 
-            flash({'type':'success', 'content':'保存成功！'})
-            return redirect(url_for('dutyedit',duty_id=duty_id))
+            flash({'type': 'success', 'content': '保存成功！'})
+            return redirect(url_for('dutyedit', duty_id=duty_id))
         return render_template('duty/dutyedit.html', form=form, duty=duty)
 
     else:
@@ -104,6 +104,7 @@ def dutyedit(duty_id):
         #print form
         return render_template('duty/dutyedit.html', form=form, duty=duty)
 
+
 @app.route('/dutydelete-<int:duty_id>')
 @login_required
 def dutydelete(duty_id):
@@ -114,7 +115,5 @@ def dutydelete(duty_id):
     db.session.delete(duty)
     db.session.commit()
 
-    flash({'type':'success', 'content':'删除成功！'})
+    flash({'type': 'success', 'content': '删除成功！'})
     return redirect('/dutymanage')
-
-

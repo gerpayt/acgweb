@@ -21,23 +21,23 @@ from acgweb.controller import mail
 @login_required
 def activitylist(pagenum=1):
     ts = time.localtime()
-    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     activity_count = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0).count()
     activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0)\
-        .order_by(Activity.start_time).limit(CONST.activity_per_page).offset(CONST.activity_per_page*(pagenum-1))
+        .order_by(Activity.start_time).limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
     if viewtype() == 1:
         return render_template('activity/activitylist_mobile.html', activity_list=activity_list,
-                               page_count=(activity_count-1)/CONST.activity_per_page+1, page_current=pagenum)
+                               page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum)
     else:
         return render_template('activity/activitylist.html', activity_list=activity_list,
-                               page_count=(activity_count-1)/CONST.activity_per_page+1, page_current=pagenum)
+                               page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum)
 
 
 @app.route('/api/activitylist')
 #@login_required
 def activitylistapi():
     ts = time.localtime()
-    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0)\
         .order_by(Activity.start_time).all()
     res = []
@@ -62,13 +62,13 @@ def activitymanage(pagenum=1):
     if not session.get('is_arra_monitor'):
         abort(403)
     ts = time.localtime()
-    todaytime = int(time.time()) - ts.tm_hour*3600 - ts.tm_min*60 - ts.tm_sec
+    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     #config.SEMASTER_BASE
-    activity_count = Activity.query.filter(Activity.start_time >= todaytime-3*86400).count()
-    activity_list = Activity.query.filter(Activity.start_time >= todaytime-3*86400).order_by(Activity.start_time)\
-        .limit(CONST.activity_per_page).offset(CONST.activity_per_page*(pagenum-1))
+    activity_count = Activity.query.filter(Activity.start_time >= todaytime - 3 * 86400).count()
+    activity_list = Activity.query.filter(Activity.start_time >= todaytime - 3 * 86400).order_by(Activity.start_time)\
+        .limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
     return render_template('activity/activitymanage.html', activity_list=activity_list,
-                           page_count=(activity_count-1)/CONST.activity_per_page+1, page_current=pagenum)
+                           page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum)
 
 
 @app.route('/activity-<int:activity_id>', methods=['GET', 'POST'])
@@ -93,7 +93,7 @@ def activitydetail(activity_id):
         activity = Activity.query.get(activity_id)
         if activity.status == 2 or activity.status == 3:
             duty = Duty.query.filter(Duty.aid == activity_id, Duty.uid == session['uid']).first()
-            
+
             type = request.form['type']
             content = request.form['content']
             duty.appendlog(type, content)
@@ -112,10 +112,10 @@ def activitydetailapi(activity_id):
     if request.method == 'GET':
         activity = Activity.query.get(activity_id)
         uid = request.args.get('uid')
-        is_busy = Duty.query.filter(Duty.uid==uid, Duty.aid==activity_id).count()
-        duty = Duty.query.filter(Duty.uid==uid, Duty.aid==activity_id).first()
+        is_busy = Duty.query.filter(Duty.uid == uid, Duty.aid == activity_id).count()
+        duty = Duty.query.filter(Duty.uid == uid, Duty.aid == activity_id).first()
         if duty:
-            is_success = duty.status==10
+            is_success = duty.status == 10
         else:
             is_success = False
         now = int(time.time())
@@ -149,6 +149,7 @@ def activitydetailapi(activity_id):
         else:
             return jsonify(result='err', msg='非法操作，请重试。')
 
+
 @app.route('/activityopeartion-<opeartion>-<int:duty_id>', methods=['GET', 'POST'])
 @login_required
 def activityopeartion(opeartion, duty_id):
@@ -167,7 +168,7 @@ def activityopeartion(opeartion, duty_id):
             return redirect(url_for('activitydetail', activity_id=duty.aid))
 
         if opeartion == 'cover_duty':
-            if Duty.query.filter(Duty.uid == session['uid'], Duty.aid==duty.aid).count():
+            if Duty.query.filter(Duty.uid == session['uid'], Duty.aid == duty.aid).count():
                 flash({'type': 'danger', 'content': '你在本时间段已经有此活动，请勿重复选班。'})
                 return redirect(url_for('activitydetail', activity_id=duty.aid))
             else:
@@ -185,8 +186,8 @@ def activityopeartion(opeartion, duty_id):
                 mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
 
-                new_duty = Duty(aid=duty.aid,uid=session['uid'],status=6,log='')
-                new_duty.appendprocesse('cover_duty','')
+                new_duty = Duty(aid=duty.aid, uid=session['uid'], status=6, log='')
+                new_duty.appendprocesse('cover_duty', '')
                 db.session.add(new_duty)
         elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
             worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
@@ -203,7 +204,7 @@ def activityopeartion(opeartion, duty_id):
                 content = mail.decline_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
             msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
             mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                           msgid=msg_id,touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                           msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
         elif opeartion == 'decline_duty':
             uname = session['name']
             worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
@@ -240,6 +241,7 @@ def activityopeartion(opeartion, duty_id):
         flash({'type': 'danger', 'content': '非法操作，请重试。'})
     return redirect(url_for('activitydetail', activity_id=duty.aid))
 
+
 @app.route('/activityapply-<int:activity_id>', methods=['GET', 'POST'])
 @login_required
 def activityapply(activity_id):
@@ -256,7 +258,7 @@ def activityapply(activity_id):
             db.session.commit()
             flash({'type': 'success', 'content': '值班申请提交成功，等待排版班长审核。'})
     else:
-        flash({'type':'danger', 'content': '非法操作，请重试。'})
+        flash({'type': 'danger', 'content': '非法操作，请重试。'})
     return redirect(url_for('activitydetail', activity_id=activity_id))
 
 
@@ -276,7 +278,7 @@ def activityedit(activity_id=0):
                 abort(403)
             if not activity:
                 activity = Activity()
-            info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time)!=str(form.work_start_time.data)
+            info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
             if info_modify:
                 dutylist = Duty.query.filter(Duty.aid == activity_id).all()
 
@@ -323,7 +325,6 @@ def activityedit(activity_id=0):
         return render_template('activity/activityedit.html', form=form)
 
 
-
 @app.route('/activityarrange-<int:activity_id>')
 @login_required
 def activityarrange(activity_id):
@@ -344,7 +345,7 @@ def activityarrange(activity_id):
             if st['week'] in s.weeklist and st['weekday'] in s.weekdaylist:
                 if not scheduletable.has_key(s.uid): scheduletable[s.uid] = {}
                 #scheduletable[s.uid][]
-                if st['start_section'] in s.sectionlist or st['start_section']+3 in s.sectionlist:
+                if st['start_section'] in s.sectionlist or st['start_section'] + 3 in s.sectionlist:
                     busymember[s.uid] = s.classtype
         #print busymember
         hour = time.localtime(activity.start_time).tm_hour
@@ -372,7 +373,6 @@ def activityarrange(activity_id):
             except:
                 schedule_content[member.uid] = []
 
-
         # get last duty time and venue
         sql = "select a.uid, b.venue, max(b.work_start_time) as start_time from duty as a left join activity as b on a.aid = b.id where a.status=11 group by a.uid"
         res = db.session.execute(sql)
@@ -382,7 +382,6 @@ def activityarrange(activity_id):
                 available_member[uid]['venue'] = venue
                 available_member[uid]['work_start_time'] = work_start_time
 
-
         # get last week and last month count
         sql = "select a.uid, count(1) as count from duty as a left join activity as b on a.aid = b.id where a.status=11 and b.start_time<= %d and b.start_time>= %d group by a.uid"
         now = int(time.time())
@@ -391,18 +390,17 @@ def activityarrange(activity_id):
         res = db.session.execute(sql % (now, last_week))
         #print sql%(now, last_week)
         for r in res:
-            (uid,weekcount) = r
+            (uid, weekcount) = r
             if uid in available_member.keys():
                 available_member[uid]['weekcount'] = weekcount
         res = db.session.execute(sql % (now, last_month))
         for r in res:
-            (uid,monthcount) = r
+            (uid, monthcount) = r
             if uid in available_member.keys():
                 available_member[uid]['monthcount'] = monthcount
 
-
     else:
-        flash({'type':'danger', 'content':'非法操作，请重试。'})
+        flash({'type': 'danger', 'content': '非法操作，请重试。'})
     #print available_member.values()
     # TODO sort name list
     return render_template('activity/activityarrange.html', activity=activity, schedule_content=schedule_content, available_member=available_member.values())
@@ -441,7 +439,6 @@ def activityappoint(activity_id, member_uid):
     else:
         flash({'type': 'danger', 'content': '非法操作，请重试。'})
     return redirect(url_for('activitydetail', activity_id=activity_id))
-
 
 
 @app.route('/activityready-<int:activity_id>')
@@ -495,7 +492,6 @@ def activitycancle(activity_id):
     return redirect(url_for('activitydetail', activity_id=activity_id))
 
 
-
 @app.route('/activitystart-<int:activity_id>')
 @login_required
 def activitystart(activity_id):
@@ -507,7 +503,7 @@ def activitystart(activity_id):
         activity = Activity.query.get_or_404(activity_id)
         activity.status = 2
         db.session.add(activity)
-        dutylist = Duty.query.filter(Duty.aid == activity_id, or_(Duty.status == 6,Duty.status == 7)).all()
+        dutylist = Duty.query.filter(Duty.aid == activity_id, or_(Duty.status == 6, Duty.status == 7)).all()
         for duty in dutylist:
             duty.status = 10
             db.session.add(duty)
@@ -576,7 +572,7 @@ def sync():
     for log in logs:
         fp.write("%s\n" % log)
     fp.close()
-    fp = open(config.BASE_DIR+'data/last_sync.time', 'w')
+    fp = open(config.BASE_DIR + 'data/last_sync.time', 'w')
     timestr = str(int(time.time()))
     fp.write(timestr)
     fp.close()
@@ -587,16 +583,16 @@ def sync():
 @app.route('/cron')
 def cron():
     try:
-        last_cron = int(open(config.BASE_DIR+'data/last_cron.time', 'r').read())
+        last_cron = int(open(config.BASE_DIR + 'data/last_cron.time', 'r').read())
     except:
         last_cron = 0
     now = int(time.time())
     nowstr = timeformat_filter(now, "%Y-%m-%d %H:%M:%S")
-    if last_cron / (30*60) < now / (30*60):
-        now = now / (30*60) * (30*60)
+    if last_cron / (30 * 60) < now / (30 * 60):
+        now = now / (30 * 60) * (30 * 60)
         logs = []
         # 1 hours before activity start
-        activitylist = Activity.query.filter(Activity.work_start_time == now+3600, Activity.status == 1).all()
+        activitylist = Activity.query.filter(Activity.work_start_time == now + 3600, Activity.status == 1).all()
         for activity in activitylist:
             work_timestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
             timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
@@ -636,8 +632,8 @@ def cron():
             # auto sync
             sync()
         if ts.tm_hour == 21 and ts.tm_min == 30 and ts.tm_sec == 0:
-            range_start = 86400 + now-21*3600-1800
-            range_end = 2*86400 + now+2*3600+1800
+            range_start = 86400 + now - 21 * 3600 - 1800
+            range_end = 2 * 86400 + now + 2 * 3600 + 1800
             activitylist = Activity.query.filter(Activity.start_time >= range_start, Activity.start_time < range_end, Activity.status == 1).all()
             warnings = []
             for activity in activitylist:
@@ -648,7 +644,7 @@ def cron():
                     if duty.status in [1, 2, 4]:
                         membername = duty.member.name
                         memberurl = url_for('memberdetail', member_uid=duty.uid)
-                        worktimestr = timeformat_filter(activity.work_start_time,"%Y-%m-%d %H:%M")
+                        worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
                         timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
                         venue = venuename_filter(activity.venue)
                         title = activity.title
@@ -672,12 +668,12 @@ def cron():
                 content = mail.todo_notice_tmpl['content'] + '<hr />'.join(warnings)
                 for uid in config.ARRA_MONITOR:
                     member = Member.query.get(uid)
-                    msg_id = mail.send_message(uid,config.SYS_ADMIN, subject, content, 2)
+                    msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
                     mail.send_mail(subject, content, member.name, member.email,
                         msgid=msg_id)
 
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
-            activitylist = Activity.query.filter(Activity.start_time >= now-22*3600-1800, Activity.start_time < now+3600+1800, Activity.status == 2).all()
+            activitylist = Activity.query.filter(Activity.start_time >= now - 22 * 3600 - 1800, Activity.start_time < now + 3600 + 1800, Activity.status == 2).all()
             for activity in activitylist:
                 worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
                 timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
@@ -695,24 +691,23 @@ def cron():
                                        touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         logs.append("%s : Send mail to %s" % (nowstr, duty.uid))
 
-        open(config.BASE_DIR+'data/last_cron.time', 'w').write(str(now))
+        open(config.BASE_DIR + 'data/last_cron.time', 'w').write(str(now))
 
         try:
-            fp = open(config.BASE_DIR+'log/cron.log', 'a')
+            fp = open(config.BASE_DIR + 'log/cron.log', 'a')
         except:
-            fp = open(config.BASE_DIR+'log/cron.log', 'w')
-        fp.write("crontab %s : %d\n" % (nowstr,now))
+            fp = open(config.BASE_DIR + 'log/cron.log', 'w')
+        fp.write("crontab %s : %d\n" % (nowstr, now))
         for log in logs:
             fp.write("%s\n" % log)
         fp.close()
 
-        return "now"+str(now)
+        return "now" + str(now)
     else:
         try:
-            fp = open(config.BASE_DIR+'log/cron.log', 'a')
+            fp = open(config.BASE_DIR + 'log/cron.log', 'a')
         except:
-            fp = open(config.BASE_DIR+'log/cron.log', 'w')
+            fp = open(config.BASE_DIR + 'log/cron.log', 'w')
         fp.write("crontab_last %s : %d\n" % (nowstr, now))
         fp.close()
-        return "last_cron"+str(last_cron)
-
+        return "last_cron" + str(last_cron)

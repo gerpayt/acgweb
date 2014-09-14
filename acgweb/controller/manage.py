@@ -12,6 +12,7 @@ from decorated_function import *
 from acgweb.controller.mail import get_out_box
 import os
 
+
 @app.route('/manage')
 @login_required
 def manage():
@@ -25,25 +26,26 @@ def manage():
 
     param = {}
     try:
-        param['last_sync'] = int(open(config.BASE_DIR+'data/last_sync.time','r').read())
+        param['last_sync'] = int(open(config.BASE_DIR + 'data/last_sync.time', 'r').read())
     except:
         param['last_sync'] = 0
     try:
-        param['last_cron'] = int(open(config.BASE_DIR+'data/last_cron.time','r').read())
+        param['last_cron'] = int(open(config.BASE_DIR + 'data/last_cron.time', 'r').read())
     except:
         param['last_cron'] = 0
     #if config.DEBUG: print config.BASE_DIR+'data/last_cron.time'
-    return render_template('manage/manage.html',count=count,param=param)
+    return render_template('manage/manage.html', count=count, param=param)
+
 
 @app.route('/salarymanage')
 @login_required
 def salarymanage():
     """Page: all activitylist  and a.status = '11' """
-    starttime=request.args.get('starttime',0)
+    starttime = request.args.get('starttime', 0)
     if not starttime: starttime = 0
-    endtime=request.args.get('endtime',CONST.max_time)
+    endtime = request.args.get('endtime', CONST.max_time)
     if not endtime: endtime = CONST.max_time
-    export = request.args.get('export',None)
+    export = request.args.get('export', None)
 
     sql1 = "select c.uid, b.id, b.start_time, b.end_time, b.venue, b.title, b.end_time-b.start_time as last_time from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' order by b.start_time " % (int(starttime), int(endtime))
     #print sql1
@@ -52,23 +54,23 @@ def salarymanage():
     for i in res1:
         if not salalist.has_key(i.uid):
             salalist[i.uid] = []
-        salalist[i.uid].append({'aid':i.id,'start_time':i.start_time-3600,'end_time':i.end_time,'venue':i.venue,'title':i.title,'work_last_time':i.work_last_time})
+        salalist[i.uid].append({'aid': i.id, 'start_time': i.start_time - 3600, 'end_time': i.end_time, 'venue': i.venue, 'title': i.title, 'work_last_time': i.work_last_time})
     #print salalist
     sql2 = "select c.uid, c.name, c.credit_card, sum(b.end_time-b.start_time+3600) as totaltime from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' group by a.uid order by convert(c.name using gb2312) ASC " % (int(starttime), int(endtime))
     #print sql2
     res2 = db.session.execute(sql2)
     #print res2
     rank_list = []
-    for i,r in enumerate(res2):
-        d = {'uid':r[0],'rank':i+1,'name':r[1],'time':r[3],'salalist':salalist[r[0]],'credit_card':r[2]}
+    for i, r in enumerate(res2):
+        d = {'uid': r[0], 'rank': i + 1, 'name': r[1], 'time': r[3], 'salalist': salalist[r[0]], 'credit_card': r[2]}
         rank_list.append(d)
     #print rank_list
     if starttime == 0: starttime = ''
     if endtime == CONST.max_time: endtime = ''
     if export:
         from acgweb.controller.export import export_salary
-        wb = export_salary(rank_list,starttime, endtime)
-        tmp_filename = config.BASE_DIR+'temp/salary.xls'
+        wb = export_salary(rank_list, starttime, endtime)
+        tmp_filename = config.BASE_DIR + 'temp/salary.xls'
         wb.save(tmp_filename)
         #if config.DEBUG: print tmp_filename
         response = send_file(tmp_filename, as_attachment=True, attachment_filename='salary.xls')
@@ -97,11 +99,11 @@ def mailmanage():
 @login_required
 def logmanage():
     """Page: all activitylist"""
-    logdict={}
+    logdict = {}
     for t in ['cron', 'sync', 'error']:
         logs = []
         try:
-            fp = open(config.BASE_DIR+'log/%s.log'%t, 'r')
+            fp = open(config.BASE_DIR + 'log/%s.log' % t, 'r')
             logs = fp.readlines()[-100:]
             fp.close()
         except:
@@ -117,4 +119,3 @@ def logmanage():
 def systemmanage():
     """Page: all activitylist"""
     return render_template('manage/managesystem.html')
-

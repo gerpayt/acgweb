@@ -14,17 +14,17 @@ from decorated_function import *
 @login_required
 def mymessage(pagenum=1):
     """Page: all activitylist"""
-    message_count = Message.query.filter(Message.touid==session[u'uid']).count()
-    message_list = Message.query.filter(Message.touid==session[u'uid']).order_by('sendtime DESC').\
-        limit(CONST.message_per_page).offset(CONST.message_per_page*(pagenum-1))
-    if viewtype()==1:
+    message_count = Message.query.filter(Message.touid == session[u'uid']).count()
+    message_list = Message.query.filter(Message.touid == session[u'uid']).order_by('sendtime DESC').\
+        limit(CONST.message_per_page).offset(CONST.message_per_page * (pagenum - 1))
+    if viewtype() == 1:
         return render_template('message/messagelist_mobile.html',
         message_list=message_list,
-        page_count=(message_count-1)/CONST.message_per_page+1,page_current=pagenum)
+        page_count=(message_count - 1) / CONST.message_per_page + 1, page_current=pagenum)
     else:
         return render_template('message/messagelist.html',
         message_list=message_list,
-        page_count=(message_count-1)/CONST.message_per_page+1,page_current=pagenum)
+        page_count=(message_count - 1) / CONST.message_per_page + 1, page_current=pagenum)
 
 
 @app.route('/api/messagelist')
@@ -51,10 +51,10 @@ def messageapi():
 def messagemanage(pagenum=1):
     """Page: all activitylist"""
     message_count = Message.query.count()
-    message_list = Message.query.order_by('sendtime DESC').limit(CONST.message_per_page).offset(CONST.message_per_page*(pagenum-1))
+    message_list = Message.query.order_by('sendtime DESC').limit(CONST.message_per_page).offset(CONST.message_per_page * (pagenum - 1))
     return render_template('message/messagemanage.html',
         message_list=message_list,
-        page_count=(message_count-1)/CONST.message_per_page+1,page_current=pagenum)
+        page_count=(message_count - 1) / CONST.message_per_page + 1, page_current=pagenum)
 
 '''
 
@@ -96,7 +96,7 @@ def mymessagedetail(message_id=0):
         message.update_readtime()
         db.session.add(message)
         db.session.commit()
-    if viewtype()==1:
+    if viewtype() == 1:
         return render_template('message/messagedetail_mobile.html',
         message=message)
     else:
@@ -142,7 +142,7 @@ def mymessagesend():
         subject = request.form['subject']
         content = request.form['content']
         if request.form.has_key('mobile'):
-            content = content.replace('\n','<br />\n')
+            content = content.replace('\n', '<br />\n')
         for uid in sendto:
             message = Message()
             message.fromuid = session[u'uid']
@@ -153,7 +153,7 @@ def mymessagesend():
             message.status = 0
             db.session.add(message)
         db.session.commit()
-        flash({'type':'success', 'content':'发送成功！'})
+        flash({'type': 'success', 'content': '发送成功！'})
 
         return redirect(url_for('mymessage'))
     else:
@@ -163,4 +163,3 @@ def mymessagesend():
         form = MemberForm(obj=member)
 
         return render_template('message/messagesend.html', form=form)
-

@@ -9,7 +9,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-app = Flask(__name__,template_folder='view')
+app = Flask(__name__, template_folder='view')
 app.config.from_pyfile('config.py')
 
 # SQLAlchemy
@@ -20,4 +20,3 @@ db = SQLAlchemy(app)
 
 import model
 import controller
-
