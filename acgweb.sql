@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `activity` (
   `title` varchar(32) NOT NULL,
   `remark` text NOT NULL,
   `venue` tinyint(4) NOT NULL,
+  `work_start_time` int(11) NOT NULL,
   `start_time` int(11) NOT NULL,
   `end_time` int(11) NOT NULL,
   `type` tinyint(4) NOT NULL,
