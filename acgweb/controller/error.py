@@ -1,7 +1,7 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, flash
+from flask import render_template
 from decorated_function import *
-from acgweb import app, db
+from acgweb import app
 
 
 @app.errorhandler(404)

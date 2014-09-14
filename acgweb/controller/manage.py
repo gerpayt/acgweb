@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, flash, send_file
+from flask import render_template, send_file
 from acgweb import app, db
 from acgweb.model.activity import Activity
 from acgweb.model.article import Article

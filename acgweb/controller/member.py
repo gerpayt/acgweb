@@ -1,13 +1,15 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, flash, abort, session, make_response
+import md5
+import time
+
+from flask import render_template, json, flash, abort, make_response
 from acgweb import app, db
 from acgweb.model.member import Member
-import template_filter
 from acgweb.form.member import MemberForm
 from decorated_function import *
 import acgweb.const as CONST
 from acgweb import config
-import md5,time
+
 
 @app.route('/memberlist-p<int:pagenum>')
 @app.route('/memberlist')

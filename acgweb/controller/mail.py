@@ -1,18 +1,16 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, abort, flash
-from acgweb import app, db
-import acgweb.const as CONST
-from acgweb import config
-from acgweb.model.message import Message
-import os,md5,time
 import smtplib
-import imaplib,email
-from pprint import pprint
+import imaplib
+import email
 from email.mime.text import MIMEText
 from threading import Thread
+import md5
+
+from flask import abort
+from acgweb import config
+from acgweb.model.message import Message
 from decorated_function import *
 from template_filter import *
-import md5
 
 
 def async(f):

@@ -1,13 +1,14 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, abort, session, flash, make_response
+import time
+
+from flask import render_template, json, abort, flash, make_response
 from acgweb import app, db
 from acgweb.model.activity import Activity
 from acgweb.model.duty import Duty
 from acgweb.form.duty import DutyForm
-import template_filter
 from decorated_function import *
 import acgweb.const as CONST
-import time
+
 
 @app.route('/dutylist-p<int:pagenum>')
 @app.route('/dutylist')

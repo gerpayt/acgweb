@@ -1,5 +1,5 @@
 # coding: utf-8
-from acgweb import app, db
+from acgweb import app
 import acgweb.const as CONST
 
 @app.template_filter('reverse')

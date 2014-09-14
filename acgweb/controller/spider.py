@@ -1,13 +1,14 @@
 # -- coding:utf-8 --
+import urllib2
+import json
+
 from flask import url_for
-from acgweb import db
 from acgweb.model.activity import Activity
-from acgweb.model.duty import Duty
 from acgweb.model.member import Member
 from template_filter import *
 from acgweb import config
 from acgweb.controller import mail
-import urllib2, json, MySQLdb
+
 #from acttypeclassify import acttype
 import time
 

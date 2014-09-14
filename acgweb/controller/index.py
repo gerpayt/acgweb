@@ -1,14 +1,12 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session
+from flask import render_template
 from acgweb import app, db
 from acgweb.model.activity import Activity
 from acgweb.model.article import Article
 from acgweb.model.duty import Duty
 #from sqlalchemy import func, desc
 import acgweb.const as CONST
-import template_filter
 from decorated_function import *
-from acgweb import config
 import time
 
 @app.route('/index')

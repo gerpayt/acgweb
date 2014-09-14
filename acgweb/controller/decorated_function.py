@@ -1,6 +1,8 @@
 # coding: utf-8
 from functools import wraps
-from flask import render_template, request, redirect, url_for, session
+
+from flask import request, redirect, url_for, session
+
 
 def login_required(f):
     @wraps(f)

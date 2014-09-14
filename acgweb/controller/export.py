@@ -1,7 +1,4 @@
 # coding: utf-8
-from acgweb import app, db
-import acgweb.const as CONST
-from acgweb import config
 from template_filter import *
 
 

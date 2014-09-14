@@ -1,15 +1,12 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, abort, flash, make_response
+from flask import render_template, json, abort, flash, make_response
 from acgweb import app, db
 from acgweb.model.message import Message
 from acgweb.model.member import Member
 from acgweb.form.member import MemberForm
 
 import acgweb.const as CONST
-from acgweb import config
-import template_filter
 from decorated_function import *
-import time
 
 
 @app.route('/mymessage-p<int:pagenum>')

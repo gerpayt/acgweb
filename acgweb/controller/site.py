@@ -1,13 +1,13 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, flash, jsonify, abort, make_response
+import md5
+
+from flask import render_template, flash, jsonify, abort, make_response
 from acgweb import app, db
 from acgweb.model.member import Member
 from acgweb.form.register import RegisterForm
-import acgweb.const as CONST
-import template_filter
 from decorated_function import *
 from acgweb import config
-import os,md5
+import os
 from acgweb.controller import mail
 
 

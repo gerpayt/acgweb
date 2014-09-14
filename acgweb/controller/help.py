@@ -1,6 +1,6 @@
 # coding: utf-8
-from flask import render_template, request, redirect, url_for, json, session, flash
-from acgweb import app, db
+from flask import render_template
+from acgweb import app
 from decorated_function import *
 
 

@@ -4,8 +4,6 @@ from flask_wtf import Form
 from wtforms import TextField,SelectField,TextAreaField,HiddenField
 from wtforms import validators 
 import acgweb.const as CONST
-import time
-
 
 
 class ActivityForm(Form):
