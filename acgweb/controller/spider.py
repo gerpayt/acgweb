@@ -7,6 +7,7 @@ from acgweb.model.activity import Activity
 from acgweb.model.member import Member
 from template_filter import *
 from acgweb import config
+from acgweb import app, db
 from acgweb.controller import mail
 
 #from acttypeclassify import acttype

@@ -7,6 +7,7 @@ from threading import Thread
 import md5
 
 from flask import abort
+from acgweb import app, db
 from acgweb import config
 from acgweb.model.message import Message
 from decorated_function import *
