@@ -112,9 +112,10 @@
 {% else %}
 <p>没有音控员被分派到此活动。</p>{% endif %}
 {% if session.is_arra_monitor and activity.status == 1 %}
-  <a href="{{url_for('activityarrange',activity_id=activity.id)}}" class="btn btn-success btn-mini">安排音控员值班</a>
+  <p><a href="{{url_for('activityarrange',activity_id=activity.id)}}" class="btn btn-success btn-mini">安排音控员值班</a></p>
 {% endif %}
-{% if not is_busy and activity.status == 1 %}<p>你有空闲时间，可以申请此次活动。
+{% if not is_busy and activity.status == 1 %}
+  <p>{% if on_schedule %}你有“{{ on_schedule }}”。{% else %}你有空闲时间，可以申请此次活动。{% endif %}
   <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
    data-href="{{url_for('activityapply',activity_id=activity.id)}}"
    data-label="申请值班" data-content="申请值班成功后不可以拒绝" data-require_input='1' data-modal-loading-text="正在申请">申请值班</a>

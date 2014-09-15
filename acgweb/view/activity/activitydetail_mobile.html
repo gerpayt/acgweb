@@ -9,10 +9,11 @@
 
 <h4>活动信息</h4>
   <p>值班时间: {{ activity.work_start_time|timeformat('%Y年%m月%d日') }} {{ activity.work_start_time|dayname }}
+    {{ activity.work_start_time|periodname }} {{ activity.work_start_time|timeformat('%H:%M') }}</p>
   <p>活动时间: {{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}
-  {{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}</p>
+    {{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}</p>
   <p>地点: <span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span>
-      状态: <span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></p>
+    状态: <span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></p>
   <hr />
 <h4>活动名称</h4>
   <p>{{ activity.title }}</p>
@@ -103,7 +104,8 @@
 {% else %}
 <p>没有音控员被分派到此活动。</p>{% endif %}
 <hr />
-{% if not is_busy and activity.status == 1 %}<p>你有空闲时间，可以申请此次活动。
+{% if not is_busy and activity.status == 1 %}
+  <p>{% if on_schedule %}你有“{{ on_schedule }}”。{% else %}你有空闲时间，可以申请此次活动。{% endif %}
   <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
    data-href="{{url_for('activityapply',activity_id=activity.id)}}"
    data-label="申请值班" data-content="申请值班成功后不可以拒绝" data-require_input='1' data-modal-loading-text="正在申请">申请值班</a>

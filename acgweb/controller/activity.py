@@ -83,12 +83,23 @@ def activitydetail(activity_id):
         else:
             is_success = False
         now = int(time.time())
+        on_schedule = False
+        st = activity.getstrustarttime()
+        schedulelist = Schedule.query.filter(Schedule.uid == session['uid'], Schedule.semester == config.SEMESTER).all()
+        for s in schedulelist:
+            s.strtolist()
+            #print st['week'], s.weeklist, st['weekday'], s.weekdaylist
+            if st['week'] in s.weeklist and st['weekday'] in s.weekdaylist:
+                if st['start_section'] in s.sectionlist or st['start_section'] + 3 in s.sectionlist:
+                    on_schedule = s.classname
+                    break
+        #print busymember
         if viewtype() == 1:
             return render_template('activity/activitydetail_mobile.html',
-                                   activity=activity, is_busy=is_busy, is_success=is_success, now=now)
+                                   activity=activity, is_busy=is_busy, is_success=is_success, on_schedule=on_schedule, now=now)
         else:
             return render_template('activity/activitydetail.html',
-                                   activity=activity, is_busy=is_busy, is_success=is_success, now=now)
+                                   activity=activity, is_busy=is_busy, is_success=is_success, on_schedule=on_schedule, now=now)
     else:
         activity = Activity.query.get(activity_id)
         if activity.status == 2 or activity.status == 3:
@@ -333,7 +344,7 @@ def activityarrange(activity_id):
     available_member = {}
     schedule_content = {}
     if activity.status == 1 and session.get('is_arra_monitor'):
-        schedulelist = Schedule.query.all()
+        schedulelist = Schedule.query.filter(Schedule.semester == config.SEMESTER).all()
         memberlist = Member.query.filter(or_(Member.type == 1, Member.type == 3)).order_by('convert(name using gb2312) ASC').all()
         busymember = {}
         scheduletable = {}
@@ -343,7 +354,8 @@ def activityarrange(activity_id):
             s.strtolist()
             #print st['week'], s.weeklist, st['weekday'], s.weekdaylist
             if st['week'] in s.weeklist and st['weekday'] in s.weekdaylist:
-                if not scheduletable.has_key(s.uid): scheduletable[s.uid] = {}
+                if not scheduletable.has_key(s.uid):
+                    scheduletable[s.uid] = {}
                 #scheduletable[s.uid][]
                 if st['start_section'] in s.sectionlist or st['start_section'] + 3 in s.sectionlist:
                     busymember[s.uid] = s.classtype
