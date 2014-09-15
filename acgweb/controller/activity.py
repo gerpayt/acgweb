@@ -306,9 +306,10 @@ def activityedit(activity_id=0):
                 subject = mail.activity_modify_tmpl['subject']
                 content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url, url)
                 for duty in dutylist:
-                    msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                    mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                                   msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                    if duty.status in [1, 2, 4, 6, 7]:
+                        msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                        mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                                       msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
 
             activity.title = form.title.data
             activity.remark = form.remark.data
@@ -490,7 +491,7 @@ def activitycancel(activity_id):
         content = mail.activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
 
         for duty in duties:
-            if duty.status == 7 or duty.status == 8:
+            if duty.status in [1, 2, 4, 6, 7]:
                 msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
                 mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
@@ -618,7 +619,7 @@ def cron():
             logs.append("%s: Activity almost start id:%d" % (nowstr, activity.id))
             for duty in activity.duties:
                 #print subject, content, duty.member.name, duty.member.email, subject, content
-                if duty.status == 7 or duty.status == 8:
+                if duty.status == 6 or duty.status == 7:
                     mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                    touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                     logs.append("%s: Send mail to %s" % (nowstr, duty.uid))

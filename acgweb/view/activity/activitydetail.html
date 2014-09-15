@@ -46,6 +46,9 @@
 {% else %}
 <p>活动尚未就绪。<a href="{{url_for('activityready',activity_id=activity.id)}}" class="btn btn-success btn-mini">活动就绪</a></p>
 {% endif %}
+{% if session.is_arra_monitor %}
+<p><a class="btn btn-mini btn-success" href="{{ url_for('activityedit',activity_id=activity.id) }}">编辑活动</a></p>
+{% endif %}
 </div>
 
 <div class="span8">
