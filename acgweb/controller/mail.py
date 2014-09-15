@@ -146,7 +146,7 @@ activity_appoint_tmpl = {'subject': "安排值班", 'content': '''
 '''}
 
 
-activity_cancle_tmpl = {'subject': "活动取消", 'content': '''
+activity_cancel_tmpl = {'subject': "活动取消", 'content': '''
 你值班的活动被取消了<br />
 <strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
@@ -256,7 +256,7 @@ notice_activity_modify_tmpl = {'subject': "有一个活动信息变化", 'conten
 
 '''}
 
-notice_activity_cancle_tmpl = {'subject': "有一个活动已删除", 'content': '''
+notice_activity_cancel_tmpl = {'subject': "有一个活动已删除", 'content': '''
 有一个活动已删除<br />
 活动时间 %s <br />
 活动地点 %s <br />

@@ -232,7 +232,7 @@ def activityopeartion(opeartion, duty_id):
                 mail.send_mail(subject, content, member.name, member.email,
                                msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
 
-        elif opeartion == 'cancle_task':
+        elif opeartion == 'cancel_task':
             pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
             #venue = venuename_filter(duty.activity.venue)
             #title = duty.activity.title
@@ -469,9 +469,9 @@ def activityready(activity_id):
     return redirect(url_for('activitydetail', activity_id=activity_id))
 
 
-@app.route('/activitycancle-<int:activity_id>', methods=['GET', 'POST'])
+@app.route('/activitycancel-<int:activity_id>', methods=['GET', 'POST'])
 @login_required
-def activitycancle(activity_id):
+def activitycancel(activity_id):
     activity = Activity.query.get_or_404(activity_id)
     if (activity.status == 1 or activity.status == 0) and session.get('is_arra_monitor'):
         #print Article.query.filter(Article.title==article_title).statement
@@ -486,8 +486,8 @@ def activitycancle(activity_id):
         title = activity.title
         remark = activity.remark
         url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
-        subject = mail.activity_cancle_tmpl['subject']
-        content = mail.activity_cancle_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+        subject = mail.activity_cancel_tmpl['subject']
+        content = mail.activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
 
         for duty in duties:
             if duty.status == 7 or duty.status == 8:

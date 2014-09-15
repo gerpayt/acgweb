@@ -118,8 +118,8 @@ def activity_spider():
         venue = venuename_filter(row[3])
         title = row[4]
         url = config.BASE_URL + url_for('activitydetail', activity_id=row[0])
-        #subject = mail.notice_activity_cancle_tmpl['subject']
-        content = mail.notice_activity_cancle_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
+        #subject = mail.notice_activity_cancel_tmpl['subject']
+        content = mail.notice_activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
         warnings.append(content)
 
     log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S'))

@@ -63,11 +63,11 @@ dutyoperationname = {
         'accept_duty': {'color': 'success', 'title': '接受值班', 'loading': '正在处理'},
         'decline_duty': {'color': 'danger', 'title': '不能值班', 'content': '填写你不能值班的原因', 'loading': '正在处理', 'require_input': True},
         'request_cover': {'color': 'danger', 'title': '请求代班', 'content': '填写需要代班的原因', 'loading': '正在处理', 'require_input': True},
-        'cancle_cover': {'color': 'danger', 'title': '取消带班', 'loading': '正在处理'},
+        'cancel_cover': {'color': 'danger', 'title': '取消带班', 'loading': '正在处理'},
         'cover_duty': {'color': 'success', 'title': '代他值班', 'loading': '正在处理'},
         'term_activity': {'color': 'danger', 'title': '结束活动', 'loading': '正在处理'},
-        'cancle_task': {'color': 'danger',  'title': '取消任务', 'content': '确定要取消排班吗？', 'loading': '正在处理'},
-        'cancle_apply': {'color': 'danger',  'title': '撤销申请', 'content': '确定要撤销值班申请吗？', 'loading': '正在取消'},
+        'cancel_task': {'color': 'danger',  'title': '取消任务', 'content': '确定要取消排班吗？', 'loading': '正在处理'},
+        'cancel_apply': {'color': 'danger',  'title': '撤销申请', 'content': '确定要撤销值班申请吗？', 'loading': '正在取消'},
     }
 
 
@@ -88,12 +88,12 @@ dutyoperationname = {
 '''
 
 
-duty_status_opeartion_selfuser_mapper = {0: ['apply_duty'], 1: ['cancle_apply'], 2: ['confirm_apply'], 3: [], 4: ['accept_duty', 'decline_duty'], 5: [], 6: ['request_cover'], 7: ['cancle_cover'], 8: [], 9: ['term_activity'], 10: [], 11: [], 12: []}
+duty_status_opeartion_selfuser_mapper = {0: ['apply_duty'], 1: ['cancel_apply'], 2: ['confirm_apply'], 3: [], 4: ['accept_duty', 'decline_duty'], 5: [], 6: ['request_cover'], 7: ['cancel_cover'], 8: [], 9: ['term_activity'], 10: [], 11: [], 12: []}
 
 duty_status_opeartion_otheruser_mapper = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: ['cover_duty'], 8: [], 9: [], 10: [], 11: [], 12: []}
 
-duty_status_opeartion_monitor_mapper = {0: ['arrange_duty'], 1: ['approve_apply', 'decline_apply'], 2: [], 3: [], 4: ['cancle_task'], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []}
+duty_status_opeartion_monitor_mapper = {0: ['arrange_duty'], 1: ['approve_apply', 'decline_apply'], 2: [], 3: [], 4: ['cancel_task'], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []}
 
-duty_status_opeartion_next = {'apply_duty': 1, 'confirm_apply': 6, 'accept_duty': 6, 'decline_duty': 5, 'request_cover': 7, 'cancle_cover': 6, 'term_activity': 11, 'cover_duty': 8, 'approve_apply': 2, 'decline_apply': 3, 'cancle_task': 12, 'cancle_apply': 13}
+duty_status_opeartion_next = {'apply_duty': 1, 'confirm_apply': 6, 'accept_duty': 6, 'decline_duty': 5, 'request_cover': 7, 'cancel_cover': 6, 'term_activity': 11, 'cover_duty': 8, 'approve_apply': 2, 'decline_apply': 3, 'cancel_task': 12, 'cancel_apply': 13}
 
 dutylogtypename = {'equip': '设备记录', 'disc': '报告纪律班长', 'tech': '报告技术班长', 'arra': '报告排班班长', 'prev': '通知前音控员', 'next': '通知后音控员', 'host': '活动方记录', 'blame': '抱怨吐槽'}
