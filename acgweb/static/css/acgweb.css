@@ -60,7 +60,7 @@ list-style: none;
 .cms-row { margin-bottom:20px;}
 
 .cms-row  .well{
-height:179px;
+height:172px;
 margin-bottom: 0;
 overflow:auto;
 }
@@ -71,11 +71,11 @@ overflow:auto;
     -webkit-border-radius:3px;  
     border-radius:3px;      
     position:relative;  
-    min-height:216px;
+    min-height:210px;
 
 }
 .cms-div ul {
-	margin: 0 20px 20px;
+	margin: 0 20px 10px;
 }
 
 .cms-div ul li {
