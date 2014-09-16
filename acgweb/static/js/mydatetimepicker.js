@@ -30,9 +30,9 @@ var endtime = parseInt($('#form_endtime_hidden').val());
 if (endtime)
     $('#form_endtime_timepicker').val( new Date(parseInt(endtime) * 1000).format('hh:mm'));
 
-var VAR_SEMASTER_BASE = parseInt($("#VAR_SEMASTER_BASE").html());
-var start_date = new Date(1000 * VAR_SEMASTER_BASE);
-var end_date = new Date(1000 * (VAR_SEMASTER_BASE + 25 * 7 * 24 * 3600));
+var VAR_SEMESTER_BASE = parseInt($("#VAR_SEMESTER_BASE").html());
+var start_date = new Date(1000 * VAR_SEMESTER_BASE);
+var end_date = new Date(1000 * (VAR_SEMESTER_BASE + 25 * 7 * 24 * 3600));
 
 $('.form_date').datetimepicker({
     language: 'zh-CN',

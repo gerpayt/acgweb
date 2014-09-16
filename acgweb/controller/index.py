@@ -22,7 +22,7 @@ def siteindex():
     duty_list = Duty.query.join(Activity).filter(Duty.uid == session[u'uid'], Activity.start_time > now).order_by(Activity.start_time).limit(CONST.duty_index_page)
     #rank_list = Duty.query.group_by(Duty.uid).order_by('sumtime ASC').limit(CONST.duty_index_page)
     ### 3qto kongkongyzt  #db.session.query(Activity).order_by(desc('end_time-start_time')).all()
-    sql = "select c.uid, c.name, sum(b.end_time-b.start_time+3600) as totaltime from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' group by a.uid order by totaltime desc limit %s " % (int(time.time()) - 30 * 24 * 60 * 60, int(time.time()), CONST.duty_index_page)
+    sql = "select c.uid, c.name, sum(b.end_time-b.work_start_time) as totaltime from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' group by a.uid order by totaltime desc limit %s " % (int(time.time()) - 30 * 24 * 60 * 60, int(time.time()), CONST.duty_index_page)
     #if config.DEBUG: print sql
     # BUG?
     res = db.session.execute(sql)

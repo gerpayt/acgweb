@@ -63,7 +63,7 @@ def activitymanage(pagenum=1):
         abort(403)
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
-    #config.SEMASTER_BASE
+    #config.SEMESTER_BASE
     activity_count = Activity.query.filter(Activity.start_time >= todaytime - 3 * 86400).count()
     activity_list = Activity.query.filter(Activity.start_time >= todaytime - 3 * 86400).order_by(Activity.start_time)\
         .limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))

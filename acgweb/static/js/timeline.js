@@ -6663,8 +6663,8 @@ links.Timeline.parseJSONDate = function (date) {
 Date.prototype.getWeek = function (dowOffset) {
 
     var now = Math.floor(this.getTime()/1000);
-    var VAR_SEMASTER_BASE = $("#VAR_SEMASTER_BASE").html();
-    var daynum = Math.floor((now - VAR_SEMASTER_BASE) /86400);
+    var VAR_SEMESTER_BASE = $("#VAR_SEMESTER_BASE").html();
+    var daynum = Math.floor((now - VAR_SEMESTER_BASE) /86400);
     var weeknum = Math.floor(daynum/7)+1;
     return weeknum;
 };

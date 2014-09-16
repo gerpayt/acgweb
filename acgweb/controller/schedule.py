@@ -76,7 +76,7 @@ def update_schedule_cache(uid=''):
         schedule_table = {}
         for i in range(1, 27):
             for j in range(7):
-                dayint = config.SEMASTER_BASE + ((i - 1) * 7 + j) * 86400
+                dayint = config.SEMESTER_BASE + ((i - 1) * 7 + j) * 86400
                 daystr = time.strftime('%Y-%m-%d', time.localtime(dayint))
                 if not schedule_table.has_key(daystr):
                     schedule_table[daystr] = {}
@@ -88,7 +88,7 @@ def update_schedule_cache(uid=''):
             sch.strtolist()
             for week in sch.weeklist:
                 for weekday in sch.weekdaylist:
-                    dayint = config.SEMASTER_BASE + ((week - 1) * 7 + weekday) * 86400
+                    dayint = config.SEMESTER_BASE + ((week - 1) * 7 + weekday) * 86400
                     daystr = time.strftime('%Y-%m-%d', time.localtime(dayint))
                     for section in sch.sectionlist:
                         schedule_table[daystr][section].append(sch.classname)

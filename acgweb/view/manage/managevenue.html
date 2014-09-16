@@ -10,7 +10,7 @@
 
 
 <hr />
-<span class="hide" id="VAR_SEMASTER_BASE">{{config.SEMASTER_BASE}}</span>
+<span class="hide" id="VAR_SEMESTER_BASE">{{config.SEMESTER_BASE}}</span>
 {% endblock %}
 
 {% block custom_script %}
@@ -46,8 +46,8 @@ function drawVisualization() {
         autoHeight: false,
         eventMargin: 0,  // minimal margin between events
         eventMarginAxis: 0, // minimal margin between events and the axis
-        "min": new Date({{config.SEMASTER_BASE}}*1000),                // lower limit of visible range
-        "max": new Date(({{config.SEMASTER_BASE}} + 25 * 7 * 24 * 3600 )*1000),                // upper limit of visible range
+        "min": new Date({{config.SEMESTER_BASE}}*1000),                // lower limit of visible range
+        "max": new Date(({{config.SEMESTER_BASE}} + 25 * 7 * 24 * 3600 )*1000),                // upper limit of visible range
         "zoomMin": 1000 * 60 * 60 * 12,             // one day in milliseconds
         "zoomMax": 1000 * 60 * 60 * 24 * 31 * 12,     // about three months in milliseconds
         "locale" : 'en'

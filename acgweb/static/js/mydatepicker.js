@@ -26,9 +26,9 @@ var endtime = parseInt($('#endtime_hidden').val());
 if (endtime)
     $('#endtime_timepicker').val( new Date(parseInt(endtime - 24 * 3600) * 1000).format('yyyy-MM-dd'));
 
-var VAR_SEMASTER_BASE = parseInt($("#VAR_SEMASTER_BASE").html());
-var start_date = new Date(1000 * VAR_SEMASTER_BASE);
-var end_date = new Date(1000 * (VAR_SEMASTER_BASE + 25 * 7 * 24 * 3600));
+var VAR_SEMESTER_BASE = parseInt($("#VAR_SEMESTER_BASE").html());
+var start_date = new Date(1000 * VAR_SEMESTER_BASE);
+var end_date = new Date(1000 * (VAR_SEMESTER_BASE + 25 * 7 * 24 * 3600));
 
 var now_time = new Date().getTime()/1000;
 now_time = Math.floor ( ( now_time + 8 * 3600 ) / 86400 ) * 86400 - 8 * 3600 ;

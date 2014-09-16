@@ -55,7 +55,7 @@ class Activity(db.Model):
 
     def getstrustarttime(self):
         if not self._strustarttime:
-            offset = self.start_time - config.SEMASTER_BASE
+            offset = self.start_time - config.SEMESTER_BASE
             (week, weekday) = divmod(offset, 7 * 86400)
             (weekday, sec) = divmod(weekday, 86400)
             hour = sec / 3600

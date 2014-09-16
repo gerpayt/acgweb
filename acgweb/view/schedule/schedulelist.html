@@ -34,7 +34,7 @@
 {% endif %}
 <a href="{{ url_for('myschedule_form') }}" class="btn btn-primary btn-mini">添加课程</a>
 
-<span class="hide" id="VAR_SEMASTER_BASE">{{config.SEMASTER_BASE}}</span>
+<span class="hide" id="VAR_SEMESTER_BASE">{{config.SEMESTER_BASE}}</span>
 {% endblock %}
 
 {% block custom_script %}
@@ -93,7 +93,7 @@ function drawVisualization() {
 
     //console.log(classes);
 
-    var semasterbase = {{config.SEMASTER_BASE}};
+    var SEMESTERbase = {{config.SEMESTER_BASE}};
     var data = [];
 
     for (i in classes) {
@@ -107,16 +107,16 @@ function drawVisualization() {
                         case 2:  var start_sc = 8 * 3600 + 55 * 60; break;
                         case 3:  var start_sc = 10 * 3600 + 10 * 60; break;
                         case 4:  var start_sc = 11 * 3600 + 5 * 50; break;
-                        case 5:  var start_sc = 14 * 3600 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 6:  var start_sc = 14 * 3600 + 50 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 7:  var start_sc = 15 * 3600 + 55 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 8:  var start_sc = 16 * 3600 + 45 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 9:  var start_sc = 18 * 3600 + 30 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 10: var start_sc = 19 * 3600 + 20 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 11: var start_sc = 20 * 3600 + 15 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
-                        case 12: var start_sc = 21 * 3600 + 5 * 60 + 1800 * summertime(semasterbase + start_wk + start_wd); break;
+                        case 5:  var start_sc = 14 * 3600 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 6:  var start_sc = 14 * 3600 + 50 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 7:  var start_sc = 15 * 3600 + 55 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 8:  var start_sc = 16 * 3600 + 45 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 9:  var start_sc = 18 * 3600 + 30 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 10: var start_sc = 19 * 3600 + 20 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 11: var start_sc = 20 * 3600 + 15 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
+                        case 12: var start_sc = 21 * 3600 + 5 * 60 + 1800 * summertime(SEMESTERbase + start_wk + start_wd); break;
                     }
-                    var start = semasterbase + start_wk + start_wd + start_sc;
+                    var start = SEMESTERbase + start_wk + start_wd + start_sc;
                     var end = start + 45 * 60;
                     var p = {'start': new Date(start*1000), 'end': new Date(end*1000), 'content': classes[i].classname};
                     data.push(p);
@@ -133,8 +133,8 @@ function drawVisualization() {
         "height": "150px",
         eventMargin: 0,  // minimal margin between events
         eventMarginAxis: 0, // minimal margin between events and the axis
-        "min": new Date({{config.SEMASTER_BASE}}*1000),                // lower limit of visible range
-        "max": new Date(({{config.SEMASTER_BASE}} + 25 * 7 * 24 * 3600 )*1000),                // upper limit of visible range
+        "min": new Date({{config.SEMESTER_BASE}}*1000),                // lower limit of visible range
+        "max": new Date(({{config.SEMESTER_BASE}} + 25 * 7 * 24 * 3600 )*1000),                // upper limit of visible range
         "zoomMin": 1000 * 60 * 60 * 12,             // one day in milliseconds
         "zoomMax": 1000 * 60 * 60 * 24 * 31 * 12,     // about three months in milliseconds
         "locale" : 'en'
