@@ -41,12 +41,13 @@ def activity_spider():
         remark = act['remark']
         venue = sid2ven[act['sid']]
         start_time = act['time']
-        work_start_time = act['time'] - 3600
+        work_start_time = int(act['time']) - 3600
         #type = acttype(title)
         type = 0
         #if exist
 
         sql = 'select id,venue,title,remark,work_start_time,start_time from activity where oid = "%s";' % oid
+        #print sql
         #print 'test oid:'+oid
         res = db.session.execute(sql)
         db.session.commit()
@@ -114,13 +115,12 @@ def activity_spider():
     res = db.session.execute(sql)
     for row in res:
         log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]))
-        worktimestr = '-'
         timestr = timeformat_filter(row[2], "%Y-%m-%d %H:%M")
         venue = venuename_filter(row[3])
         title = row[4]
         url = config.BASE_URL + url_for('activitydetail', activity_id=row[0])
         #subject = mail.notice_activity_cancel_tmpl['subject']
-        content = mail.notice_activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
+        content = mail.notice_activity_cancel_tmpl['content'] % (timestr, venue, title, url, url)
         warnings.append(content)
 
     log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S'))
