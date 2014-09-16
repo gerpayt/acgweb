@@ -9,6 +9,7 @@ import manage
 import message
 import schedule
 import help
+import ranklist
 
 import index
 import my

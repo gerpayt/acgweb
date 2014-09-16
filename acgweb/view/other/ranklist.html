@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="row cms-row">
+{% for period in period_list %}
+<div class="span3">
+  <div class="cms-div">
+    <h4>{{ period.title }}</h4>
+    <ul class="long-text">
+    {% for rank in rank_list[period.name] %}
+    <li>
+      <span class="badge badge-warning">{{rank.rank}}</span>
+      <a href="{{ url_for('memberdetail',member_uid=rank.uid) }}">{{rank.name}}</a>
+      <span class="label label-inverse pull-right">{{rank.time/3600}} 小时</span>
+    </li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endfor %}
+
+</div>
+
+<div class="alert alert-success">感谢以上同学对音控组的付出。</div>
+
+{% endblock %}
