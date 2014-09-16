@@ -20,7 +20,7 @@ Date.prototype.format =function(format)
 
 
 var workstarttime = parseInt($('#form_workstarttime_hidden').val());
-$('#form_workstarttime_timepicker').val( new Date(parseInt(workstarttime) * 1000).format('hh:mm'));
+$('#form_workstarttime_timepicker').val(new Date(parseInt(workstarttime) * 1000).format('hh:mm'));
 
 var starttime = parseInt($('#form_starttime_hidden').val());
 $('#form_date_timepicker').val( new Date(parseInt(starttime) * 1000).format('yyyy-MM-dd'));
@@ -49,6 +49,8 @@ $('.form_date').datetimepicker({
     var date = ev.date.valueOf()/1000;
     var stime = $('#form_starttime_hidden').val() % 86400;
     $('#form_starttime_hidden').val(date+stime);
+    var work_stime = $('#form_workstarttime_hidden').val() % 86400;
+    $('#form_workstarttime_hidden').val(date+work_stime);
     if ($('#form_endtime_hidden').val()) {
         etime = $('#form_endtime_hidden').val() % 86400;
         $('#form_endtime_hidden').val(date+etime);
@@ -73,8 +75,8 @@ $('#form_starttime_timepicker').timepicker({
     defaultTime: false
 }).on('changeTime.timepicker', function(ev) {
     var date = Math.floor($('#form_starttime_hidden').val() / 86400 ) * 86400;
-    var time = ev.time.hours*3600 + ev.time.minutes*60 ;
-    $('#form_starttime_hidden').val(date+time -8*3600)
+    var time = ev.time.hours*3600 + ev.time.minutes*60;
+    $('#form_starttime_hidden').val(date+time -8*3600);
 });
 
 $('#form_endtime_timepicker').timepicker({
@@ -84,8 +86,11 @@ $('#form_endtime_timepicker').timepicker({
     defaultTime: false
 }).on('changeTime.timepicker', function(ev) {
     var date = Math.floor($('#form_starttime_hidden').val() / 86400 ) * 86400;
-    var time = ev.time.hours*3600 + ev.time.minutes*60 ;
-    $('#form_endtime_hidden').val(date+time -8*3600)
+    var time = ev.time.hours*3600 + ev.time.minutes*60;
+    $('#form_endtime_hidden').val(date+time -8*3600);
 });
 
-
+$('#form_endtime_cancel').click(function(){
+    $('#form_endtime_hidden').val(0);
+    $('#form_endtime_timepicker').timepicker('setTime', '');
+});
