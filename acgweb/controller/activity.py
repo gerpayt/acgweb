@@ -165,91 +165,97 @@ def activitydetailapi(activity_id):
 @login_required
 def activityopeartion(opeartion, duty_id):
     duty = Duty.query.get_or_404(duty_id)
-    if duty.activity.status == 1 and (not Duty.query.filter(Duty.id != duty_id, Duty.uid == session['uid'], Duty.aid == duty.aid).count()) and \
-            ((session['uid'] == duty.member.uid and opeartion in CONST.duty_status_opeartion_selfuser_mapper[duty.status]) or
+    if duty.activity.status == 1:
+        if ((session['uid'] == duty.member.uid and opeartion in CONST.duty_status_opeartion_selfuser_mapper[duty.status]) or
             (session['uid'] != duty.member.uid and opeartion in CONST.duty_status_opeartion_otheruser_mapper[duty.status]) or
             (session.get('is_arra_monitor') and opeartion in CONST.duty_status_opeartion_monitor_mapper[duty.status])):
-        #print Article.query.filter(Article.title==article_title).statement
-        if request.method == 'POST':
-            reason = request.form['content']
+            if ((opeartion != 'approve_apply' and not Duty.query.filter(Duty.id != duty_id, Duty.uid == session['uid'], Duty.aid == duty.aid).count()) or
+                (opeartion == 'approve_apply' and not Duty.query.filter(Duty.id != duty_id, Duty.uid == duty.uid, Duty.aid == duty.aid).count())):
+                #print Article.query.filter(Article.title==article_title).statement
+                if request.method == 'POST':
+                    reason = request.form['content']
+                else:
+                    reason = ''
+                if CONST.dutyoperationname[opeartion].has_key('require_input') and not reason:
+                    flash({'type': 'error', 'content': '请填写申请理由。'})
+                    return redirect(url_for('activitydetail', activity_id=duty.aid))
+
+                if opeartion == 'cover_duty':
+                    if Duty.query.filter(Duty.uid == session['uid'], Duty.aid == duty.aid).count():
+                        flash({'type': 'danger', 'content': '你在本时间段已经有此活动，请勿重复选班。'})
+                        return redirect(url_for('activitydetail', activity_id=duty.aid))
+                    else:
+                        worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
+                        timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
+                        venue = venuename_filter(duty.activity.venue)
+                        title = duty.activity.title
+                        remark = duty.activity.remark
+                        url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
+                        member_url = config.BASE_URL + url_for('memberdetail', member_uid=session['uid'])
+                        member_name = session['name']
+                        subject = mail.cover_duty_tmpl['subject']
+                        content = mail.cover_duty_tmpl['content'] % (member_url, member_name, worktimestr, timestr, venue, title, remark, url, url)
+                        msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                        mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                                       msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+
+                        new_duty = Duty(aid=duty.aid, uid=session['uid'], status=6, log='')
+                        new_duty.appendprocesse('cover_duty', '')
+                        db.session.add(new_duty)
+                elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
+                    worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
+                    timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
+                    venue = venuename_filter(duty.activity.venue)
+                    title = duty.activity.title
+                    remark = duty.activity.remark
+                    url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
+                    if opeartion == 'approve_apply':
+                        subject = mail.approve_apply_tmpl['subject']
+                        content = mail.approve_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+                    else:
+                        subject = mail.decline_apply_tmpl['subject']
+                        content = mail.decline_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+                    msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                    mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                                   msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                elif opeartion == 'decline_duty':
+                    uname = session['name']
+                    worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
+                    timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
+                    venue = venuename_filter(duty.activity.venue)
+                    title = duty.activity.title
+                    remark = duty.activity.remark
+                    url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
+                    subject = mail.decline_duty_tmpl['subject']
+                    content = mail.decline_duty_tmpl['content'] % (uname, reason, worktimestr, timestr, venue, title, remark, url, url)
+                    for uid in config.ARRA_MONITOR:
+                        member = Member.query.get(uid)
+                        msg_id = mail.send_message(uid, session['uid'], subject, content, 2)
+                        mail.send_mail(subject, content, member.name, member.email,
+                                       msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+
+                elif opeartion == 'cancel_task':
+                    pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
+                    #venue = venuename_filter(duty.activity.venue)
+                    #title = duty.activity.title
+                    #remark = duty.activity.remark
+                    #url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
+                    #subject = mail.approve_apply_tmpl['subject']
+                    #content = mail.approve_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+                    #msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
+                    #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
+
+                duty.status = CONST.duty_status_opeartion_next[opeartion]
+                duty.appendprocesse(opeartion, reason)
+                db.session.add(duty)
+                db.session.commit()
+                flash({'type': 'success', 'content': '操作成功！'})
+            else:
+                flash({'type': 'danger', 'content': '一个活动只能选一个班。'})
         else:
-            reason = ''
-        if CONST.dutyoperationname[opeartion].has_key('require_input') and not reason:
-            flash({'type': 'error', 'content': '请填写申请理由。'})
-            return redirect(url_for('activitydetail', activity_id=duty.aid))
-
-        if opeartion == 'cover_duty':
-            if Duty.query.filter(Duty.uid == session['uid'], Duty.aid == duty.aid).count():
-                flash({'type': 'danger', 'content': '你在本时间段已经有此活动，请勿重复选班。'})
-                return redirect(url_for('activitydetail', activity_id=duty.aid))
-            else:
-                worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
-                timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
-                venue = venuename_filter(duty.activity.venue)
-                title = duty.activity.title
-                remark = duty.activity.remark
-                url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
-                member_url = config.BASE_URL + url_for('memberdetail', member_uid=session['uid'])
-                member_name = session['name']
-                subject = mail.cover_duty_tmpl['subject']
-                content = mail.cover_duty_tmpl['content'] % (member_url, member_name, worktimestr, timestr, venue, title, remark, url, url)
-                msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                               msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
-
-                new_duty = Duty(aid=duty.aid, uid=session['uid'], status=6, log='')
-                new_duty.appendprocesse('cover_duty', '')
-                db.session.add(new_duty)
-        elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
-            worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
-            timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
-            venue = venuename_filter(duty.activity.venue)
-            title = duty.activity.title
-            remark = duty.activity.remark
-            url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
-            if opeartion == 'approve_apply':
-                subject = mail.approve_apply_tmpl['subject']
-                content = mail.approve_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
-            else:
-                subject = mail.decline_apply_tmpl['subject']
-                content = mail.decline_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
-            msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-            mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                           msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
-        elif opeartion == 'decline_duty':
-            uname = session['name']
-            worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
-            timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
-            venue = venuename_filter(duty.activity.venue)
-            title = duty.activity.title
-            remark = duty.activity.remark
-            url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
-            subject = mail.decline_duty_tmpl['subject']
-            content = mail.decline_duty_tmpl['content'] % (uname, reason, worktimestr, timestr, venue, title, remark, url, url)
-            for uid in config.ARRA_MONITOR:
-                member = Member.query.get(uid)
-                msg_id = mail.send_message(uid, session['uid'], subject, content, 2)
-                mail.send_mail(subject, content, member.name, member.email,
-                               msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
-
-        elif opeartion == 'cancel_task':
-            pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
-            #venue = venuename_filter(duty.activity.venue)
-            #title = duty.activity.title
-            #remark = duty.activity.remark
-            #url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
-            #subject = mail.approve_apply_tmpl['subject']
-            #content = mail.approve_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
-            #msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
-            #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
-
-        duty.status = CONST.duty_status_opeartion_next[opeartion]
-        duty.appendprocesse(opeartion, reason)
-        db.session.add(duty)
-        db.session.commit()
-        flash({'type': 'success', 'content': '操作成功！'})
+            flash({'type': 'danger', 'content': '没有权限。'})
     else:
-        flash({'type': 'danger', 'content': '非法操作，请重试。'})
+        flash({'type': 'danger', 'content': '过期操作。'})
     return redirect(url_for('activitydetail', activity_id=duty.aid))
 
 
