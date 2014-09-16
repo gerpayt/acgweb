@@ -163,3 +163,16 @@ def mymessagesend():
         form = MemberForm(obj=member)
 
         return render_template('message/messagesend.html', form=form)
+
+
+@app.route('/mymessagereadall')
+@login_required
+def mymessagereadall():
+    messagelist = Message.query.filter(Message.touid == session['uid']).all()
+    for message in messagelist:
+        if not message.readtime:
+            message.update_readtime()
+            db.session.add(message)
+    db.session.commit()
+    flash({'type': 'success', 'content': '所有消息已标为已读。'})
+    return redirect(url_for('mymessage'))

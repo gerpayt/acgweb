@@ -8,8 +8,11 @@
 {% endfor %}
 
 <div class="row">
-  <h2 class="span10">我的消息</h2>
-  <p class="span2"><a class="btn pull-right" href="{{url_for('mymessagesend')}}">发送消息</a></p>
+  <h2 class="span8">我的消息</h2>
+  <p class="span4 text-right">
+    <a class="btn btn-success" href="{{url_for('mymessagereadall')}}">全部标为已读</a>
+    <a class="btn" href="{{url_for('mymessagesend')}}">发送消息</a>
+  </p>
 </div>
 
 <hr />
