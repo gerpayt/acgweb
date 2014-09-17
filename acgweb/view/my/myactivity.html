@@ -18,7 +18,7 @@
   <td><a href="{{ url_for('activitydetail',activity_id=duty.activity.id) }}">{{ duty.activity.title }}</a></td>
   <td><span class="label label-{{ duty.status|dutystatuscolor }}">{{ duty.status|dutystatusname }}</span></td>
   <td>
-    {% if duty.activity.status == 1 %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %}
+    {% if duty.activity.status == config.CONST.ACTIVITY_SCHEDULING %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %}
         {% if config.CONST.dutyoperationname[op].content %}
           <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
             data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"

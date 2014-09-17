@@ -22,8 +22,8 @@ from acgweb.controller import mail
 def activitylist(pagenum=1):
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
-    activity_count = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0).count()
-    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0)\
+    activity_count = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN).count()
+    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN)\
         .order_by(Activity.start_time).limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
     if viewtype() == 1:
         return render_template('activity/activitylist_mobile.html', activity_list=activity_list,
@@ -38,7 +38,7 @@ def activitylist(pagenum=1):
 def activitylistapi():
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
-    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != 0)\
+    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN)\
         .order_by(Activity.start_time).all()
     res = []
     for activity in activity_list:
@@ -79,7 +79,7 @@ def activitydetail(activity_id):
         is_busy = Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()
         duty = Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).first()
         if duty:
-            is_success = (duty.status == 10)
+            is_success = (duty.status == CONST.DUTY_ACTIVITY_ONGOING)
         else:
             is_success = False
         now = int(time.time())
@@ -102,7 +102,7 @@ def activitydetail(activity_id):
                                    activity=activity, is_busy=is_busy, is_success=is_success, on_schedule=on_schedule, now=now)
     else:
         activity = Activity.query.get(activity_id)
-        if activity.status == 2 or activity.status == 3:
+        if activity.status == CONST.ACTIVITY_ONGOING or activity.status == CONST.ACTIVITY_ENDED:
             duty = Duty.query.filter(Duty.aid == activity_id, Duty.uid == session['uid']).first()
 
             type = request.form['type']
@@ -126,7 +126,7 @@ def activitydetailapi(activity_id):
         is_busy = Duty.query.filter(Duty.uid == uid, Duty.aid == activity_id).count()
         duty = Duty.query.filter(Duty.uid == uid, Duty.aid == activity_id).first()
         if duty:
-            is_success = duty.status == 10
+            is_success = duty.status == CONST.DUTY_ACTIVITY_ONGOING
         else:
             is_success = False
         now = int(time.time())
@@ -147,7 +147,7 @@ def activitydetailapi(activity_id):
         return resp
     else:
         activity = Activity.query.get(activity_id)
-        if activity.status == 2 or activity.status == 3:
+        if activity.status == CONST.ACTIVITY_ONGOING or activity.status == CONST.ACTIVITY_ENDED:
             duty = Duty.query.filter(Duty.aid == activity_id, Duty.uid == session['uid']).first()
 
             type = request.form['type']
@@ -165,7 +165,7 @@ def activitydetailapi(activity_id):
 @login_required
 def activityopeartion(opeartion, duty_id):
     duty = Duty.query.get_or_404(duty_id)
-    if duty.activity.status == 1:
+    if duty.activity.status == CONST.ACTIVITY_SCHEDULING:
         if ((session['uid'] == duty.member.uid and opeartion in CONST.duty_status_opeartion_selfuser_mapper[duty.status]) or
             (session['uid'] != duty.member.uid and opeartion in CONST.duty_status_opeartion_otheruser_mapper[duty.status]) or
             (session.get('is_arra_monitor') and opeartion in CONST.duty_status_opeartion_monitor_mapper[duty.status])):
@@ -199,7 +199,7 @@ def activityopeartion(opeartion, duty_id):
                         mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                        msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
 
-                        new_duty = Duty(aid=duty.aid, uid=session['uid'], status=6, log='')
+                        new_duty = Duty(aid=duty.aid, uid=session['uid'], status=CONST.DUTY_BEFORE_START, log='')
                         new_duty.appendprocesse('cover_duty', '')
                         db.session.add(new_duty)
                 elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
@@ -264,12 +264,12 @@ def activityopeartion(opeartion, duty_id):
 def activityapply(activity_id):
     """Page: activity detail"""
     activity = Activity.query.get_or_404(activity_id)
-    if activity.status == 1 and (not Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()):
+    if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()):
         content = request.form['content']
         if not content:
             flash({'type': 'error', 'content': '请填写申请理由。'})
         else:
-            newduty = Duty(aid=activity_id, uid=session['uid'], status=1, process='', log='')
+            newduty = Duty(aid=activity_id, uid=session['uid'], status=CONST.DUTY_APPLY_ING, process='', log='')
             newduty.appendprocesse('apply_duty', content)
             db.session.add(newduty)
             db.session.commit()
@@ -312,7 +312,7 @@ def activityedit(activity_id=0):
                 subject = mail.activity_modify_tmpl['subject']
                 content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url, url)
                 for duty in dutylist:
-                    if duty.status in [1, 2, 4, 6, 7]:
+                    if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
                         msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
                         mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                        msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
@@ -350,7 +350,7 @@ def activityarrange(activity_id):
     st = activity.getstrustarttime()
     available_member = {}
     schedule_content = {}
-    if activity.status == 1 and session.get('is_arra_monitor'):
+    if activity.status == CONST.ACTIVITY_SCHEDULING and session.get('is_arra_monitor'):
         schedulelist = Schedule.query.filter(Schedule.semester == config.SEMESTER).all()
         memberlist = Member.query.filter(or_(Member.type == 1, Member.type == 3)).order_by('convert(name using gb2312) ASC').all()
         busymember = {}
@@ -393,7 +393,7 @@ def activityarrange(activity_id):
                 schedule_content[member.uid] = []
 
         # get last duty time and venue
-        sql = "select a.uid, b.venue, max(b.work_start_time) as start_time from duty as a left join activity as b on a.aid = b.id where a.status=11 group by a.uid"
+        sql = "select a.uid, b.venue, max(b.work_start_time) as start_time from duty as a left join activity as b on a.aid = b.id where a.status=" + str(CONST.DUTY_ACTIVITY_ENDED) +" group by a.uid"
         res = db.session.execute(sql)
         for r in res:
             (uid, venue, work_start_time) = r
@@ -402,7 +402,7 @@ def activityarrange(activity_id):
                 available_member[uid]['work_start_time'] = work_start_time
 
         # get last week and last month count
-        sql = "select a.uid, count(1) as count from duty as a left join activity as b on a.aid = b.id where a.status=11 and b.start_time<= %d and b.start_time>= %d group by a.uid"
+        sql = "select a.uid, count(1) as count from duty as a left join activity as b on a.aid = b.id where a.status=" + str(CONST.DUTY_ACTIVITY_ENDED) +" and b.start_time<= %d and b.start_time>= %d group by a.uid"
         now = int(time.time())
         last_week = now - 7 * 86400
         last_month = now - 30 * 86400
@@ -429,13 +429,13 @@ def activityarrange(activity_id):
 @login_required
 def activityappoint(activity_id, member_uid):
     activity = Activity.query.get_or_404(activity_id)
-    if activity.status == 1 and session.get('is_arra_monitor'):
+    if activity.status == CONST.ACTIVITY_SCHEDULING and session.get('is_arra_monitor'):
         member = Member.query.get(member_uid)
         if not Duty.query.filter(Duty.aid == activity_id, Duty.uid == member_uid).count():
             duty = Duty()
             duty.aid = activity_id
             duty.uid = member_uid
-            duty.status = 4
+            duty.status = CONST.DUTY_ARRANGE_CONFIRM
             duty.log = ''
             duty.appendprocesse('activity_appoint', '排班班长安排值班')
             db.session.add(duty)
@@ -464,11 +464,11 @@ def activityappoint(activity_id, member_uid):
 @login_required
 def activityready(activity_id):
     activity = Activity.query.get_or_404(activity_id)
-    if activity.status == 0 and session.get('is_arra_monitor'):
+    if activity.status == CONST.ACTIVITY_UNKNOWN and session.get('is_arra_monitor'):
         #print Article.query.filter(Article.title==article_title).statement
         flash({'type': 'success', 'content': '活动已经就绪。'})
         activity = Activity.query.get_or_404(activity_id)
-        activity.status = 1
+        activity.status = CONST.ACTIVITY_SCHEDULING
         db.session.add(activity)
         db.session.commit()
     else:
@@ -480,11 +480,11 @@ def activityready(activity_id):
 @login_required
 def activitycancel(activity_id):
     activity = Activity.query.get_or_404(activity_id)
-    if (activity.status == 1 or activity.status == 0) and session.get('is_arra_monitor'):
+    if (activity.status == CONST.ACTIVITY_SCHEDULING or activity.status == CONST.ACTIVITY_UNKNOWN) and session.get('is_arra_monitor'):
         #print Article.query.filter(Article.title==article_title).statement
         flash({'type': 'success', 'content': '活动已经取消。'})
         activity = Activity.query.get_or_404(activity_id)
-        activity.status = 4
+        activity.status = CONST.ACTIVITY_CANCELED
         duties = Duty.query.filter(Duty.aid == activity_id)
 
         worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
@@ -497,12 +497,12 @@ def activitycancel(activity_id):
         content = mail.activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
 
         for duty in duties:
-            if duty.status in [1, 2, 4, 6, 7]:
+            if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
                 msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
                 mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
 
-            duty.status = 9
+            duty.status = CONST.DUTY_ACTIVITY_CANCELED
             db.session.add(duty)
         db.session.add(activity)
         db.session.commit()
@@ -516,15 +516,15 @@ def activitycancel(activity_id):
 def activitystart(activity_id):
     activity = Activity.query.get_or_404(activity_id)
     now = int(time.time())
-    if activity.status == 1 and activity.start_time <= now and session.get('is_arra_monitor'):
+    if activity.status == CONST.ACTIVITY_SCHEDULING and activity.start_time <= now and session.get('is_arra_monitor'):
         #print Article.query.filter(Article.title==article_title).statement
         flash({'type': 'success', 'content': '活动已经开始。'})
         activity = Activity.query.get_or_404(activity_id)
-        activity.status = 2
+        activity.status = CONST.ACTIVITY_ONGOING
         db.session.add(activity)
-        dutylist = Duty.query.filter(Duty.aid == activity_id, or_(Duty.status == 6, Duty.status == 7)).all()
+        dutylist = Duty.query.filter(Duty.aid == activity_id, or_(Duty.status == CONST.DUTY_BEFORE_START, Duty.status == CONST.DUTY_REPLACE_ING)).all()
         for duty in dutylist:
-            duty.status = 10
+            duty.status = CONST.DUTY_ACTIVITY_ONGOING
             db.session.add(duty)
         db.session.commit()
     else:
@@ -536,17 +536,17 @@ def activitystart(activity_id):
 @login_required
 def activityterminate(activity_id):
     activity = Activity.query.get_or_404(activity_id)
-    if activity.status == 2 and Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id, Duty.status == 10).count():
+    if activity.status == CONST.ACTIVITY_ONGOING and Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id, Duty.status == CONST.DUTY_ACTIVITY_ONGOING).count():
         #print Article.query.filter(Article.title==article_title).statement
         last_time = int(request.form['end_time']) - activity.start_time
         if last_time < 30 * 60 or last_time > 6 * 3600:
             flash({'type': 'danger', 'content': '活动结束时间填写有误。'})
         else:
             activity.end_time = int(request.form['end_time'])
-            activity.status = 3
-            duties = Duty.query.filter(Duty.aid == activity_id, Duty.status == 10)
+            activity.status = CONST.ACTIVITY_ENDED
+            duties = Duty.query.filter(Duty.aid == activity_id, Duty.status == CONST.DUTY_ACTIVITY_ONGOING)
             for duty in duties:
-                duty.status = 11
+                duty.status = CONST.DUTY_ACTIVITY_ENDED
                 db.session.add(duty)
             db.session.add(activity)
             db.session.commit()
@@ -611,7 +611,7 @@ def cron():
         now = now / (30 * 60) * (30 * 60)
         logs = []
         # 1 hours before activity start
-        activitylist = Activity.query.filter(Activity.work_start_time == now + 3600, Activity.status == 1).all()
+        activitylist = Activity.query.filter(Activity.work_start_time == now + 3600, Activity.status == CONST.ACTIVITY_SCHEDULING).all()
         for activity in activitylist:
             work_timestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
             timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
@@ -625,22 +625,22 @@ def cron():
             logs.append("%s: Activity almost start id:%d" % (nowstr, activity.id))
             for duty in activity.duties:
                 #print subject, content, duty.member.name, duty.member.email, subject, content
-                if duty.status == 6 or duty.status == 7:
+                if duty.status == CONST.DUTY_BEFORE_START or duty.status == CONST.DUTY_REPLACE_ING:
                     mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                    touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                     logs.append("%s: Send mail to %s" % (nowstr, duty.uid))
 
         # on activity start
-        activitylist = Activity.query.filter(Activity.start_time == now, Activity.status == 1).all()
-        dutylist = Duty.query.join(Activity).filter(Activity.start_time == now, Activity.status == 1, or_(Duty.status == 6, Duty.status == 7)).all()
+        activitylist = Activity.query.filter(Activity.start_time == now, Activity.status == CONST.ACTIVITY_SCHEDULING).all()
+        dutylist = Duty.query.join(Activity).filter(Activity.start_time == now, Activity.status == CONST.ACTIVITY_SCHEDULING, or_(Duty.status == CONST.DUTY_BEFORE_START, Duty.status == CONST.DUTY_REPLACE_ING)).all()
         for activity in activitylist:
             logs.append("%s : Activity starts, change activity status id:%d" % (nowstr, activity.id))
-            activity.status = 2
+            activity.status = CONST.ACTIVITY_ONGOING
             db.session.add(activity)
         # TODO other duty status
         for duty in dutylist:
             logs.append("%s : Activity starts, change duty status id:%d" % (nowstr, duty.id))
-            duty.status = 10
+            duty.status = CONST.DUTY_ACTIVITY_ONGOING
             db.session.add(duty)
         db.session.commit()
 
@@ -658,9 +658,9 @@ def cron():
             for activity in activitylist:
                 ready_num = 0
                 for duty in activity.duties:
-                    if duty.status in [1, 2, 4, 6, 7]:
+                    if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
                         ready_num += 1
-                    if duty.status in [1, 2, 4]:
+                    if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM]:
                         membername = duty.member.name
                         memberurl = url_for('memberdetail', member_uid=duty.uid)
                         worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
@@ -692,7 +692,7 @@ def cron():
                         msgid=msg_id)
 
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
-            activitylist = Activity.query.filter(Activity.start_time >= now - 22 * 3600 - 1800, Activity.start_time < now + 3600 + 1800, Activity.status == 2).all()
+            activitylist = Activity.query.filter(Activity.start_time >= now - 22 * 3600 - 1800, Activity.start_time < now + 3600 + 1800, Activity.status == CONST.ACTIVITY_ONGOING).all()
             for activity in activitylist:
                 worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
                 timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
@@ -704,7 +704,7 @@ def cron():
                 content = mail.activity_mark_endtime_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
                 logs.append("%s : Activity almost end id:%d" % (nowstr, activity.id))
                 for duty in activity.duties:
-                    if duty.status == 10:
+                    if duty.status == CONST.DUTY_ACTIVITY_ONGOING:
                         #print subject, content
                         mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                        touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)

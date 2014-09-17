@@ -17,7 +17,7 @@ def siteindex():
     """Site index method"""
     now = int(time.time())
     article_notice = Article.query.filter(Article.cate_id == 1).order_by(Article.posttime.desc()).first()
-    activity_list = Activity.query.filter(Activity.start_time > now, Activity.status != 0, Activity.status != 4).order_by(Activity.start_time).limit(CONST.activity_index_num)
+    activity_list = Activity.query.filter(Activity.start_time > now, Activity.status != CONST.ACTIVITY_UNKNOWN, Activity.status != CONST.ACTIVITY_CANCELED).order_by(Activity.start_time).limit(CONST.activity_index_num)
     article_list = Article.query.order_by(Article.posttime.desc()).limit(CONST.article_index_num)
     duty_list = Duty.query.join(Activity).filter(Duty.uid == session[u'uid'], Activity.start_time > now).order_by(Activity.start_time).limit(CONST.duty_index_page)
     #rank_list = Duty.query.group_by(Duty.uid).order_by('sumtime ASC').limit(CONST.duty_index_page)

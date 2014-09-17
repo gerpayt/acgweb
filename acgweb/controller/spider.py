@@ -110,7 +110,7 @@ def activity_spider():
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     oidstr = ','.join(oidlist)
-    sql = 'select id, oid, start_time, venue, title from activity where status != "4" and start_time >= "%d" and oid not in( %s);' % (todaytime, oidstr)
+    sql = 'select id, oid, start_time, venue, title from activity where status != "' + str(CONST.ACTIVITY_CANCELED) + '" and start_time >= "%d" and oid not in( %s);' % (todaytime, oidstr)
     #print sql
     res = db.session.execute(sql)
     for row in res:

@@ -2,7 +2,7 @@
 from acgweb import db
 from datetime import datetime
 import time
-
+from acgweb import config
 
 class Duty(db.Model):
     """Model for duty"""
@@ -20,13 +20,15 @@ class Duty(db.Model):
     logs = []
 
     def is_wait(self):
-        return self.status in [2, 4]
+        return self.status in [config.CONST.DUTY_APPLY_CONFIRM, config.CONST.DUTY_ARRANGE_CONFIRM]
 
     def is_abort(self):
-        return self.status in [3, 5, 8, 9]
+        return self.status in [config.CONST.DUTY_APPLY_REJECTED, config.CONST.DUTY_ARRANGE_REJECTED, config.CONST.DUTY_REPLACE_ED,
+                               config.CONST.DUTY_ACTIVITY_CANCELED, config.CONST.DUTY_ARRANGE_CANCEL, config.CONST.DUTY_APPLY_CANCEL]
 
     def is_success(self):
-        return self.status in [6, 7, 10, 11]
+        return self.status in [config.CONST.DUTY_BEFORE_START, config.CONST.DUTY_REPLACE_ING, config.CONST.DUTY_ACTIVITY_ONGOING,
+                               config.CONST.DUTY_ACTIVITY_ENDED]
 
     def __repr__(self):
         return '<Duty %s>' % self.id

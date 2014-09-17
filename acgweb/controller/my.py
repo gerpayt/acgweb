@@ -162,6 +162,18 @@ def myinfoapi():
         return resp
 
 
+@app.route('/mysetting')
+#@login_required
+def mysetting():
+
+    form = None
+
+    if viewtype() == 1:
+        return render_template('my/mysetting_mobile.html', form=form)
+    else:
+        return render_template('my/mysetting.html', form=form)
+
+
 @app.before_request
 def check_new_message():
     if session.has_key(u'uid'):

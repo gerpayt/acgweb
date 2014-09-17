@@ -26,14 +26,14 @@
 <h4>活动备注</h4>
 <p>{% if activity.remark %}{{ activity.remark }}{% else %}没有备注{% endif %}</p>
 <hr />
-{% if activity.status == 3 %}
+{% if activity.status == config.CONST.ACTIVITY_ENDED %}
 <p>活动已结束。</p>
-{% elif activity.status == 2 %}
+{% elif activity.status == config.CONST.ACTIVITY_ONGOING %}
 <p>活动正在进行中。 {% if is_success %}<a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
     data-href="{{ url_for('activityterminate',activity_id=activity.id) }}"
     data-label="真的要结束活动吗?" data-content="请填写活动结束时间"
     data-require_select='1' data-start_time="{{activity.start_time}}">活动结束</a> {% endif %}</p>
-{% elif activity.status == 1 %}
+{% elif activity.status == config.CONST.ACTIVITY_SCHEDULING %}
   <p><span id='activity_from_time_int' class='hide'>{{ activity.from_time() }}</span><span id='activity_from_time_str'></span> <br />
   {% if session.is_arra_monitor %}<a class="btn btn-danger btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
     data-href="{{ url_for('activitycancel',activity_id=activity.id) }}"
@@ -41,7 +41,7 @@
     data-modal-loading-text="正在取消">取消活动</a>{% endif %}
   {% if activity.start_time <= now %}<a class="btn btn-success btn-mini" href="{{ url_for('activitystart',activity_id=activity.id) }}">开始活动</a>{% endif %}
   </p>
-{% elif activity.status == 4 %}
+{% elif activity.status == config.CONST.ACTIVITY_CANCELED %}
 <p>活动已取消。</p>
 {% else %}
 <p>活动尚未就绪。<a href="{{url_for('activityready',activity_id=activity.id)}}" class="btn btn-success btn-mini">活动就绪</a></p>
@@ -53,7 +53,7 @@
 
 <div class="span8">
 <h4>音控员</h4>
-{% if activity.status >= 1 %}
+{% if activity.status != config.CONST.ACTIVITY_UNKNOWN %}
 {% if activity.duties %}
 <table class="table table-striped">
   <tr><th>姓名</th><th>电话号码</th><th>电话短号</th><th>状态</th><th>操作</th>
@@ -63,7 +63,7 @@
     <td><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a></td>
     <td>{{duty.member.mobile_num}}</td><td>{{duty.member.mobile_short}}</td><td>{{ duty.status|dutystatusname() }}</td>
     <td>
-      {% if activity.status == 1 %}
+      {% if activity.status == config.CONST.ACTIVITY_SCHEDULING %}
       {% if session.uid == duty.member.uid %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %} 
         {% if config.CONST.dutyoperationname[op].content %}
           <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
@@ -114,10 +114,10 @@
 </table>
 {% else %}
 <p>没有音控员被分派到此活动。</p>{% endif %}
-{% if session.is_arra_monitor and activity.status == 1 %}
+{% if session.is_arra_monitor and activity.status == config.CONST.ACTIVITY_SCHEDULING %}
   <p><a href="{{url_for('activityarrange',activity_id=activity.id)}}" class="btn btn-success btn-mini">安排音控员值班</a></p>
 {% endif %}
-{% if not is_busy and activity.status == 1 %}
+{% if not is_busy and activity.status == config.CONST.ACTIVITY_SCHEDULING %}
   <p>{% if on_schedule %}你有“{{ on_schedule }}”。{% else %}你有空闲时间，可以申请此次活动。{% endif %}
   <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
    data-href="{{url_for('activityapply',activity_id=activity.id)}}"
@@ -142,7 +142,7 @@
 <p>暂时还没有值班记录。</p>
 {% endif %}
 <!-- # TODO -->
-{% if is_busy and ( activity.status == 2 or activity.status == 3 ) %}
+{% if is_busy and ( activity.status == config.CONST.ACTIVITY_ONGOING or activity.status == config.CONST.ACTIVITY_ENDED ) %}
 <div class="alert alert-error hide" id="submit_message_notice"> </div>
 <div class="input-prepend input-append">
   <span class="add-on">类型</span>
