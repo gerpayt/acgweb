@@ -18,7 +18,11 @@ def viewtype():
     vt = request.cookies.get('vt')
     if vt != None:
         return int(vt)
-    ua = request.headers.get('User-Agent').lower()
+    ua = request.headers.get('User-Agent')
+    if ua:
+        ua = ua.lower()
+    else:
+        ua = ''
     #print ua
     re = 0
     osArr = {'iphone': 1, 'ipad': 1, 'ipod': 1, 'android': 2, 'windows phone': 3}
