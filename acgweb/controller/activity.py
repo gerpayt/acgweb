@@ -14,7 +14,8 @@ from acgweb import config
 from template_filter import *
 from decorated_function import *
 from acgweb.controller import mail
-
+from acgweb.controller import sms
+import notify
 
 @app.route('/activitylist-p<int:pagenum>')
 @app.route('/activitylist')
@@ -193,11 +194,21 @@ def activityopeartion(opeartion, duty_id):
                         url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
                         member_url = config.BASE_URL + url_for('memberdetail', member_uid=session['uid'])
                         member_name = session['name']
+
                         subject = mail.cover_duty_tmpl['subject']
                         content = mail.cover_duty_tmpl['content'] % (member_url, member_name, worktimestr, timestr, venue, title, remark, url, url)
-                        msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                        mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                                       msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        sms_content = sms.sms_cover_duty_tmpl
+                        if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_COVER_DUTY):
+                            msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                        else:
+                            msg_id = 0
+                        if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_COVER_DUTY):
+                            mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                                           msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_COVER_DUTY):
+                            pass  # TODO app notify
+                        if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_COVER_DUTY):
+                            sms.send_sms(duty.member.mobile_num, sms_content)
 
                         new_duty = Duty(aid=duty.aid, uid=session['uid'], status=CONST.DUTY_BEFORE_START, log='')
                         new_duty.appendprocesse('cover_duty', '')
@@ -212,12 +223,31 @@ def activityopeartion(opeartion, duty_id):
                     if opeartion == 'approve_apply':
                         subject = mail.approve_apply_tmpl['subject']
                         content = mail.approve_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+                        sms_content = sms.sms_approve_apply_tmpl % (worktimestr, venue, title)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_APPROVE_APPLY):
+                            msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                        else:
+                            msg_id = 0
+                        if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_APPROVE_APPLY):
+                            mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_APPROVE_APPLY):
+                            pass  # TODO app notify
+                        if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
+                            sms.send_sms(duty.member.mobile_num, sms_content)
                     else:
                         subject = mail.decline_apply_tmpl['subject']
                         content = mail.decline_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
-                    msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                    mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                                   msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        sms_content = sms.sms_decline_apply_tmpl % (worktimestr, venue, title)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_APPROVE_APPLY):
+                            msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                        else:
+                            msg_id = 0
+                        if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_APPROVE_APPLY):
+                            mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_APPROVE_APPLY):
+                            pass  # TODO app notify
+                        if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
+                            sms.send_sms(duty.member.mobile_num, sms_content)
                 elif opeartion == 'decline_duty':
                     uname = session['name']
                     worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
@@ -228,11 +258,19 @@ def activityopeartion(opeartion, duty_id):
                     url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
                     subject = mail.decline_duty_tmpl['subject']
                     content = mail.decline_duty_tmpl['content'] % (uname, reason, worktimestr, timestr, venue, title, remark, url, url)
+                    sms_content = sms.sms_decline_duty_tmpl['content'] % (uname, worktimestr, venue, title)
                     for uid in config.ARRA_MONITOR:
                         member = Member.query.get(uid)
-                        msg_id = mail.send_message(uid, session['uid'], subject, content, 2)
-                        mail.send_mail(subject, content, member.name, member.email,
-                                       msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_DECLINE_DUTY):
+                            msg_id = mail.send_message(uid, session['uid'], subject, content, 2)
+                        else:
+                            msg_id = 0
+                        if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_DECLINE_DUTY):
+                            mail.send_mail(subject, content, member.name, member.email, msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_DECLINE_DUTY):
+                            pass  # TODO app notify
+                        if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_DECLINE_DUTY):
+                            sms.send_sms(duty.member.mobile_num, sms_content)
 
                 elif opeartion == 'cancel_task':
                     pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
@@ -311,11 +349,19 @@ def activityedit(activity_id=0):
                 url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
                 subject = mail.activity_modify_tmpl['subject']
                 content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url, url)
+                sms_content = sms.sms_activity_modify_tmpl % (worktimestr, worktimestr_new, venue, venue_new, title, title_new)
                 for duty in dutylist:
                     if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
-                        msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                        mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                                       msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_MODIFY):
+                            msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                        else:
+                            msg_id = 0
+                        if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_MODIFY):
+                            mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_MODIFY):
+                            pass  # TODO app notify
+                        if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_MODIFY):
+                            sms.send_sms(duty.member.mobile_num, sms_content)
 
             activity.title = form.title.data
             activity.remark = form.remark.data
@@ -449,10 +495,17 @@ def activityappoint(activity_id, member_uid):
             url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
             subject = mail.activity_appoint_tmpl['subject']
             content = mail.activity_appoint_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
-            msg_id = mail.send_message(member_uid, session['uid'], subject, content, 2)
-            mail.send_mail(subject, content, member.name, member.email,
-                           msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
-
+            sms_content = sms.sms_activity_appoint_tmpl % (worktimestr, venue, title)
+            if notify.is_notify(member_uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_APPOINT):
+                msg_id = mail.send_message(member_uid, session['uid'], subject, content, 2)
+            else:
+                msg_id = 0
+            if notify.is_notify(member_uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_APPOINT):
+                mail.send_mail(subject, content, member.name, member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+            if notify.is_notify(member_uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_APPOINT):
+                pass  # TODO app notify
+            if notify.is_notify(member_uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_APPOINT):
+                sms.send_sms(duty.member.mobile_num, sms_content)
         else:
             flash({'type': 'danger', 'content': '此人已经安排过值班任务。'})
     else:
@@ -495,12 +548,20 @@ def activitycancel(activity_id):
         url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
         subject = mail.activity_cancel_tmpl['subject']
         content = mail.activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+        sms_content = sms.sms_activity_cancel_tmpl % (worktimestr, venue, title)
 
         for duty in duties:
             if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
-                msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                               msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_CANCEL):
+                    msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+                else:
+                    msg_id = 0
+                if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_CANCEL):
+                    mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_CANCEL):
+                    pass  # TODO app notify
+                if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_CANCEL):
+                    sms.send_sms(duty.member.mobile_num, sms_content)
 
             duty.status = CONST.DUTY_ACTIVITY_CANCELED
             db.session.add(duty)
@@ -687,9 +748,16 @@ def cron():
                 content = mail.todo_notice_tmpl['content'] + '<hr />'.join(warnings)
                 for uid in config.ARRA_MONITOR:
                     member = Member.query.get(uid)
-                    msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
-                    mail.send_mail(subject, content, member.name, member.email,
-                        msgid=msg_id)
+                    if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_TODO):
+                        msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
+                    else:
+                        msg_id = 0
+                    if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_TODO):
+                        mail.send_mail(subject, content, member.name, member.email, msgid=msg_id)
+                    if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_TODO):
+                        pass  # TODO app notify
+                    if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_TODO):
+                        pass  #
 
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
             activitylist = Activity.query.filter(Activity.start_time >= now - 22 * 3600 - 1800, Activity.start_time < now + 3600 + 1800, Activity.status == CONST.ACTIVITY_ONGOING).all()

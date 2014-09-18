@@ -12,6 +12,7 @@ from acgweb.controller import mail
 
 #from acttypeclassify import acttype
 import time
+import notify
 
 
 def activity_spider():
@@ -133,8 +134,15 @@ def activity_spider():
         content = mail.spider_notice_tmpl['content'] % nowstr + '<hr />'.join(warnings)
         for uid in config.ARRA_MONITOR:
             member = Member.query.get(uid)
-            msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
-            mail.send_mail(subject, content, member.name, member.email,
-                msgid=msg_id)
+            if notify.is_notify(uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_SPIDER):
+                msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
+            else:
+                msg_id = 0
+            if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_SPIDER):
+                mail.send_mail(subject, content, member.name, member.email, msgid=msg_id)
+            if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_SPIDER):
+                pass  # TODO app notify
+            if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_SPIDER):
+                pass  #
 
     return log
