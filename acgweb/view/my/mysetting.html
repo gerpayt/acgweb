@@ -1,0 +1,239 @@
+{% extends "layout.html" %}
+{% set script_list = ['jquery.uploadify.min'] %}
+
+{% block body %}
+<div class="page-header">
+  <h1>个人设置</h1>
+</div>
+
+<form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-{{message.type}}">{{ message.content }}</div>
+{% endfor %}
+
+<h4>提醒设置</h4>
+
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th>排班提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox"  value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>班长批准/拒绝值班提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox"  value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox"  value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>被成功代班提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>活动信息变更/取消提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>值班前一小时提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>标记活动结束时间提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>[班长]活动同步提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>[班长]拒绝值班提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>[班长]近期未完成操作提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>[班长]系统内部错误</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+      <tr>
+        <th>[班长]其他通知提醒</th>
+        <td><label class="checkbox">
+          <input type="checkbox" value="message"> 站内信
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="email"> 邮件提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="app"> 客户端提醒
+        </label>
+        </td>
+        <td><label class="checkbox">
+          <input type="checkbox" value="sms"> 短信提醒
+        </label>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+<div class="form-actions">
+  {{ form.csrf_token }}
+  <button type="submit" class="btn">恢复默认</button>
+  <button type="submit" class="btn btn-primary">保存</button>
+</div>
+
+</form>
+
+
+{% endblock %}

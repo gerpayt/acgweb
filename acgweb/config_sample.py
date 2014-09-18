@@ -31,6 +31,13 @@ SMTP_USER = ""
 SMTP_USERNAME = ""
 SMTP_PASSWORD = ""
 
+SMS_PROVIDER = 'smsbao'
+SMS_BASE_URL = 'http://www.smsbao.com/'
+SMS_SEND_URL = 'sms?u={username}&p={password}&m={phone}&c={content}'
+SMS_QUERY_URL = 'query?u={username}&p={password}'
+SMS_USERNAME = ''
+SMS_PASSWORD = ''
+
 HTTP_PROXY = ''
 MAIL_DOMAIN = 'acg-test'
 

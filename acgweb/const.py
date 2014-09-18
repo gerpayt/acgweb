@@ -48,13 +48,29 @@ venuecolor = ['inverse', 'warning', 'important', 'info']
 activitytypename = ['未知', '招聘', '晚会', '其他']
 activitytypecolor = ['inverse', 'info', 'important', 'inverse']
 
-activity_scheduling = 1
-activity_ongoing = 2
-activity_ended = 3
-activity_canceled = 4
+ACTIVITY_UNKNOWN = 0
+ACTIVITY_SCHEDULING = 1
+ACTIVITY_ONGOING = 2
+ACTIVITY_ENDED = 3
+ACTIVITY_CANCELED = 4
 
 activitystatusname = ['未知', '排班中', '正在进行', '已结束', '已取消']
 activitystatuscolor = ['inverse', 'info', 'success', 'default', 'warning']
+
+DUTY_UNKNOWN = 0
+DUTY_APPLY_ING = 1
+DUTY_APPLY_CONFIRM = 2
+DUTY_APPLY_REJECTED = 3
+DUTY_ARRANGE_CONFIRM = 4
+DUTY_ARRANGE_REJECTED = 5
+DUTY_BEFORE_START = 6
+DUTY_REPLACE_ING = 7
+DUTY_REPLACE_ED = 8
+DUTY_ACTIVITY_CANCELED = 9
+DUTY_ACTIVITY_ONGOING = 10
+DUTY_ACTIVITY_ENDED = 11
+DUTY_ARRANGE_CANCEL = 12
+DUTY_APPLY_CANCEL = 13
 
 dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认', '班长拒绝了你的申请', '排班等待确认', '你拒绝了排班任务', '等待活动开始', '等待其他音控员代班', '其他音控员代班成功', '活动取消', '活动进行中', '活动结束', '排班取消', '已撤销值班申请']
 dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'warning', 'success', 'warning', 'default', 'default', 'success', 'default', 'default', 'default']
