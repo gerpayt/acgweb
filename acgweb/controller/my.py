@@ -8,7 +8,7 @@ from acgweb.model.member import Member
 from acgweb.form.member import MemberForm
 import acgweb.const as CONST
 from decorated_function import *
-
+import notify
 
 @app.route('/myactivity-p<int:pagenum>')
 @app.route('/myactivity')
@@ -162,16 +162,47 @@ def myinfoapi():
         return resp
 
 
-@app.route('/mysetting')
-#@login_required
-def mysetting():
+@app.route('/mysetting-reset')
+@login_required
+def mysettingreset():
+    member = Member.query.get_or_404(session['uid'])
+    setting = notify.default_setting.copy()
+    member.setting = json.dumps(setting)
+    #print setting
+    db.session.add(member)
+    db.session.commit()
+    flash({'type': 'success', 'content': '重置成功。'})
 
-    form = None
+    return redirect(url_for('mysetting'))
+
+
+@app.route('/mysetting', methods=['GET', 'POST'])
+@login_required
+def mysetting():
+    member = Member.query.get_or_404(session['uid'])
+    if request.method == 'POST':
+        setting = notify.empty_setting.copy()
+        for item in request.form:
+            #print item, request.form[item]
+            (x, event, method) = item.split('-')
+            setting[event+'-'+method] = int(request.form[item])
+        print setting
+        member.setting = json.dumps(setting)
+        db.session.add(member)
+        db.session.commit()
+        flash({'type': 'success', 'content': '修改成功。'})
+
+    else:
+        setting = notify.default_setting.copy()
+        if member.setting != '':
+            setting.update(json.loads(member.setting))
+
+    setting_list = notify.notify_setting_list
 
     if viewtype() == 1:
-        return render_template('my/mysetting_mobile.html', form=form)
+        return render_template('my/mysetting_mobile.html', setting=setting, setting_list=setting_list)
     else:
-        return render_template('my/mysetting.html', form=form)
+        return render_template('my/mysetting.html', setting=setting, setting_list=setting_list)
 
 
 @app.before_request

@@ -24,6 +24,7 @@ class Member(db.Model):
     register_time = db.Column(db.Integer)
     lastlogin_time = db.Column(db.Integer)
     flag = db.Column(db.Integer)
+    setting = db.Column(db.Text)
     duties = db.relationship('Duty',
         backref=db.backref('owner', lazy='joined'))
     photos = []
