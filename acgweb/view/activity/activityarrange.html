@@ -10,7 +10,8 @@
   </div>
 <table class="table table-striped">
   <tr><th width='60'>活动日期</th><td>{{ activity.start_time|timeformat('%Y-%m-%d') }} {{ activity.start_time|dayname() }}</td></tr>
-  <tr><th>开始时间</th><td>{{ activity.start_time|periodname() }} {{ activity.start_time|timeformat('%H:%M') }}</td></tr>
+  <tr><th>值班时间</th><td>{{ activity.work_start_time|periodname() }} {{ activity.work_start_time|timeformat('%H:%M') }}</td></tr>
+  <tr><th>活动时间</th><td>{{ activity.start_time|periodname() }} {{ activity.start_time|timeformat('%H:%M') }}</td></tr>
   <tr><th>活动地点</th><td>{{ activity.venue|venuename() }}</td></tr>
   <tr><th>活动名称</th><td>{{ activity.title }}</td></tr>
   <tr><th>活动类型</th><td>{{ activity.type|activitytypename() }}</td></tr>

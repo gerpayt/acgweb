@@ -72,8 +72,8 @@ DUTY_ACTIVITY_ENDED = 11
 DUTY_ARRANGE_CANCEL = 12
 DUTY_APPLY_CANCEL = 13
 
-dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认', '班长拒绝了你的申请', '排班等待确认', '你拒绝了排班任务', '等待活动开始', '等待其他音控员代班', '其他音控员代班成功', '活动取消', '活动进行中', '活动结束', '排班取消', '已撤销值班申请']
-dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'warning', 'success', 'warning', 'default', 'default', 'success', 'default', 'default', 'default']
+dutystatusname = ['未知', '等待班长批准申请', '等待音控员确认', '班长拒绝了你的申请', '排班等待确认', '音控员拒绝了排班', '等待活动开始', '等待其他音控员代班', '其他音控员代班成功', '活动取消', '活动进行中', '活动结束', '排班取消', '已撤销值班申请']
+dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'default', 'success', 'warning', 'default', 'default', 'success', 'default', 'default', 'default']
 
 dutyoperationname = {
     'activity_appoint': {'color': 'success', 'title': '安排值班', 'loading': '正在排班'},
