@@ -60,7 +60,7 @@ def query_sms():
     send, rest = 0, 0
     if rtn.startswith("0\n"):
         (send, rest) = rtn[2:].split(',')
-    print send, rest
+    #print send, rest
     return send, rest
 
 
@@ -77,3 +77,7 @@ sms_activity_modify_tmpl = '''【音控组】活动信息变化 时间:%s->%s �
 sms_activity_cancel_tmpl = '''【音控组】活动取消 %s [%s] 活动:%s'''
 
 sms_activity_appoint_tmpl = '''【音控组】班长排班 %s [%s] 活动:%s'''
+
+sms_activity_nearly_begin_tmpl = '''【音控组】活动即将开始 %s [%s] 活动:%s '''
+
+sms_activity_mark_endtime_tmpl = '''【音控组】标记活动结束时间 活动:%s '''

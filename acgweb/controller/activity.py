@@ -682,14 +682,24 @@ def cron():
             url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
             subject = mail.activity_nearly_begin_tmpl['subject']
             content = mail.activity_nearly_begin_tmpl['content'] % (work_timestr, timestr, venue, title, remark, url, url)
+            sms_content = sms.sms_activity_nearly_begin_tmpl % (work_timestr, venue, title)
             # TODO %d or %s ?
             logs.append("%s: Activity almost start id:%d" % (nowstr, activity.id))
             for duty in activity.duties:
                 #print subject, content, duty.member.name, duty.member.email, subject, content
                 if duty.status == CONST.DUTY_BEFORE_START or duty.status == CONST.DUTY_REPLACE_ING:
-                    mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                                   touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
-                    logs.append("%s: Send mail to %s" % (nowstr, duty.uid))
+                    if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_NEARLY_BEGIN):
+                        msg_id = mail.send_message(duty.uid, config.SYS_ADMIN, subject, content, 2)
+                    else:
+                        msg_id = 0
+                    if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_NEARLY_BEGIN):
+                        mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        logs.append("%s: Send mail to %s" % (nowstr, duty.uid))
+                    if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_NEARLY_BEGIN):
+                        pass  # TODO app notify
+                    if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_NEARLY_BEGIN):
+                        sms.send_sms(duty.member.mobile_num, sms_content)
+                        logs.append("%s: Send SMS to %s" % (nowstr, duty.uid))
 
         # on activity start
         activitylist = Activity.query.filter(Activity.start_time == now, Activity.status == CONST.ACTIVITY_SCHEDULING).all()
@@ -770,12 +780,24 @@ def cron():
                 url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
                 subject = mail.activity_mark_endtime_tmpl['subject']
                 content = mail.activity_mark_endtime_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+                sms_content = sms.sms_activity_mark_endtime_tmpl % (title)
                 logs.append("%s : Activity almost end id:%d" % (nowstr, activity.id))
                 for duty in activity.duties:
                     if duty.status == CONST.DUTY_ACTIVITY_ONGOING:
                         #print subject, content
-                        mail.send_mail(subject, content, duty.member.name, duty.member.email,
-                                       touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                        if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_MARK_ENDTIME):
+                            msg_id = mail.send_message(duty.uid, config.SYS_ADMIN, subject, content, 2)
+                        else:
+                            msg_id = 0
+                        if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_MARK_ENDTIME):
+                            mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                            logs.append("%s: Send mail to %s" % (nowstr, duty.uid))
+                        if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_MARK_ENDTIME):
+                            pass  # TODO app notify
+                        if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_MARK_ENDTIME):
+                            sms.send_sms(duty.member.mobile_num, sms_content)
+                            logs.append("%s: Send SMS to %s" % (nowstr, duty.uid))
+
                         logs.append("%s : Send mail to %s" % (nowstr, duty.uid))
 
         open(config.BASE_DIR + 'data/last_cron.time', 'w').write(str(now))
