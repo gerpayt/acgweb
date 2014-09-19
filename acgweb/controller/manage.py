@@ -11,6 +11,7 @@ from acgweb import config
 from decorated_function import *
 from acgweb.controller.mail import get_out_box
 import os
+import sms
 
 
 @app.route('/manage')
@@ -23,6 +24,8 @@ def manage():
     count['duty'] = Duty.query.count()
     count['article'] = Article.query.count()
     count['message'] = Message.query.count()
+
+    count['send_sms'], count['rest_sms'] = sms.query_sms()
 
     param = {}
     try:
@@ -100,7 +103,7 @@ def mailmanage():
 def logmanage():
     """Page: all activitylist"""
     logdict = {}
-    for t in ['cron', 'sync', 'error']:
+    for t in ['cron', 'sync', 'sms', 'error']:
         logs = []
         try:
             fp = open(config.BASE_DIR + 'log/%s.log' % t, 'r')
@@ -111,7 +114,7 @@ def logmanage():
         logs.reverse()
         logdict[t] = logs
 
-    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], errorlogs=logdict['error'])
+    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], smslogs=logdict['sms'], errorlogs=logdict['error'])
 
 
 @app.route('/systemmanage')

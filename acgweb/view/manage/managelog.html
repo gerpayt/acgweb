@@ -12,7 +12,8 @@
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tab1" data-toggle="tab">Cron Logs</a></li>
     <li><a href="#tab2" data-toggle="tab">Sync Logs</a></li>
-    <li><a href="#tab3" data-toggle="tab">Error Logs</a></li>
+    <li><a href="#tab3" data-toggle="tab">SMS Logs</a></li>
+    <li><a href="#tab4" data-toggle="tab">Error Logs</a></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -26,6 +27,11 @@
         {% endfor %}
     </div>
     <div class="tab-pane" id="tab3">
+        {% for log in smslogs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+    <div class="tab-pane" id="tab4">
         {% for log in errorlogs %}
         <p>{{ log }}</p>
         {% endfor %}
