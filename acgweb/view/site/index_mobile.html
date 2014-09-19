@@ -31,7 +31,7 @@
   {% for duty in duty_list %}
   <li><span class="label label-{{ duty.activity.venue|venuecolor }}">{{duty.activity.venue|venuename}}</span>
       <strong>{{duty.activity.start_time|timeformat('%m月%d日')}} {{duty.activity.start_time|dayname()}}
-          {{duty.activity.start_time|timeformat('%H:%S')}} </strong>
+          {{duty.activity.start_time|timeformat('%H:%M')}} </strong>
       <span class="label label-{{ duty.activity.status|activitystatuscolor }}">{{duty.activity.status|activitystatusname()}}</span></li>
   <li> <a href="{{url_for('activitydetail',activity_id=duty.activity.id)}}">{{duty.activity.title}}</a></li>
   {% endfor %}
@@ -47,7 +47,7 @@
 <ul class="longtext">
 {% for activity in activity_list %}
   <li><span class="label label-{{ activity.venue|venuecolor }}">{{activity.venue|venuename}}</span> {{activity.start_time|timeformat('%Y年%m月%d日')}}
-      {{activity.start_time|dayname()}} {{activity.start_time|timeformat('%H:%S')}} <br />
+      {{activity.start_time|dayname()}} {{activity.start_time|timeformat('%H:%M')}} <br />
       <a href="{{url_for('activitydetail',activity_id=activity.id)}}">{{activity.title}}</a></li>
 {% endfor %}
 </ul>
