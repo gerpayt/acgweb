@@ -199,10 +199,7 @@ def mysetting():
 
     setting_list = notify.notify_setting_list
 
-    if viewtype() == 1:
-        return render_template('my/mysetting_mobile.html', setting=setting, setting_list=setting_list)
-    else:
-        return render_template('my/mysetting.html', setting=setting, setting_list=setting_list)
+    return render_template('my/mysetting.html', setting=setting, setting_list=setting_list)
 
 
 @app.before_request
