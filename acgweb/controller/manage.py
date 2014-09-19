@@ -44,22 +44,22 @@ def manage():
 @login_required
 def salarymanage():
     """Page: all activitylist  and a.status = '11' """
-    starttime = request.args.get('starttime', 0)
+    starttime = request.args.get('starttime', config.SEMESTER_BASE)
     if not starttime: starttime = 0
     endtime = request.args.get('endtime', CONST.max_time)
     if not endtime: endtime = CONST.max_time
     export = request.args.get('export', None)
 
-    sql1 = "select c.uid, b.id, b.start_time, b.end_time, b.venue, b.title, b.end_time-b.start_time as last_time from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' order by b.start_time " % (int(starttime), int(endtime))
+    sql1 = "select c.uid, b.id, b.work_start_time, b.start_time, b.end_time, b.venue, b.title, b.end_time-b.work_start_time as work_last_time from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' order by b.start_time " % (int(starttime), int(endtime))
     #print sql1
     res1 = db.session.execute(sql1)
     salalist = {}
     for i in res1:
         if not salalist.has_key(i.uid):
             salalist[i.uid] = []
-        salalist[i.uid].append({'aid': i.id, 'start_time': i.start_time - 3600, 'end_time': i.end_time, 'venue': i.venue, 'title': i.title, 'work_last_time': i.work_last_time})
+        salalist[i.uid].append({'aid': i.id, 'work_start_time': i.work_start_time, 'end_time': i.end_time, 'venue': i.venue, 'title': i.title, 'work_last_time': i.work_last_time})
     #print salalist
-    sql2 = "select c.uid, c.name, c.credit_card, sum(b.end_time-b.start_time+3600) as totaltime from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' group by a.uid order by convert(c.name using gb2312) ASC " % (int(starttime), int(endtime))
+    sql2 = "select c.uid, c.name, c.credit_card, sum(b.end_time-b.work_start_time) as totaltime from duty as a left join activity as b on a.aid = b.id left join member as c on c.uid = a.uid where b.end_time != '0' and b.start_time > '%d' and b.end_time < %d and a.status = '11' group by a.uid order by convert(c.name using gb2312) ASC " % (int(starttime), int(endtime))
     #print sql2
     res2 = db.session.execute(sql2)
     #print res2

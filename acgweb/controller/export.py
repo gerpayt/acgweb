@@ -76,9 +76,9 @@ def export_salary(rank_list, starttime, endtime):
     for member in rank_list:
         for duty in member['salalist']:
             ws.write(i, 0, member['name'])
-            ws.write(i, 1, timeformat_filter(duty['start_time'], '%Y-%m-%d %H:%M'))
+            ws.write(i, 1, timeformat_filter(duty['work_start_time'], '%Y-%m-%d %H:%M'))
             ws.write(i, 2, venuename_filter(duty['venue']))
             ws.write(i, 3, duty['title'])
-            ws.write(i, 4, duty['work_last_time'] / 3600)
+            ws.write(i, 4, 1.0 * duty['work_last_time'] / 3600)
             i += 1
     return wb
