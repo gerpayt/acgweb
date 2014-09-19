@@ -186,7 +186,7 @@ def mysetting():
             #print item, request.form[item]
             (x, event, method) = item.split('-')
             setting[event+'-'+method] = int(request.form[item])
-        print setting
+        #print setting
         member.setting = json.dumps(setting)
         db.session.add(member)
         db.session.commit()

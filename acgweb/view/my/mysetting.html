@@ -16,6 +16,7 @@
   <table class="table table-striped">
     <tbody>
       {% for item in setting_list %}
+        {% if session['is_arra_monitor'] or (not item.startswith('[班长]')) %}
       <tr>
         <th>{{ item  }}</th>
         <td><label class="checkbox">
@@ -35,6 +36,7 @@
         </label>
         </td>
       </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>
