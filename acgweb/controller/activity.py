@@ -258,7 +258,7 @@ def activityopeartion(opeartion, duty_id):
                     url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
                     subject = mail.decline_duty_tmpl['subject']
                     content = mail.decline_duty_tmpl['content'] % (uname, reason, worktimestr, timestr, venue, title, remark, url, url)
-                    sms_content = sms.sms_decline_duty_tmpl['content'] % (uname, worktimestr, venue, title)
+                    sms_content = sms.sms_decline_duty_tmpl % (uname, worktimestr, venue, title)
                     for uid in config.ARRA_MONITOR:
                         member = Member.query.get(uid)
                         if notify.is_notify(uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_DECLINE_DUTY):
