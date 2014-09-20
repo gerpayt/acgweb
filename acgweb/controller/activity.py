@@ -743,11 +743,12 @@ def cron():
                         content = mail.todo_duty_tmpl['content'] % (memberurl, membername, worktimestr, timestr, venue, title, url, url, statusname)
                         warnings.append(content)
                 if ready_num == 0:
+                    worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
                     timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
                     venue = venuename_filter(activity.venue)
                     title = activity.title
                     url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
-                    content = mail.todo_activity_tmpl['content'] % (timestr, venue, title, url, url)
+                    content = mail.todo_activity_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
                     warnings.append(content)
 
             if warnings:
