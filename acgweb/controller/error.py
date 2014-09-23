@@ -15,6 +15,14 @@ def error404(error):
 @app.errorhandler(403)
 def error403(error):
     if viewtype() == 1:
-        return render_template('site/error403_mobile.html'), 401
+        return render_template('site/error403_mobile.html'), 403
     else:
-        return render_template('site/error403.html'), 401
+        return render_template('site/error403.html'), 403
+
+
+@app.errorhandler(500)
+def error500(error):
+    if viewtype() == 1:
+        return render_template('site/error500_mobile.html'), 500
+    else:
+        return render_template('site/error500.html'), 500
