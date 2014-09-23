@@ -6,7 +6,7 @@
 <div class="row cms-row">
 <div class="span3">
 <div class="cms-div">
-<h4>最新文章</h4>
+<h4>最新文章 <small class="pull-right"><a href="{{url_for('articlelist')}}">查看更多</a></small></h4>
 <ul class="long-text">
 {% for article in article_list %}
   <li><span class="label label-info">{{article.cate_id|categoryname}}</span> <a href="{{url_for('articledetail',article_title=article.title)}}">{{article.title}}</a></li>
@@ -41,7 +41,7 @@
 <div class="row cms-row">
 <div class="span4">
 <div class="cms-div">
-<h4>我的活动</h4>
+<h4>我的活动 <small class="pull-right"><a href="{{url_for('myactivity')}}">查看更多</a></small></h4>
 <ul class="long-text">
   {% if duty_list.count() %}
   {% for duty in duty_list %}
@@ -60,7 +60,7 @@
 </div>
 <div class="span8">
 <div class="cms-div">
-<h4>近期活动</h4>
+<h4>近期活动 <small class="pull-right"><a href="{{url_for('activitylist')}}">查看更多</a></small></h4>
 <ul class="longtext">
 {% for activity in activity_list %}
   <li>
