@@ -57,6 +57,7 @@ class Member(db.Model):
         self.register_time = 0
         self.lastlogin_time = 0
         self.flag = 0
+        self.setting = ''
 
     def getphotos(self):
         self.photos = self.photo.split('\n')
