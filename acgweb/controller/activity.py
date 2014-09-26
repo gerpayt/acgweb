@@ -170,8 +170,15 @@ def activityopeartion(opeartion, duty_id):
         if ((session['uid'] == duty.member.uid and opeartion in CONST.duty_status_opeartion_selfuser_mapper[duty.status]) or
             (session['uid'] != duty.member.uid and opeartion in CONST.duty_status_opeartion_otheruser_mapper[duty.status]) or
             (session.get('is_arra_monitor') and opeartion in CONST.duty_status_opeartion_monitor_mapper[duty.status])):
-            if ((opeartion != 'approve_apply' and not Duty.query.filter(Duty.id != duty_id, Duty.uid == session['uid'], Duty.aid == duty.aid).count()) or
-                (opeartion == 'approve_apply' and not Duty.query.filter(Duty.id != duty_id, Duty.uid == duty.uid, Duty.aid == duty.aid).count())):
+            # 一个活动一个成员只能有一条值班记录
+            if opeartion in ['activity_appoint', 'approve_apply']:
+                target_uid = duty.uid
+            elif opeartion in ['apply_duty', 'confirm_apply', 'accept_duty', 'cover_duty']:
+                target_uid = session['uid']
+            else:
+                target_uid = ''
+
+            if not Duty.query.filter(Duty.id != duty_id, Duty.uid == target_uid, Duty.aid == duty.aid).count():
                 #print Article.query.filter(Article.title==article_title).statement
                 if request.method == 'POST':
                     reason = request.form['content']
@@ -181,11 +188,21 @@ def activityopeartion(opeartion, duty_id):
                     flash({'type': 'error', 'content': '请填写申请理由。'})
                     return redirect(url_for('activitydetail', activity_id=duty.aid))
 
+                duty.status = CONST.duty_status_opeartion_next[opeartion]
+                duty.appendprocesse(opeartion, reason)
+                db.session.add(duty)
+                db.session.commit()
+
                 if opeartion == 'cover_duty':
                     if Duty.query.filter(Duty.uid == session['uid'], Duty.aid == duty.aid).count():
                         flash({'type': 'danger', 'content': '你在本时间段已经有此活动，请勿重复选班。'})
                         return redirect(url_for('activitydetail', activity_id=duty.aid))
                     else:
+                        new_duty = Duty(aid=duty.aid, uid=session['uid'], status=CONST.DUTY_BEFORE_START, log='')
+                        new_duty.appendprocesse('cover_duty', '')
+                        db.session.add(new_duty)
+                        db.session.commit()
+
                         worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
                         timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
                         venue = venuename_filter(duty.activity.venue)
@@ -210,9 +227,6 @@ def activityopeartion(opeartion, duty_id):
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_COVER_DUTY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
 
-                        new_duty = Duty(aid=duty.aid, uid=session['uid'], status=CONST.DUTY_BEFORE_START, log='')
-                        new_duty.appendprocesse('cover_duty', '')
-                        db.session.add(new_duty)
                 elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
                     worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
                     timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
@@ -283,10 +297,7 @@ def activityopeartion(opeartion, duty_id):
                     #msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                     #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
 
-                duty.status = CONST.duty_status_opeartion_next[opeartion]
-                duty.appendprocesse(opeartion, reason)
-                db.session.add(duty)
-                db.session.commit()
+
                 flash({'type': 'success', 'content': '操作成功！'})
             else:
                 flash({'type': 'danger', 'content': '一个活动只能选一个班。'})
@@ -333,6 +344,19 @@ def activityedit(activity_id=0):
                 abort(403)
             if not activity:
                 activity = Activity()
+
+            activity.title = form.title.data
+            activity.remark = form.remark.data
+            activity.venue = form.venue.data
+            activity.work_start_time = form.work_start_time.data
+            activity.start_time = form.start_time.data
+            activity.end_time = form.end_time.data
+            activity.type = form.type.data
+            activity.status = form.status.data
+            activity.hostname = form.hostname.data
+            db.session.add(activity)
+            db.session.commit()
+
             info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
             if info_modify:
                 dutylist = Duty.query.filter(Duty.aid == activity_id).all()
@@ -362,18 +386,6 @@ def activityedit(activity_id=0):
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_MODIFY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
-
-            activity.title = form.title.data
-            activity.remark = form.remark.data
-            activity.venue = form.venue.data
-            activity.work_start_time = form.work_start_time.data
-            activity.start_time = form.start_time.data
-            activity.end_time = form.end_time.data
-            activity.type = form.type.data
-            activity.status = form.status.data
-            activity.hostname = form.hostname.data
-            db.session.add(activity)
-            db.session.commit()
 
             flash({'type': 'success', 'content': '保存成功！'})
             return redirect('/activitymanage')
@@ -551,6 +563,12 @@ def activitycancel(activity_id):
         sms_content = sms.sms_activity_cancel_tmpl % (worktimestr, venue, title)
 
         for duty in duties:
+            duty.status = CONST.DUTY_ACTIVITY_CANCELED
+            db.session.add(duty)
+        db.session.add(activity)
+        db.session.commit()
+
+        for duty in duties:
             if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
                 if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_CANCEL):
                     msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
@@ -563,10 +581,6 @@ def activitycancel(activity_id):
                 if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_CANCEL):
                     sms.send_sms(duty.member.mobile_num, sms_content)
 
-            duty.status = CONST.DUTY_ACTIVITY_CANCELED
-            db.session.add(duty)
-        db.session.add(activity)
-        db.session.commit()
     else:
         flash({'type': 'danger', 'content': '非法操作，请重试。'})
     return redirect(url_for('activitydetail', activity_id=activity_id))
