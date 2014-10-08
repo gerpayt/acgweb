@@ -20,6 +20,8 @@
   {% endfor %}
 </table>
 
+<a href="{{ url_for('memberexport') }}" class="btn btn-mini btn-success">导出通讯录</a>
+
 {% if page_count > 1 %}
 <div class="pagination pagination-centered">
   <ul>

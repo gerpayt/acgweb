@@ -1,8 +1,9 @@
 # coding: utf-8
 import md5
 import time
+import os
 
-from flask import render_template, json, flash, abort, make_response
+from flask import render_template, json, flash, abort, make_response, send_file
 from acgweb import app, db
 from acgweb.model.member import Member
 from acgweb.form.member import MemberForm
@@ -230,3 +231,21 @@ def memberactas(member_uid):
         session['name'] = '[' + member.name + ']'
     flash({'type': 'success', 'content': '切换成功。'})
     return redirect('/member-' + member_uid)
+
+
+@app.route('/memberexport')
+@login_required
+def memberexport():
+    member_count = Member.query.count()
+    member_list = Member.query.filter(Member.type==1).order_by('convert(name using gb2312) ASC')
+
+    from acgweb.controller.export import export_member
+
+    wb = export_member(member_list)
+    tmp_filename = config.BASE_DIR + 'temp/member.xls'
+    wb.save(tmp_filename)
+    #if config.DEBUG: print tmp_filename
+    response = send_file(tmp_filename, as_attachment=True, attachment_filename='member.xls')
+    os.unlink(tmp_filename)
+    return response
+

@@ -82,3 +82,46 @@ def export_salary(rank_list, starttime, endtime):
             ws.write(i, 4, 1.0 * duty['work_last_time'] / 3600)
             i += 1
     return wb
+
+
+def export_member(member_list):
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet(u'音控组成员通讯录')
+
+    style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
+    #style1 = xlwt.easyxf(num_format_str='D-MMM-YY')
+
+    title = " 音控组成员通讯录 （%s）" % timeformat_filter(int(time.time()), '%Y-%m-%d')
+
+    ws.merge(0, 0, 0, 7)
+    ws.write(0, 0, title, style0)
+    ws.write(1, 0, "学号")
+    ws.write(1, 1, "姓名")
+    ws.write(1, 2, "专业")
+    ws.write(1, 3, "电话")
+    ws.write(1, 4, "短号")
+    ws.write(1, 5, "qq")
+    ws.write(1, 6, "住址")
+    ws.write(1, 7, "备注")
+
+    ws.col(0).set_width(256 * 12)
+    ws.col(1).set_width(256 * 7)
+    ws.col(2).set_width(256 * 9)
+    ws.col(3).set_width(256 * 12)
+    ws.col(4).set_width(256 * 12)
+    ws.col(5).set_width(256 * 12)
+    ws.col(6).set_width(256 * 10)
+    ws.col(7).set_width(256 * 10)
+
+    i = 2
+    for member in member_list:
+        ws.write(i, 0, member.uid)
+        ws.write(i, 1, member.name)
+        ws.write(i, 2, member.school)
+        ws.write(i, 3, member.mobile_num)
+        ws.write(i, 4, member.mobile_short+'('+mobiletypename_filter(member.mobile_type)+')')
+        ws.write(i, 5, member.qqnum)
+        ws.write(i, 6, member.address)
+        i += 1
+
+    return wb
