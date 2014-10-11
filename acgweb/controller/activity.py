@@ -345,6 +345,8 @@ def activityedit(activity_id=0):
             if not activity:
                 activity = Activity()
 
+            info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
+
             activity.title = form.title.data
             activity.remark = form.remark.data
             activity.venue = form.venue.data
@@ -357,7 +359,6 @@ def activityedit(activity_id=0):
             db.session.add(activity)
             db.session.commit()
 
-            info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
             if info_modify:
                 dutylist = Duty.query.filter(Duty.aid == activity_id).all()
 
@@ -562,24 +563,26 @@ def activitycancel(activity_id):
         content = mail.activity_cancel_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
         sms_content = sms.sms_activity_cancel_tmpl % (worktimestr, venue, title)
 
+        notify_duties = []
         for duty in duties:
+            if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
+                notify_duties.append(duty)
             duty.status = CONST.DUTY_ACTIVITY_CANCELED
             db.session.add(duty)
         db.session.add(activity)
         db.session.commit()
 
-        for duty in duties:
-            if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
-                if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_CANCEL):
-                    msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
-                else:
-                    msg_id = 0
-                if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_CANCEL):
-                    mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
-                if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_CANCEL):
-                    pass  # TODO app notify
-                if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_CANCEL):
-                    sms.send_sms(duty.member.mobile_num, sms_content)
+        for duty in notify_duties:
+            if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_CANCEL):
+                msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
+            else:
+                msg_id = 0
+            if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_CANCEL):
+                mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+            if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_CANCEL):
+                pass  # TODO app notify
+            if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_CANCEL):
+                sms.send_sms(duty.member.mobile_num, sms_content)
 
     else:
         flash({'type': 'danger', 'content': '非法操作，请重试。'})
