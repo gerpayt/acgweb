@@ -346,6 +346,20 @@ def activityedit(activity_id=0):
                 activity = Activity()
 
             info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
+            if info_modify:
+                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+                worktimestr_new = timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M")
+                timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
+                timestr_new = timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M")
+                venue = venuename_filter(activity.venue)
+                venue_new = venuename_filter(form.venue.data)
+                title = activity.title
+                title_new = form.title.data
+                remark = activity.remark
+                url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
+                subject = mail.activity_modify_tmpl['subject']
+                content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url, url)
+                sms_content = sms.sms_activity_modify_tmpl % (worktimestr, worktimestr_new, venue, venue_new, title, title_new)
 
             activity.title = form.title.data
             activity.remark = form.remark.data
@@ -362,19 +376,6 @@ def activityedit(activity_id=0):
             if info_modify:
                 dutylist = Duty.query.filter(Duty.aid == activity_id).all()
 
-                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
-                worktimestr_new = timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M")
-                timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
-                timestr_new = timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M")
-                venue = venuename_filter(activity.venue)
-                venue_new = venuename_filter(form.venue.data)
-                title = activity.title
-                title_new = form.title.data
-                remark = activity.remark
-                url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
-                subject = mail.activity_modify_tmpl['subject']
-                content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url, url)
-                sms_content = sms.sms_activity_modify_tmpl % (worktimestr, worktimestr_new, venue, venue_new, title, title_new)
                 for duty in dutylist:
                     if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
                         if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_ACTIVITY_MODIFY):
