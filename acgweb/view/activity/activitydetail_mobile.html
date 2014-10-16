@@ -7,6 +7,8 @@
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
 {% endfor %}
 
+<div class="wrapper-mobile">
+
 <h4>活动信息</h4>
   <p>值班时间: {{ activity.work_start_time|timeformat('%Y年%m月%d日') }} {{ activity.work_start_time|dayname }}
     {{ activity.work_start_time|periodname }} {{ activity.work_start_time|timeformat('%H:%M') }}</p>
@@ -168,7 +170,7 @@
   </div>
   </form>
 </div>
-
+</div>
 
 {% endblock %}
 

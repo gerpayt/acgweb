@@ -11,7 +11,7 @@
     float: left;
     text-align: center;
     border:1px solid #d4d4d4;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 16px;
 }
 .activity-item .activity-content {
@@ -86,6 +86,9 @@
 }
 .container {
     width:100%;
+}
+.wrapper-mobile {
+    padding: 0 15px;
 }
 .navbar-inner{
     padding-left:0px;

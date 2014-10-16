@@ -3,6 +3,8 @@
 
 {% block body %}
 
+<div class="wrapper-mobile">
+
 <form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
 {% for message in get_flashed_messages() %}
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
@@ -120,16 +122,16 @@
 
 <h4>个人简介</h4>
 {{form.introduce(rows="8")}}
-</div>
-</div>
 
-<div class="form-actions">
-  {{ form.csrf_token }}
-  <button type="submit" class="btn btn-primary">保存</button>
-  <a class="btn btn-danger" href="{{url_for('changepassword')}}">更改密码</a>
-</div>
+<hr />
+
+{{ form.csrf_token }}
+<button type="submit" class="btn btn-primary">保存</button>
+<a class="btn btn-danger" href="{{url_for('changepassword')}}">更改密码</a>
 
 </form>
+
+</div>
 
 <!-- Modal -->
 

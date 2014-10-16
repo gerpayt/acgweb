@@ -6,6 +6,8 @@
   <div class="alert alert-{{message.type}}">{{ message.content }}</div>
 {% endfor %}
 
+<div class="wrapper-mobile">
+
 <h4>基本信息</h4>
 <table class="table table-striped">
   <tr><th>姓名</th><td>{{ member.name }}</td></tr>
@@ -50,5 +52,7 @@
         <a class="btn btn-small" href="{{ url_for('memberactas',member_uid=session['ori_uid']) }}">切回{{ session['ori_name'] }}</a>
     {% endif %}
 {% endif %}
+
+</div>
 
 {% endblock %}

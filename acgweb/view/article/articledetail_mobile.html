@@ -1,10 +1,15 @@
 {% extends "layout_mobile.html" %}
 
 {% block body %}
+
+<div class="wrapper-mobile">
+
 <h4>{{ article_detail.title }}</h4>
 <hr />
 <p>
 {{ article_detail.content|safe }}
 </p>
+
+</div>
 
 {% endblock %}

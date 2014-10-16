@@ -3,6 +3,8 @@
 {% set script_list = ['myschedule'] %}
 {% block body %}
 
+<div class="wrapper-mobile">
+
 <form class="form-horizontal" id="form" action="{{request.url}}" method="POST">
 
   <div class="control-group {% if form.classname.errors %} error{% endif %}">
@@ -116,9 +118,9 @@
   <a href="{{ url_for('myschedule') }}" class="btn">取消</a>
   {% if form.id.data %}<a href="{{ url_for('myschedule_delete',schedule_id=form.id.data ) }}" class="btn btn-danger">删除</a>{% endif %}
 
-
-
 </form>
+
+</div>
 
 {% endblock %}
 
