@@ -89,16 +89,19 @@
 }
 .navbar-inner{
     padding-left:0px;
-	padding-right:0px;
-	background-color:#fafafa;
-	border: 0px;
-	border-bottom:1px solid #d4d4d4;
+    padding-right:0px;
+    background-color:#fafafa;
+    border: 0px;
+    border-bottom:1px solid #d4d4d4;
 }
 .navbar .brand {
 padding: 10px 10px 10px;
 margin-left: 0px;
 }
 
+.navbar .navbar-inner-thin .nav>li>a{
+    padding:10px 5px 10px;
+}
 
 .navbar .nav>li>a{
 padding:10px 10px 10px;
@@ -178,7 +181,7 @@ overflow:auto;
 }
 
 .cms-div {
-	border:1px solid #d4d4d4;
+    border:1px solid #d4d4d4;
     -moz-border-radius:3px;  
     -webkit-border-radius:3px;  
     border-radius:3px;      
@@ -187,29 +190,29 @@ overflow:auto;
 
 }
 .cms-div ul {
-	margin: 0 20px 20px;
+    margin: 0 20px 20px;
 }
 
 .cms-div ul li {
-	line-height:30px;
-	list-style: none;
+    line-height:30px;
+    list-style: none;
 }
 .cms-div ul li a, .cms-div ul li a:hover{
-	text-decoration:none;
+    text-decoration:none;
 }
 .cms-div ul li .badge {
-	margin-right:15px;
+    margin-right:15px;
 }
 
 .cms-div ul li .label {
-	margin-top:5px;
+    margin-top:5px;
 }
 
 .cms-div  h4{
 color:#777777;
 font-size: 16px;
 font-weight:normal;
-	border-bottom:1px solid #d4d4d4;
+    border-bottom:1px solid #d4d4d4;
 min-height:26px;padding-left:20px;padding-right:20px;
 background-color:#fafafa;background-image:-moz-linear-gradient(top, #ffffff, #f2f2f2);
 background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
@@ -226,19 +229,19 @@ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', end
 
 
 #editor {
-	max-height: 250px;
-	height: 250px;
-	background-color: white;
-	border-collapse: separate; 
-	border: 1px solid rgb(204, 204, 204); 
-	padding: 4px; 
-	box-sizing: content-box; 
-	-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset; 
-	box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
-	border-top-right-radius: 3px; border-bottom-right-radius: 3px;
-	border-bottom-left-radius: 3px; border-top-left-radius: 3px;
-	overflow: scroll;
-	outline: none;
+    max-height: 250px;
+    height: 250px;
+    background-color: white;
+    border-collapse: separate;
+    border: 1px solid rgb(204, 204, 204);
+    padding: 4px;
+    box-sizing: content-box;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+    border-top-right-radius: 3px; border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px; border-top-left-radius: 3px;
+    overflow: scroll;
+    outline: none;
 }
 
 

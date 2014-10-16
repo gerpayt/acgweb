@@ -37,13 +37,18 @@
       <li><a href="{{url_for('mymessage')}}"><span class="badge badge-info">{{session.new_message}}</span> 新消息</a></li>
     </ul>
     {% endif %}
+    {% if session['is_arra_monitor'] and session['ori_uid'] %}
+    <ul class="nav pull-right">
+      <li><a href="{{ url_for('memberactas',member_uid=session['ori_uid']) }}">切回{{ session['ori_name'] }}</a></li>
+    </ul>
+    {% endif %}
   </div>
 </div>
 {% endmacro %}
 
 {% macro navbar_mobile() %}
 <div class="navbar">
-  <div class="navbar-inner">
+  <div class="navbar-inner navbar-inner-thin">
     <a class="brand" href="/">音控组管理系统</a>
     <ul class="nav pull-right">
       {% if session.name %}
@@ -66,6 +71,11 @@
     {% if session.new_message %}
     <ul class="nav pull-right">
       <li><a href="{{url_for('mymessage')}}"><span class="badge badge-info">{{session.new_message}}</span> </a></li>
+    </ul>
+    {% endif %}
+    {% if session['is_arra_monitor'] and session['ori_uid'] %}
+    <ul class="nav pull-right">
+      <li><a href="{{ url_for('memberactas',member_uid=session['ori_uid']) }}">{{ session['ori_name'] }} </a></li>
     </ul>
     {% endif %}
   </div>
