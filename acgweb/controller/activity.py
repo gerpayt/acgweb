@@ -214,7 +214,7 @@ def activityopeartion(opeartion, duty_id):
 
                         subject = mail.cover_duty_tmpl['subject']
                         content = mail.cover_duty_tmpl['content'] % (member_url, member_name, worktimestr, timestr, venue, title, remark, url, url)
-                        sms_content = sms.sms_cover_duty_tmpl
+                        sms_content = sms.sms_cover_duty_tmpl % (member_name, worktimestr, venue, title)
                         if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_COVER_DUTY):
                             msg_id = mail.send_message(duty.uid, session['uid'], subject, content, 2)
                         else:
