@@ -7,10 +7,10 @@
     background-color:#f9f9f9;
 }
 .activity-item .activity-time {
-    width:15%;
+    width:16%;
     float: left;
     text-align: center;
-    border:1px solid #d4d4d4;
+    border-right: 1px solid #d4d4d4;
     font-size: 14px;
     line-height: 16px;
 }
