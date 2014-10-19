@@ -162,9 +162,9 @@ activity_cancel_tmpl = {'subject': "活动取消", 'content': '''
 activity_modify_tmpl = {'subject': "活动信息变化", 'content': '''
 你值班的活动信息发生了变化<br />
 <strong>值班时间 %s 修改为 %s </strong> <br />
-活动时间 %s 修改为 %s <br />
-活动地点 %s 修改为 %s <br />
-活动内容 %s 修改为 %s <br />
+活动时间 %s <br />
+活动地点 %s <br />
+活动内容 %s <br />
 活动备注 %s <br />
 请点击这个链接查看详细内容 <br />
 <a href="%s">%s</a>
@@ -247,10 +247,10 @@ decline_duty_tmpl = {'subject': "拒绝排班", 'content': '''
 
 notice_activity_modify_tmpl = {'subject': "有一个活动信息变化", 'content': '''
 有一个活动信息发生了变化<br />
-活动时间 %s 修改为 %s <br />
-活动地点 %s 修改为 %s <br />
-活动内容 ‘%s’ 修改为 ‘%s’ <br />
-活动备注 ‘%s’ 修改为 ‘%s’ <br />
+活动时间 %s <br />
+活动地点 %s <br />
+活动内容 %s <br />
+活动备注 %s <br />
 请点击这个链接查看详细内容 <br />
 <a href="%s">%s</a> <br />
 请手动更改活动信息 <br />

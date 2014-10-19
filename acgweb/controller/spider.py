@@ -73,18 +73,27 @@ def activity_spider():
                 #db.session.execute(sql)
                 #db.session.commit()
                 log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid))
-                timestr_old = timeformat_filter(d['time'], "%Y-%m-%d %H:%M")
-                timestr_new = timeformat_filter(start_time, "%Y-%m-%d %H:%M")
-                venue_old = venuename_filter(d['sid'])
-                venue_new = venuename_filter(venue)
-                title_old = d['title']
-                title_new = title
-                remark_old = d['remark']
-                remark_new = remark
+                if d['time'] == start_time:
+                    timestr_modify = u'不变'
+                else:
+                    timestr_modify = u'%s 变为 %s' % (timeformat_filter(d['time'], "%Y-%m-%d %H:%M"), timeformat_filter(start_time, "%Y-%m-%d %H:%M"))
+                if d['sid'] == venue:
+                    venue_modify = u'不变'
+                else:
+                    venue_modify = u'%s 变为 %s' % (venuename_filter(d['sid']), venuename_filter(venue))
+                if d['title'] == title:
+                    title_modify = u'不变'
+                else:
+                    title_modify = u'%s 变为 %s' % (d['title'], title)
+                if d['remark'] == remark:
+                    remark_modify = u'不变'
+                else:
+                    remark_modify = u'%s 变为 %s' % (d['remark'], remark)
+
                 activity = Activity.query.get(d['id'])
                 url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
                 #subject = mail.notice_activity_modify_tmpl['subject']
-                content = mail.notice_activity_modify_tmpl['content'] % (timestr_old, timestr_new, venue_old, venue_new, title_old, title_new, remark_old, remark_new, url, url)
+                content = mail.notice_activity_modify_tmpl['content'] % (timestr_modify, venue_modify, title_modify, remark_modify, url, url)
                 warnings.append(content)
                 #duty_list = Duty.query.filter(Duty.aid==d['id']).all()
 

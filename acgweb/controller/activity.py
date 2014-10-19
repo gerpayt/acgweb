@@ -347,19 +347,27 @@ def activityedit(activity_id=0):
 
             info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
             if info_modify:
-                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
-                worktimestr_new = timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M")
-                timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
-                timestr_new = timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M")
-                venue = venuename_filter(activity.venue)
-                venue_new = venuename_filter(form.venue.data)
-                title = activity.title
-                title_new = form.title.data
+                if activity.work_start_time == form.work_start_time.data:
+                    worktimestr_modify = u'不变'
+                else:
+                    worktimestr_modify = u'%s 变为 %s' % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M"))
+                if activity.start_time == form.start_time.data:
+                    timestr_modify = u'不变'
+                else:
+                    timestr_modify = u'%s 变为 %s' % (timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M"))
+                if activity.venue == form.venue.data:
+                    venue_modify = u'不变'
+                else:
+                    venue_modify = u'%s 变为 %s' % (venuename_filter(activity.venue), venuename_filter(form.venue.data))
+                if activity.title == form.title.data:
+                    title_modify = u'不变'
+                else:
+                    title_modify = u'%s 变为 %s' % (activity.title, form.title.data)
                 remark = activity.remark
                 url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
                 subject = mail.activity_modify_tmpl['subject']
-                content = mail.activity_modify_tmpl['content'] % (worktimestr, worktimestr_new, timestr, timestr_new, venue, venue_new, title, title_new, remark, url, url)
-                sms_content = sms.sms_activity_modify_tmpl % (worktimestr, worktimestr_new, venue, venue_new, title, title_new)
+                content = mail.activity_modify_tmpl['content'] % (worktimestr_modify, timestr_modify, venue_modify, title_modify, remark, url, url)
+                sms_content = sms.sms_activity_modify_tmpl % (worktimestr_modify, venue_modify, title_modify)
 
             activity.title = form.title.data
             activity.remark = form.remark.data

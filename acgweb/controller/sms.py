@@ -72,7 +72,7 @@ sms_decline_apply_tmpl = '''【音控组】班长拒绝值班 %s [%s] 活动:%s'
 
 sms_decline_duty_tmpl = '''【音控组】%s 拒绝排班 %s [%s] 活动:%s'''
 
-sms_activity_modify_tmpl = '''【音控组】活动信息变化 时间:%s->%s 地点:%s->%s 活动:%s->%s'''
+sms_activity_modify_tmpl = '''【音控组】活动信息变化 时间:%s 地点:%s 活动:%s'''
 
 sms_activity_cancel_tmpl = '''【音控组】活动取消 %s [%s] 活动:%s'''
 
