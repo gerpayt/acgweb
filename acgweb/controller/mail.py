@@ -161,7 +161,7 @@ activity_cancel_tmpl = {'subject': "活动取消", 'content': '''
 
 activity_modify_tmpl = {'subject': "活动信息变化", 'content': '''
 你值班的活动信息发生了变化<br />
-<strong>值班时间 %s 修改为 %s </strong> <br />
+<strong>值班时间 %s </strong> <br />
 活动时间 %s <br />
 活动地点 %s <br />
 活动内容 %s <br />
