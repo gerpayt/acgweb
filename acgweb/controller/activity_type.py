@@ -1,21 +1,11 @@
 # coding: utf-8
 
-import time
-
 from flask import render_template, json, flash, jsonify, abort, make_response
 from acgweb import db
-from sqlalchemy import or_
 from acgweb.model.activity import Activity
-from acgweb.model.duty import Duty
-from acgweb.model.schedule import Schedule
-from acgweb.model.member import Member
-from acgweb.form.activity import ActivityForm
 from acgweb import config
 from template_filter import *
 from decorated_function import *
-from acgweb.controller import mail
-from acgweb.controller import sms
-import notify
 
 import jieba
 
