@@ -127,3 +127,13 @@ def test():
             correct += 1
 
     print correct * 1.0 / count
+
+
+def classify():
+    activity_list = Activity.query.filter(Activity.type == CONST.ACTIVITY_UNKNOWN)
+    for activity in activity_list:
+        type = activitytypeclassify(activity.title)
+        activity.type = type
+        print "%s\t%s" % (activity.title, type)
+        db.session.add(activity)
+        db.session.commit()
