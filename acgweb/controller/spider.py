@@ -10,7 +10,8 @@ from acgweb import config
 from acgweb import app, db
 from acgweb.controller import mail
 
-#from acttypeclassify import acttype
+from acgweb.controller.activity_type import activitytypeclassify
+
 import time
 import notify
 
@@ -43,8 +44,7 @@ def activity_spider():
         venue = sid2ven[act['sid']]
         start_time = act['time']
         work_start_time = int(act['time']) - 3600
-        #type = acttype(title)
-        type = 0
+        type = activitytypeclassify(title)
         #if exist
 
         sql = 'select id,venue,title,remark,work_start_time,start_time from activity where oid = "%s";' % oid

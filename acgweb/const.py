@@ -46,8 +46,8 @@ dutylogtypename = {'equip': '设备记录', 'disc': '报告纪律班长', 'tech'
 venuename = ['未知', '305', '513', '东四']
 venuecolor = ['inverse', 'warning', 'important', 'info']
 
-activitytypename = ['未知', '招聘', '晚会', '其他']
-activitytypecolor = ['inverse', 'info', 'important', 'inverse']
+activitytypename = ['未知', '招聘', '晚会', '会议' ,'其他']
+activitytypecolor = ['inverse', 'info', 'important', 'warning', 'inverse']
 
 ACTIVITY_UNKNOWN = 0
 ACTIVITY_SCHEDULING = 1

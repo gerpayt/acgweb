@@ -16,3 +16,4 @@ import my
 import notify
 
 import error
+import activity_type

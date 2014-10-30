@@ -3,3 +3,5 @@ Flask-SQLAlchemy
 Flask-WTF
 MySQL-python==1.2.3
 xlwt
+jieba
+
