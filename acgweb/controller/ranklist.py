@@ -17,8 +17,9 @@ def ranklist():
     rank_list = {}
     struct_now = time.localtime()
     month_start = int(time.mktime((struct_now.tm_year, struct_now.tm_mon, 1, 0, 0, 0, 0, 0, 0)))
-    week_start = int(time.mktime((struct_now.tm_year, struct_now.tm_mon, struct_now.tm_mday, 0, 0, 0, 0, 0, 0))) - 86400 * (1+struct_now.tm_wday)
-    # print month_start, week_start
+    weekday_fix = 1+struct_now.tm_wday if struct_now.tm_wday != 6 else 0
+    week_start = int(time.mktime((struct_now.tm_year, struct_now.tm_mon, struct_now.tm_mday, 0, 0, 0, 0, 0, 0))) - 86400 * weekday_fix
+    # print month_start, week_start, struct_now.tm_wday, weekday_fix
     period_list = [{'name': 'all', 'title': '总排行', 'time': 0, 'notice': u'本系统所有值班时间之和'},
                    {'name': 'semester', 'title': '学期排行', 'time': config.SEMESTER_BASE, 'notice': u'本学期值班时间之和间'},
                    {'name': 'month', 'title': '月排行', 'time': month_start, 'notice': u'自本月1日以来值班时间之和'},
