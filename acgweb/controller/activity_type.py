@@ -121,13 +121,13 @@ def test():
 
 @app.route('/classify_activity')
 @login_required
-def classify():
+def classify_activity():
     activity_list = Activity.query.filter(Activity.type == CONST.ACTIVITY_UNKNOWN)
     for activity in activity_list:
         type = activitytypeclassify(activity.title)
         activity.type = type
         print "%s\t%s" % (activity.title, type)
-        flash({'type': 'success', 'content': '%s : %s' % (activity.title, CONST.activitystatusname[type])})
+        flash({'type': 'success', 'content': '%s : %s' % (activity.title, CONST.activitytypename[type])})
         db.session.add(activity)
         db.session.commit()
-    return redirect(url_for('manage'))
+    return redirect(url_for('activitymanage'))
