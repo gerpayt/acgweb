@@ -90,4 +90,7 @@ def partner():
 
         partner_list.append({'members': member_list, 'count': item[1]})
 
-    return render_template('other/partner.html', partner_list=partner_list)
+    if viewtype() == 1:
+        return render_template('other/partner_mobile.html', partner_list=partner_list)
+    else:
+        return render_template('other/partner.html', partner_list=partner_list)
