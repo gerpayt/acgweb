@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="row cms-row">
+<div class="span4 offset4">
+  <div class="cms-div">
+    <h4>一起值班次数最多的小伙伴们
+        <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title=""></span>
+    </h4>
+    <ul class="long-text">
+    {% for partner in partner_list %}
+    <li>
+      {% for member in partner.members %}
+      {% if member.sex==1 %}
+        <span class="label label-info"><span class="icon-user"></span></span>
+      {% elif member.sex==2 %}
+        <span class="label label-important"><span class="icon-user"></span></span>
+      {% else %}
+        <span class="label"><span class="icon-question-sign"></span></span>
+      {% endif %}
+
+      <a class="fw-name" href="{{ url_for('memberdetail',member_uid=member.uid) }}"
+         {% if session['uid'] == member.uid %} class="text-warning" {% endif %}
+        >{{member.name}}</a>
+      {% endfor %}
+      <span class="label label-inverse pull-right">{{partner.count}} 次</span>
+    </li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+</div>
+
+{% endblock %}

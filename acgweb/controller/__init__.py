@@ -17,3 +17,5 @@ import notify
 
 import error
 import activity_type
+
+import partner
