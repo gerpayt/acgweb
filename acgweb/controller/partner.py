@@ -16,8 +16,8 @@ from decorated_function import *
 def partner():
     support1 = 1
     support2 = 3
-    struct_now = time.time()
-    from_time = time.time() - 86400 * 180
+
+    from_time = 0
     sql = "select count(1) as cnt, group_concat(d.uid) as uids, a.*, d.* FROM activity as a left join duty as d on d.aid = a.id where a.start_time >= %d and d.status in (%s) group by a.id order by d.uid asc"\
           % (from_time, ','.join([str(CONST.DUTY_ACTIVITY_ENDED), str(CONST.DUTY_ACTIVITY_ONGOING)]))
 
