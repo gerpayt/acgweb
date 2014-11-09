@@ -347,11 +347,11 @@ def activityedit(activity_id=0):
 
             info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
             if info_modify:
-                if activity.work_start_time == form.work_start_time.data:
+                if int(activity.work_start_time) == int(form.work_start_time.data):
                     worktimestr_modify = u'不变'
                 else:
                     worktimestr_modify = u'%s 变为 %s' % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M"))
-                if activity.start_time == form.start_time.data:
+                if int(activity.start_time) == int(form.start_time.data):
                     timestr_modify = u'不变'
                 else:
                     timestr_modify = u'%s 变为 %s' % (timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M"))
