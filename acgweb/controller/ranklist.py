@@ -34,4 +34,7 @@ def ranklist():
             ranks.append(d)
         rank_list[period['name']] = ranks
 
-    return render_template('other/ranklist.html', rank_list=rank_list, period_list=period_list)
+    if viewtype() == 1:
+        return render_template('other/ranklist_mobile.html', rank_list=rank_list, period_list=period_list)
+    else:
+        return render_template('other/ranklist.html', rank_list=rank_list, period_list=period_list)

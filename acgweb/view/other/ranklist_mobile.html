@@ -1,0 +1,31 @@
+{% extends "layout_mobile.html" %}
+
+
+{% block body %}
+<div class="wrapper-mobile">
+{% for period in period_list %}
+<div class="cms-row">
+  <div class="cms-div">
+    <h4>{{ period.title }}
+        <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="{{ period.notice }}"></span>
+    </h4>
+    <ul class="long-text">
+    {% for rank in rank_list[period.name] %}
+    <li>
+      <span class="badge badge-warning">{{rank.rank}}</span>
+      <a href="{{ url_for('memberdetail',member_uid=rank.uid) }}"
+         {% if session['uid'] == rank.uid %} class="text-warning" {% endif %}
+        >{{rank.name}}</a>
+      <span class="label label-inverse pull-right">{{rank.time/3600}} 小时</span>
+    </li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endfor %}
+
+
+<div class="alert alert-warning">对以上同学对音控组的付出表示衷心的感谢。</div>
+
+</div>
+{% endblock %}
