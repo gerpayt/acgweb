@@ -73,7 +73,7 @@ def activity_spider():
                 #db.session.execute(sql)
                 #db.session.commit()
                 log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid))
-                if d['time'] == start_time:
+                if int(d['time']) == int(start_time):
                     timestr_modify = u'不变'
                 else:
                     timestr_modify = u'%s 变为 %s' % (timeformat_filter(d['time'], "%Y-%m-%d %H:%M"), timeformat_filter(start_time, "%Y-%m-%d %H:%M"))
