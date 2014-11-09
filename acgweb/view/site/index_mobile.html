@@ -2,30 +2,32 @@
 
 
 {% block body %}
-
+<div class="wrapper-mobile">
+<div class="cms-row">
 <div class="cms-div">
-<h4>最新文章</h4>
+<h4>最新文章 <small class="pull-right"><a href="{{url_for('articlelist')}}">查看更多</a></small></h4>
 <ul class="long-text">
 {% for article in article_list %}
   <li><span class="label label-info">{{article.cate_id|categoryname}}</span> <a href="{{url_for('articledetail',article_title=article.title)}}">{{article.title}}</a></li>
 {% endfor %}
 </ul>
 </div>
+</div>
 
-
-
+<div class="cms-row">
 <div class="cms-div">
-<h4>本月值班排名</h4>
+<h4>本月值班排名 <small class="pull-right"><a href="{{url_for('ranklist')}}">查看更多</a></small></h4>
 <ul>
   {% for rank in rank_list %}
   <li><span class="badge badge-warning">{{rank.rank}}</span> <a href="{{ url_for('memberdetail',member_uid=rank.uid) }}">{{rank.name}}</a><span class="label label-inverse pull-right">{{rank.time/3600}} 小时</span></li>
   {% endfor %}
 </ul>
 </div>
+</div>
 
-
+<div class="cms-row">
 <div class="cms-div">
-<h4>我的活动</h4>
+<h4>我的活动 <small class="pull-right"><a href="{{url_for('myactivity')}}">查看更多</a></small></h4>
 <ul class="long-text">
   {% if duty_list.count() %}
   {% for duty in duty_list %}
@@ -40,10 +42,11 @@
   {% endif %}
 </ul>
 </div>
+</div>
 
-
+<div class="cms-row">
 <div class="cms-div">
-<h4>近期活动</h4>
+<h4>近期活动 <small class="pull-right"><a href="{{url_for('activitylist')}}">查看更多</a></small></h4>
 <ul class="longtext">
 {% for activity in activity_list %}
   <li><span class="label label-{{ activity.venue|venuecolor }}">{{activity.venue|venuename}}</span> {{activity.start_time|timeformat('%Y年%m月%d日')}}
@@ -52,7 +55,8 @@
 {% endfor %}
 </ul>
 </div>
+</div>
 
-
+</div>
 
 {% endblock %}
