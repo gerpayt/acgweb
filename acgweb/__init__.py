@@ -17,7 +17,7 @@ app.config.from_pyfile('config.py')
 # SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://%s:%s@%s/%s' % (
     config.DB_USER, config.DB_PASSWORD, config.DB_HOST, config.DB_NAME)
-app.config['SQLALCHEMY_POOL_RECYCLE'] = 5
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 500
 db = SQLAlchemy(app)
 
 file_handler = RotatingFileHandler('./acgweb/log/error.log', 'a', 1 * 1024 * 1024, 10)
