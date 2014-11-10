@@ -74,22 +74,22 @@ def activity_spider():
                 #db.session.execute(sql)
                 #db.session.commit()
                 log.append('Same record exists but modified id: %s oid:%s.' % (d['id'], oid))
-                if d['time'] == start_time:
-                    timestr_modify = u'不变'
+                if int(d['time']) == int(start_time):
+                    timestr_modify = u'%s 不变' % timeformat_filter(d['time'], "%Y-%m-%d %H:%M")
                 else:
-                    timestr_modify = u'%s 变为 %s' % (timeformat_filter(d['time'], "%Y-%m-%d %H:%M"), timeformat_filter(start_time, "%Y-%m-%d %H:%M"))
+                    timestr_modify = u'<strong>%s 变为 %s</strong>' % (timeformat_filter(d['time'], "%Y-%m-%d %H:%M"), timeformat_filter(start_time, "%Y-%m-%d %H:%M"))
                 if d['sid'] == venue:
-                    venue_modify = u'不变'
+                    venue_modify = u'%s 不变' % venuename_filter(d['sid'])
                 else:
-                    venue_modify = u'%s 变为 %s' % (venuename_filter(d['sid']), venuename_filter(venue))
+                    venue_modify = u'<strong>%s 变为 %s</strong>' % (venuename_filter(d['sid']), venuename_filter(venue))
                 if d['title'] == title:
-                    title_modify = u'不变'
+                    title_modify = u'%s 不变' % d['title']
                 else:
-                    title_modify = u'%s 变为 %s' % (d['title'], title)
+                    title_modify = u'<strong>%s 变为 %s</strong>' % (d['title'], title)
                 if d['remark'] == remark:
-                    remark_modify = u'不变'
+                    remark_modify = u'%s 不变' % d['remark']
                 else:
-                    remark_modify = u'%s 变为 %s' % (d['remark'], remark)
+                    remark_modify = u'<strong>%s 变为 %s</strong>' % (d['remark'], remark)
 
                 activity = Activity.query.get(d['id'])
                 url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
