@@ -350,19 +350,19 @@ def activityedit(activity_id=0):
                 if int(activity.work_start_time) == int(form.work_start_time.data):
                     worktimestr_modify = u'%s 不变' % timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
                 else:
-                    worktimestr_modify = u'%s 变为 %s' % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M"))
+                    worktimestr_modify = u'<strong>%s 变为 %s</strong>' % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M"))
                 if int(activity.start_time) == int(form.start_time.data):
                     timestr_modify = u'%s 不变' % timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
                 else:
-                    timestr_modify = u'%s 变为 %s' % (timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M"))
+                    timestr_modify = u'<strong>%s 变为 %s</strong>' % (timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.start_time.data, "%Y-%m-%d %H:%M"))
                 if activity.venue == form.venue.data:
                     venue_modify = u'%s 不变' % venuename_filter(activity.venue)
                 else:
-                    venue_modify = u'%s 变为 %s' % (venuename_filter(activity.venue), venuename_filter(form.venue.data))
+                    venue_modify = u'<strong>%s 变为 %s</strong>' % (venuename_filter(activity.venue), venuename_filter(form.venue.data))
                 if activity.title == form.title.data:
                     title_modify = u'%s 不变' % activity.title
                 else:
-                    title_modify = u'%s 变为 %s' % (activity.title, form.title.data)
+                    title_modify = u'<strong>%s 变为 %s</strong>' % (activity.title, form.title.data)
                 remark = activity.remark
                 url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
                 subject = mail.activity_modify_tmpl['subject']
