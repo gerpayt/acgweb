@@ -44,7 +44,8 @@ def activity_spider():
         venue = sid2ven[act['sid']]
         start_time = act['time']
         work_start_time = int(act['time']) - 3600
-        type = activitytypeclassify(title)
+        # type = activitytypeclassify(title)
+        type = 0
         #if exist
 
         sql = 'select id,venue,title,remark,work_start_time,start_time from activity where oid = "%s";' % oid
