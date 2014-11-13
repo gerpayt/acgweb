@@ -39,6 +39,15 @@
 </div>
 
 <div class="row cms-row">
+  <div class="span12">
+    <a href="{{ url_for('partner') }}" class="btn">共同值班的小伙伴们统计</a>
+    <a href="{{ url_for('duty_stat') }}" class="btn">音控员值班情况统计</a>
+    <a href="{{ url_for('decline_reason') }}" class="btn">音控员拒绝值班理由统计</a>
+    <a href="{{ url_for('operation_interval') }}" class="btn">音控员确认操作时间统计</a>
+  </div>
+</div>
+
+<div class="row cms-row">
 <div class="span4">
 <div class="cms-div">
 <h4>我的活动 <small class="pull-right"><a href="{{url_for('myactivity')}}">查看更多</a></small></h4>
@@ -66,7 +75,7 @@
   <li>
     <span class="label label-{{ activity.venue|venuecolor }}">{{activity.venue|venuename}}</span>
     {{activity.start_time|timeformat('%Y年%m月%d日')}} {{activity.start_time|dayname()}} {{activity.start_time|timeformat('%H:%M')}}
-    <a href="{{url_for('activitydetail',activity_id=activity.id)}}">{{activity.title}}</a>
+    <a href="{{url_for('activitydetail', activity_id=activity.id)}}">{{activity.title}}</a>
   </li>
 {% endfor %}
 </ul>
