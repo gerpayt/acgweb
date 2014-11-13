@@ -77,11 +77,11 @@
 
 <hr />
 
-<h4>本学期值班记录</h4>
-{% if member.duties %}
+<h4>本月值班记录</h4>
+{% if duty_list %}
 <table class="table table-striped">
   <tr><th width='80'>日期</th><th width='90'>值班时间</th><th width='50'>时长</th><th width='30'>地点</th><th>活动</th><th>状态</th><th>记录</th></tr>
-  {% for duty in member.duties %}{% if duty.is_success() %}
+  {% for duty in duty_list %}{% if duty.is_success() %}
   <tr><td>{{ duty.activity.work_start_time|timeformat('%Y-%m-%d') }}</td>
       <td>{{ duty.activity.work_start_time|timeformat('%H:%M') }} - {% if duty.activity.end_time %}{{ duty.activity.end_time|timeformat('%H:%M') }}{% else %} ? {% endif %}</td>
       <td>{% if duty.activity.work_last_time() != 0.0 %}{{ duty.activity.work_last_time() }}{% endif %}</td>

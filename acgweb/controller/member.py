@@ -5,6 +5,8 @@ import os
 
 from flask import render_template, json, flash, abort, make_response, send_file
 from acgweb import app, db
+from acgweb.model.activity import Activity
+from acgweb.model.duty import Duty
 from acgweb.model.member import Member
 from acgweb.form.member import MemberForm
 from decorated_function import *
@@ -92,6 +94,9 @@ def memberdetail(member_uid):
     startstr = time.strftime("%Y-%m-%d", time.localtime(weekstart))
     endstr = time.strftime("%Y-%m-%d", time.localtime(weekstart + 7 * 86400))
 
+    duty_list = Duty.query.join(Activity).filter(Duty.uid == member_uid, Activity.start_time >= int(time.time())-30*86400).\
+        order_by(Activity.start_time.desc())
+
     try:
         fp = open(config.BASE_DIR + 'cache/st_%s.log' % member_uid, 'r')
     except:
@@ -108,7 +113,8 @@ def memberdetail(member_uid):
     if viewtype() == 1:
         return render_template('member/memberdetail_mobile.html', member=member)
     else:
-        return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table, weekstart=weekstart, weeknum=weeknum)
+        return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table,
+                               weekstart=weekstart, weeknum=weeknum, duty_list=duty_list)
 
 
 @app.route('/membermanage-p<int:pagenum>')
