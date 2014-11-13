@@ -17,7 +17,7 @@ def myactivity(pagenum=1):
     """Page: all activitylist"""
     # TODO status!=0
     duty_count = Duty.query.filter(Duty.uid == session[u'uid']).count()
-    duty_list = Duty.query.filter(Duty.uid == session[u'uid']).order_by('activity_1_start_time ASC').limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
+    duty_list = Duty.query.filter(Duty.uid == session[u'uid']).order_by('activity_1_start_time DESC').limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
     if viewtype() == 1:
         return render_template('my/myactivity_mobile.html',
             duty_list=duty_list,
