@@ -8,10 +8,11 @@
 </div>
 
 <table class="table table-striped">
-  <tr><th width='30%'>活动</th><th>音控员</th><th>操作间隔</th><th width='50%'>原因</th></tr>
+  <tr><th width='25%'>活动</th><th>音控员</th><th>操作时间</th><th>操作间隔</th><th width='40%'>原因</th></tr>
   {% for item in decline_duty_list %}
   <tr><td><a href="{{ url_for('activitydetail',activity_id=item.activity.id) }}">{{ item.activity.title }}</a></td>
   <td><a href="{{ url_for('memberdetail',member_uid=item.member.uid) }}">{{ item.member.name }}</a></td>
+  <td>{{ item.time | timeformat('%Y-%m-%d %H:%M:%S') }}</td>
   <td><span class="label label-{{ item.interval | operationintervalcolor }}">{{ item.interval | intervaltime }}</span></td>
   <td>{{ item.content }}</td>
   </tr>
