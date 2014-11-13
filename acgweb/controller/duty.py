@@ -124,8 +124,9 @@ def dutydelete(duty_id):
 def duty_stat():
     member_list = {}
 
+    end_time = time.time()
     start_time = time.time() - 30 * 86400
-    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= start_time).\
+    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= start_time, Activity.start_time < end_time).\
         order_by(Activity.start_time.desc())
     for duty in duty_list:
         activity_appoint_time = 0
@@ -219,8 +220,9 @@ def duty_stat():
 def decline_reason():
     decline_duty_list = []
 
+    end_time = time.time()
     start_time = time.time() - 30 * 86400
-    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= start_time).\
+    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= start_time, Activity.start_time < end_time).\
         order_by(Activity.start_time.desc())
     for duty in duty_list:
         activity_appoint_time = 0
@@ -242,8 +244,9 @@ def decline_reason():
 def operation_interval():
     operation_list = []
 
+    end_time = time.time()
     start_time = time.time() - 30 * 86400
-    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= start_time).\
+    duty_list = Duty.query.join(Activity).filter(Activity.start_time >= start_time, Activity.start_time < end_time).\
         order_by(Activity.start_time.desc())
     for duty in duty_list:
         activity_appoint_time = 0
