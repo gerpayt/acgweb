@@ -199,7 +199,7 @@ def activityoperation(operation, duty_id):
                         return redirect(url_for('activitydetail', activity_id=duty.aid))
                     else:
                         new_duty = Duty(aid=duty.aid, uid=session['uid'], status=CONST.DUTY_BEFORE_START, log='')
-                        new_duty.appendprocesse('cover_duty', '')
+                        new_duty.appendprocesse('cover_duty', 'From: %s:%s' % (session['uid'], session['name']))
                         db.session.add(new_duty)
                         db.session.commit()
 
