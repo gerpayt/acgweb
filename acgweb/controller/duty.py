@@ -201,10 +201,13 @@ def duty_stat():
         member_list[member]['activity_appoint']['total'] = sum(member_list[member]['activity_appoint'].values())
         member_list[member]['activity_term']['total'] = sum(member_list[member]['activity_term'].values())
 
-        member_list[member]['operation_interval_average'] = sum(member_list[member]['operation_interval']) /\
-                                                            len(member_list[member]['operation_interval'])
+        #member_list[member]['operation_interval_average'] = sum(member_list[member]['operation_interval']) /\
+        #                                                    len(member_list[member]['operation_interval'])
 
-        member_list[member]['operation_interval_middle'] = sorted(member_list[member]['operation_interval'])[len(member_list[member]['operation_interval'])/2]
+        if len(member_list[member]['operation_interval']) == 0:
+            member_list[member]['operation_interval_middle'] = 0
+        else:
+            member_list[member]['operation_interval_middle'] = sorted(member_list[member]['operation_interval'])[len(member_list[member]['operation_interval'])/2]
 
     member_list = sorted(member_list.values(), key=lambda e: e['activity_source']['total'], reverse=True)
 
