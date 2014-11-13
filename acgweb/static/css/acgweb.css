@@ -205,3 +205,16 @@ margin-left:7px;
     display: inline-block;
     text-align: center;
 }
+
+.progress {
+    margin-bottom: 0;
+}
+
+.bar.bar-default {
+    background-color: #aaaaaa;
+    background-image: -moz-linear-gradient(top, #aaaaaa, #888888);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#aaaaaa), to(#888888));
+    background-image: -webkit-linear-gradient(top, #aaaaaa, #888888);
+    background-image: -o-linear-gradient(top, #aaaaaa, #888888);
+    background-image: linear-gradient(to bottom, #aaaaaa, #888888);
+}
