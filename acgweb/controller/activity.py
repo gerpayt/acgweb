@@ -162,18 +162,18 @@ def activitydetailapi(activity_id):
             return jsonify(result='err', msg='非法操作，请重试。')
 
 
-@app.route('/activityopeartion-<opeartion>-<int:duty_id>', methods=['GET', 'POST'])
+@app.route('/activityoperation-<operation>-<int:duty_id>', methods=['GET', 'POST'])
 @login_required
-def activityopeartion(opeartion, duty_id):
+def activityoperation(operation, duty_id):
     duty = Duty.query.get_or_404(duty_id)
     if duty.activity.status == CONST.ACTIVITY_SCHEDULING:
-        if ((session['uid'] == duty.member.uid and opeartion in CONST.duty_status_opeartion_selfuser_mapper[duty.status]) or
-            (session['uid'] != duty.member.uid and opeartion in CONST.duty_status_opeartion_otheruser_mapper[duty.status]) or
-            (session.get('is_arra_monitor') and opeartion in CONST.duty_status_opeartion_monitor_mapper[duty.status])):
+        if ((session['uid'] == duty.member.uid and operation in CONST.duty_status_operation_selfuser_mapper[duty.status]) or
+            (session['uid'] != duty.member.uid and operation in CONST.duty_status_operation_otheruser_mapper[duty.status]) or
+            (session.get('is_arra_monitor') and operation in CONST.duty_status_operation_monitor_mapper[duty.status])):
             # 一个活动一个成员只能有一条值班记录
-            if opeartion in ['activity_appoint', 'approve_apply']:
+            if operation in ['activity_appoint', 'approve_apply']:
                 target_uid = duty.uid
-            elif opeartion in ['apply_duty', 'confirm_apply', 'accept_duty', 'cover_duty']:
+            elif operation in ['apply_duty', 'confirm_apply', 'accept_duty', 'cover_duty']:
                 target_uid = session['uid']
             else:
                 target_uid = ''
@@ -184,16 +184,16 @@ def activityopeartion(opeartion, duty_id):
                     reason = request.form['content']
                 else:
                     reason = ''
-                if CONST.dutyoperationname[opeartion].has_key('require_input') and not reason:
+                if CONST.dutyoperationname[operation].has_key('require_input') and not reason:
                     flash({'type': 'error', 'content': '请填写申请理由。'})
                     return redirect(url_for('activitydetail', activity_id=duty.aid))
 
-                duty.status = CONST.duty_status_opeartion_next[opeartion]
-                duty.appendprocesse(opeartion, reason)
+                duty.status = CONST.duty_status_operation_next[operation]
+                duty.appendprocesse(operation, reason)
                 db.session.add(duty)
                 db.session.commit()
 
-                if opeartion == 'cover_duty':
+                if operation == 'cover_duty':
                     if Duty.query.filter(Duty.uid == session['uid'], Duty.aid == duty.aid).count():
                         flash({'type': 'danger', 'content': '你在本时间段已经有此活动，请勿重复选班。'})
                         return redirect(url_for('activitydetail', activity_id=duty.aid))
@@ -227,14 +227,14 @@ def activityopeartion(opeartion, duty_id):
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_COVER_DUTY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
 
-                elif opeartion == 'approve_apply' or opeartion == 'decline_apply':
+                elif operation == 'approve_apply' or operation == 'decline_apply':
                     worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
                     timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
                     venue = venuename_filter(duty.activity.venue)
                     title = duty.activity.title
                     remark = duty.activity.remark
                     url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
-                    if opeartion == 'approve_apply':
+                    if operation == 'approve_apply':
                         subject = mail.approve_apply_tmpl['subject']
                         content = mail.approve_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
                         sms_content = sms.sms_approve_apply_tmpl % (worktimestr, venue, title)
@@ -262,7 +262,7 @@ def activityopeartion(opeartion, duty_id):
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
-                elif opeartion == 'decline_duty':
+                elif operation == 'decline_duty':
                     uname = session['name']
                     worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
                     timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
@@ -286,7 +286,7 @@ def activityopeartion(opeartion, duty_id):
                         if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_DECLINE_DUTY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
 
-                elif opeartion == 'cancel_task':
+                elif operation == 'cancel_task':
                     pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
                     #venue = venuename_filter(duty.activity.venue)
                     #title = duty.activity.title

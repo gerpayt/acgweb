@@ -34,8 +34,8 @@
 </ul>
   <span class="pull-right text-center">
     {{ duty.status|dutystatusname }}<br />
-      {% if session.is_arra_monitor %}{% for op in config.CONST.duty_status_opeartion_monitor_mapper[duty.status] %} 
-        <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini">{{config.CONST.dutyoperationname[op].title}}</a>
+      {% if session.is_arra_monitor %}{% for op in config.CONST.duty_status_operation_monitor_mapper[duty.status] %}
+        <a href="{{ url_for('activityoperation',duty_id=duty.id,operation=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini">{{config.CONST.dutyoperationname[op].title}}</a>
       {% endfor %}{% endif %}
   </span>
 </div>

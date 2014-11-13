@@ -164,8 +164,8 @@ def intervaltime(t):
     return rtnstr
 
 
-@app.template_filter('opeartionintervalcolor')
-def opeartionintervalcolor(t):
+@app.template_filter('operationintervalcolor')
+def operationintervalcolor(t):
     if t <= 5 * 60:
         return 'success'
     elif t <= 15 * 60:

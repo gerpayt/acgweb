@@ -12,9 +12,9 @@ from decorated_function import *
 activity_train_set = None
 
 
-@app.route('/activity_opeartions')
+@app.route('/activity_operations')
 @login_required
-def activity_opeartions():
+def activity_operations():
     accept_duty_list = []
     decline_duty_list = []
     confirm_apply_list = []
@@ -41,5 +41,5 @@ def activity_opeartions():
                 tmp_dict = {'activity': duty.activity, 'member': duty.member, 'time': item['time'],
                             'interval': item['time'] - approve_apply_time}
                 confirm_apply_list.append(tmp_dict)
-    return render_template('activity/activity_opeartions.html', decline_duty_list=decline_duty_list, accept_duty_list=accept_duty_list,
+    return render_template('activity/activity_operations.html', decline_duty_list=decline_duty_list, accept_duty_list=accept_duty_list,
                            confirm_apply_list=confirm_apply_list)

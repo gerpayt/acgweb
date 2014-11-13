@@ -17,6 +17,6 @@ import notify
 
 import error
 import activity_type
-import activity_opeartion
+import activity_operation
 
 import partner

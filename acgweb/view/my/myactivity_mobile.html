@@ -14,16 +14,16 @@
   <div class="activity-title"> <a href="{{ url_for('activitydetail',activity_id=duty.activity.id) }}">{{ duty.activity.title }}</a></div>
   <div class="activity-info"><span class="label label-{{ duty.activity.venue|venuecolor }}">{{ duty.activity.venue|venuename }}</span>
   <span class="label label-{{ duty.activity.status|activitystatuscolor }}">{{ duty.activity.status|activitystatusname }}</span>
-    {% if duty.activity.status == config.CONST.ACTIVITY_SCHEDULING %}{% for op in config.CONST.duty_status_opeartion_selfuser_mapper[duty.status] %}
+    {% if duty.activity.status == config.CONST.ACTIVITY_SCHEDULING %}{% for op in config.CONST.duty_status_operation_selfuser_mapper[duty.status] %}
         {% if config.CONST.dutyoperationname[op].content %}
           <a class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
-            data-href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}"
+            data-href="{{ url_for('activityoperation',duty_id=duty.id,operation=op) }}"
             data-label="{{config.CONST.dutyoperationname[op].title}}" data-content="{{config.CONST.dutyoperationname[op].content}}"
             {% if config.CONST.dutyoperationname[op].require_input %}data-require_input='1'{% endif %}
             {% if config.CONST.dutyoperationname[op].loading %}data-modal-loading-text="{{config.CONST.dutyoperationname[op].loading}}"{% endif %}>
           {{config.CONST.dutyoperationname[op].title}}</a>
         {% else %}
-          <a href="{{ url_for('activityopeartion',duty_id=duty.id,opeartion=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini"
+          <a href="{{ url_for('activityoperation',duty_id=duty.id,operation=op) }}" class="btn btn-{{config.CONST.dutyoperationname[op].color}} btn-mini"
              {% if config.CONST.dutyoperationname[op].loading %}data-loading-text="{{config.CONST.dutyoperationname[op].loading}}"{% endif %}>
           {{config.CONST.dutyoperationname[op].title}}</a>
         {% endif %}
