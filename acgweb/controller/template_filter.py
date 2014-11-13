@@ -142,6 +142,39 @@ def messagetypename(t):
 def membertypename(t):
     return CONST.membertypename[t]
 
+
+@app.template_filter('intervaltime')
+def intervaltime(t):
+    if t > 10 * 365 * 24 * 60 * 60:
+        return "很久"
+    year, mon = divmod(t,  365 * 24 * 60 * 60)
+    mon, day = divmod(mon,  30 * 24 * 60 * 60)
+    day, hour = divmod(day,  24 * 60 * 60)
+    hour, min = divmod(hour, 60 * 60)
+    min, sec = divmod(min,  60)
+
+    rtnstr = ''
+    if year: rtnstr = str(year) + '年'
+    elif mon: rtnstr = str(mon) + '月'
+    elif day: rtnstr = str(day) + '天'
+    elif hour: rtnstr = str(hour) + '小时'
+    elif min: rtnstr = str(min) + '分钟'
+    elif sec: rtnstr = str(sec) + '秒'
+
+    return rtnstr
+
+
+@app.template_filter('opeartionintervalcolor')
+def opeartionintervalcolor(t):
+    if t <= 5 * 60:
+        return 'success'
+    elif t <= 15 * 60:
+        return 'info'
+    elif t <= 60 * 60:
+        return 'warning'
+    else:
+        return 'important'
+
 '''
 @app.template_filter('showqq')
 def showqq(qq):

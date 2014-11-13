@@ -55,7 +55,7 @@ class Duty(db.Model):
         for i in processlist:
             tmp = i.split('\t')
             if len(tmp) == 3:
-                obj = {'time': tmp[0], 'op': tmp[1], 'content': tmp[2]}
+                obj = {'time': int(tmp[0]), 'op': tmp[1], 'content': tmp[2]}
                 self.processes.append(obj)
         return self.processes
 
