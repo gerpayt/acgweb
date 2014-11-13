@@ -19,23 +19,23 @@
     <div class="tab-pane active" id="tab1">
     <table class="table table-striped">
       <tr><th>音控员</th>
-        <th width="21%">值班来源 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：申请值班次数
+        <th width="20%">值班来源 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：申请值班次数
         黄色：班长排班次数
         蓝色：代人值班次数"></span></th>
-        <th width="21%">申请值班 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：班长批准次数
+        <th width="20%">申请值班 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：班长批准次数
         红色：班长拒绝次数
         黄色：取消申请次数
         灰色：其他类型次数"></span></th>
-        <th width="21%">安排值班 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：接受排班次数
+        <th width="20%">安排值班 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：接受排班次数
         红色：拒绝排班次数
         黄色：取消排班次数
         灰色：其他类型次数"></span></th>
-        <th width="21%">值班结果 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：正常值班次数
+        <th width="20%">值班结果 <span class="icon-question-sign" data-toggle="tooltip" data-placement="top" title="绿色：正常值班次数
         蓝色：申请代班次数
         红色：不能值班次数
         黄色：值班取消次数
         灰色：其他类型次数"></span></th>
-        <th>总计</th></tr>
+        <th>操作间隔</th><th>总计</th></tr>
       {% for member in member_list %}
       <tr><td><a href="{{ url_for('memberdetail',member_uid=member.uid) }}">{{ member.name }}</a></td>
         <td><div class="progress">
@@ -62,6 +62,7 @@
           <div class="bar bar-warning" style="width: {{ 100 * member.activity_term.cancel / member.activity_term.total }}%;">{{ member.activity_term.cancel }}</div>
           <div class="bar bar-default" style="width: {{ 100 * member.activity_term.other / member.activity_term.total }}%;">{{ member.activity_term.other }}</div>
         {% endif %}</div></td>
+        <td><span class="label label-{{ member.operation_interval_middle | operationintervalcolor }}">{{ member.operation_interval_middle | intervaltime }}</span></td>
         <td>{{ member.activity_source.total }}</td>
       </tr>
       {% endfor %}

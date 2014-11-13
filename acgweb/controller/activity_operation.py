@@ -33,6 +33,8 @@ def activity_operations():
             member_list[duty.uid]['activity_appoint'] = {'accept': 0, 'decline': 0, 'cancel': 0, 'other': 0}
             member_list[duty.uid]['activity_term'] = {'success': 0, 'cover': 0, 'decline': 0, 'cancel': 0, 'other': 0}
 
+            member_list[duty.uid]['operation_interval'] = []
+
         step = 0
         for item in duty.getprocesses():
             step += 1
@@ -50,17 +52,20 @@ def activity_operations():
             elif item['op'] == 'confirm_apply':
                 tmp_dict = {'activity': duty.activity, 'member': duty.member, 'time': item['time'],
                             'interval': item['time'] - approve_apply_time}
+                member_list[duty.uid]['operation_interval'].append(tmp_dict['interval'])
                 confirm_apply_list.append(tmp_dict)
             elif item['op'] == 'accept_duty':
                 tmp_dict = {'activity': duty.activity, 'member': duty.member, 'time': item['time'],
                             'interval': item['time'] - activity_appoint_time}
                 accept_duty_list.append(tmp_dict)
                 member_list[duty.uid]['activity_appoint']['accept'] += 1
+                member_list[duty.uid]['operation_interval'].append(tmp_dict['interval'])
             elif item['op'] == 'decline_duty':
                 tmp_dict = {'activity': duty.activity, 'member': duty.member, 'time': item['time'],
                             'content': item['content'], 'interval': item['time'] - activity_appoint_time}
                 decline_duty_list.append(tmp_dict)
                 member_list[duty.uid]['activity_appoint']['decline'] += 1
+                member_list[duty.uid]['operation_interval'].append(tmp_dict['interval'])
             elif item['op'] == 'cover_duty' and step == 1:
                 member_list[duty.uid]['activity_source']['cover'] += 1
             elif item['op'] == 'cancel_task':
@@ -100,6 +105,11 @@ def activity_operations():
         member_list[member]['activity_apply']['total'] = sum(member_list[member]['activity_apply'].values())
         member_list[member]['activity_appoint']['total'] = sum(member_list[member]['activity_appoint'].values())
         member_list[member]['activity_term']['total'] = sum(member_list[member]['activity_term'].values())
+
+        member_list[member]['operation_interval_average'] = sum(member_list[member]['operation_interval']) /\
+                                                            len(member_list[member]['operation_interval'])
+
+        member_list[member]['operation_interval_middle'] = sorted(member_list[member]['operation_interval'])[len(member_list[member]['operation_interval'])/2]
 
 
     member_list = sorted(member_list.values(), key=lambda e: e['activity_source']['total'], reverse=True)
