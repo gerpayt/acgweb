@@ -274,4 +274,6 @@ def operation_interval():
                             'interval': item['time'] - activity_appoint_time, 'type': 'decline'}
                 operation_list.append(tmp_dict)
 
+    operation_list = sorted(operation_list, key=lambda e: e['time'], reverse=True)
+
     return render_template('duty/operation_interval.html', operation_list=operation_list)
