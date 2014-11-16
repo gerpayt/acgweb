@@ -16,22 +16,23 @@ import time
 import notify
 
 
-def activity_spider():
+def activity_spider(content):
     log = []
     url = 'http://vrs.husteye.cn/Api'
     sid2ven = {u'5': 1, u'8': 2, u'10': 3}
     #Fetch contents
-    try:
-        if config.HTTP_PROXY:
-            proxy_handler = urllib2.ProxyHandler({"http": config.HTTP_PROXY})
-            opener = urllib2.build_opener(proxy_handler)
-            urllib2.install_opener(opener)
-        content = urllib2.urlopen(url).read()
-    except:
-        log.append('Can\'t fetch vrs api')
-        content = ''
-    #print content
-    #Parse contents
+    if not content:
+        try:
+            if config.HTTP_PROXY:
+                proxy_handler = urllib2.ProxyHandler({"http": config.HTTP_PROXY})
+                opener = urllib2.build_opener(proxy_handler)
+                urllib2.install_opener(opener)
+            content = urllib2.urlopen(url).read()
+        except:
+            log.append('Can\'t fetch vrs api')
+            content = '{}'
+        #print content
+        #Parse contents
 
     activities = json.loads(content)
     oidlist = []
@@ -117,22 +118,23 @@ def activity_spider():
             #print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
     db.session.commit()
 
-    #for oid in oidlist:
-    ts = time.localtime()
-    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
-    oidstr = ','.join(oidlist)
-    sql = 'select id, oid, start_time, venue, title from activity where status != "' + str(CONST.ACTIVITY_CANCELED) + '" and start_time >= "%d" and oid not in( %s);' % (todaytime, oidstr)
-    #print sql
-    res = db.session.execute(sql)
-    for row in res:
-        log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]))
-        timestr = timeformat_filter(row[2], "%Y-%m-%d %H:%M")
-        venue = venuename_filter(row[3])
-        title = row[4]
-        url = config.BASE_URL + url_for('activitydetail', activity_id=row[0])
-        #subject = mail.notice_activity_cancel_tmpl['subject']
-        content = mail.notice_activity_cancel_tmpl['content'] % (timestr, venue, title, url, url)
-        warnings.append(content)
+    if oidlist:
+        #for oid in oidlist:
+        ts = time.localtime()
+        todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
+        oidstr = ','.join(oidlist)
+        sql = 'select id, oid, start_time, venue, title from activity where status != "' + str(CONST.ACTIVITY_CANCELED) + '" and start_time >= "%d" and oid not in( %s);' % (todaytime, oidstr)
+        #print sql
+        res = db.session.execute(sql)
+        for row in res:
+            log.append('Record deleted id: %s oid:%s.' % (row[0], row[1]))
+            timestr = timeformat_filter(row[2], "%Y-%m-%d %H:%M")
+            venue = venuename_filter(row[3])
+            title = row[4]
+            url = config.BASE_URL + url_for('activitydetail', activity_id=row[0])
+            #subject = mail.notice_activity_cancel_tmpl['subject']
+            content = mail.notice_activity_cancel_tmpl['content'] % (timestr, venue, title, url, url)
+            warnings.append(content)
 
     log.append('Success on %s.' % time.strftime('%Y-%m-%d %H:%M:%S'))
 

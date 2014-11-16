@@ -643,11 +643,15 @@ def activityterminate(activity_id):
     return redirect(url_for('activitydetail', activity_id=activity_id))
 
 
-@app.route('/activitysync')
+@app.route('/activitysync', methods=['GET', 'POST'])
 @login_required
 def activitysync():
+    if request.method == 'POST':
+        content = request.form['activity_content']
+    else:
+        content = None
     try:
-        logs = sync()
+        logs = sync(content)
         for log in logs:
             flash({'type': 'success', 'content': log})
     except Exception as e:
@@ -668,9 +672,9 @@ def activityjson():
 
 
 @app.route('/sync')
-def sync():
+def sync(content):
     from acgweb.controller.spider import activity_spider
-    logs = activity_spider()
+    logs = activity_spider(content)
     try:
         fp = open(config.BASE_DIR + 'log/sync.log', 'a')
     except:
@@ -748,35 +752,7 @@ def cron():
             # auto sync
             sync()
         if ts.tm_hour == 21 and ts.tm_min == 30 and ts.tm_sec == 0:
-            range_start = 86400 + now - 21 * 3600 - 1800
-            range_end = 2 * 86400 + now + 2 * 3600 + 1800
-            activitylist = Activity.query.filter(Activity.start_time >= range_start, Activity.start_time < range_end, Activity.status == 1).all()
-            warnings = []
-            for activity in activitylist:
-                ready_num = 0
-                for duty in activity.duties:
-                    if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
-                        ready_num += 1
-                    if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM]:
-                        membername = duty.member.name
-                        memberurl = url_for('memberdetail', member_uid=duty.uid)
-                        worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
-                        timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
-                        venue = venuename_filter(activity.venue)
-                        title = activity.title
-                        url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
-                        statusname = dutystatusname_filter(duty.status)
-                        content = mail.todo_duty_tmpl['content'] % (memberurl, membername, worktimestr, timestr, venue, title, url, url, statusname)
-                        warnings.append(content)
-                if ready_num == 0:
-                    worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
-                    timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
-                    venue = venuename_filter(activity.venue)
-                    title = activity.title
-                    url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
-                    content = mail.todo_activity_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
-                    warnings.append(content)
-
+            warnings = get_warnings()
             if warnings:
                 now = int(time.time())
                 nowstr = timeformat_filter(now, "%Y-%m-%d %H:%M:%S")
@@ -847,3 +823,44 @@ def cron():
         fp.write("crontab_last %s : %d\n" % (nowstr, now))
         fp.close()
         return "last_cron" + str(last_cron)
+
+
+@app.route('/activity_warning')
+@login_required
+def activitywarning():
+    warning_list = get_warnings()
+    return render_template('activity/activitywarning.html', warning_list=warning_list)
+
+
+def get_warnings():
+    now = time.time()
+    range_start = now
+    range_end = 3 * 86400 + now
+    activitylist = Activity.query.filter(Activity.start_time >= range_start, Activity.start_time < range_end, Activity.status == 1).all()
+    warnings = []
+    for activity in activitylist:
+        ready_num = 0
+        for duty in activity.duties:
+            if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM, CONST.DUTY_BEFORE_START, CONST.DUTY_REPLACE_ING]:
+                ready_num += 1
+            if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM]:
+                membername = duty.member.name
+                memberurl = url_for('memberdetail', member_uid=duty.uid)
+                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+                timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
+                venue = venuename_filter(activity.venue)
+                title = activity.title
+                url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
+                statusname = dutystatusname_filter(duty.status)
+                content = mail.todo_duty_tmpl['content'] % (memberurl, membername, worktimestr, timestr, venue, title, url, url, statusname)
+                warnings.append(content)
+        if ready_num == 0:
+            worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+            timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
+            venue = venuename_filter(activity.venue)
+            title = activity.title
+            url = config.BASE_URL + url_for('activitydetail', activity_id=activity.id)
+            content = mail.todo_activity_tmpl['content'] % (worktimestr, timestr, venue, title, url, url)
+            warnings.append(content)
+
+    return warnings

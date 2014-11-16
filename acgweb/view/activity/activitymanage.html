@@ -28,7 +28,28 @@
   {% endfor %}
 </table>
 <!-- TODO <a class="btn btn-mini" href="{{ url_for('activityedit') }}">添加活动</a> -->
-<a class="btn btn-mini btn-success" href="{{ url_for('activitysync') }}" data-loading-text="正在同步">同步活动</a>
+<a class="btn btn-mini btn-success" href="{{ url_for('activitysync') }}" data-loading-text="正在自动同步">自动同步活动</a>
+
+<div class="btn-group">
+  <a class="btn btn-mini btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+    手动同步活动
+    <span class="caret"></span>
+  </a>
+  <div class="dropdown-menu" style="width:700px; padding: 15px;">
+    <form class="form-horizontal" method="post" action="{{ url_for('activitysync') }}">
+      <p>手动手动同步说明：
+      访问 <a href="http://vrs.husteye.cn/Api" target="_blank">http://vrs.husteye.cn/Api</a>
+            得到活动信息，然后粘贴至下框内。</p>
+      <div class="row-fluid">
+        <div class="span2"><p>粘贴内容</p><br/><br/>
+          <button class="btn btn-success" type="submit">同步</button>
+        </div>
+        <textarea class="span10" id="activity_content" name="activity_content" rows="5"></textarea>
+      </div>
+  </form>
+  </div>
+</div>
+
 {% if page_count > 1 %}
 <div class="pagination pagination-centered">
   <ul>
@@ -44,4 +65,10 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block custom_script %}
+<script>
+  $('form').bind('click', function (e) { e.stopPropagation() })
+</script>
 {% endblock %}
