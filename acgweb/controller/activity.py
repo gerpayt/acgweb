@@ -672,7 +672,7 @@ def activityjson():
 
 
 @app.route('/sync')
-def sync(content):
+def sync(content=None):
     from acgweb.controller.spider import activity_spider
     logs = activity_spider(content)
     try:
