@@ -761,15 +761,15 @@ def cron():
                 content = mail.todo_notice_tmpl['content'] + '<hr />'.join(warnings)
                 for uid in config.ARRA_MONITOR:
                     member = Member.query.get(uid)
-                    if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_TODO):
+                    if notify.is_notify(uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_TODO):
                         msg_id = mail.send_message(uid, config.SYS_ADMIN, subject, content, 2)
                     else:
                         msg_id = 0
-                    if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_TODO):
+                    if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_TODO):
                         mail.send_mail(subject, content, member.name, member.email, msgid=msg_id)
-                    if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_TODO):
+                    if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_TODO):
                         pass  # TODO app notify
-                    if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_TODO):
+                    if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_TODO):
                         pass  #
 
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
