@@ -203,7 +203,7 @@ def activityoperation(operation, duty_id):
                         db.session.add(new_duty)
                         db.session.commit()
 
-                        worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
+                        worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
                         timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
                         venue = venuename_filter(duty.activity.venue)
                         title = duty.activity.title
@@ -228,7 +228,7 @@ def activityoperation(operation, duty_id):
                             sms.send_sms(duty.member.mobile_num, sms_content)
 
                 elif operation == 'approve_apply' or operation == 'decline_apply':
-                    worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
+                    worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
                     timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
                     venue = venuename_filter(duty.activity.venue)
                     title = duty.activity.title
@@ -264,7 +264,7 @@ def activityoperation(operation, duty_id):
                             sms.send_sms(duty.member.mobile_num, sms_content)
                 elif operation == 'decline_duty':
                     uname = session['name']
-                    worktimestr = timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M")
+                    worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
                     timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
                     venue = venuename_filter(duty.activity.venue)
                     title = duty.activity.title
@@ -348,9 +348,11 @@ def activityedit(activity_id=0):
             info_modify = str(activity.title) != str(form.title.data) or str(activity.venue) != str(form.venue.data) or str(activity.work_start_time) != str(form.work_start_time.data)
             if info_modify:
                 if int(activity.work_start_time) == int(form.work_start_time.data):
-                    worktimestr_modify = u'%s 不变' % timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+                    worktimestr_modify = u'%s(%s) 不变' % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
                 else:
-                    worktimestr_modify = u'<strong>%s 变为 %s</strong>' % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M"))
+                    worktimestr_modify = u'<strong>%s(%s) 变为 %s(%s)</strong>' % (
+                        timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time),
+                        timeformat_filter(form.work_start_time.data, "%Y-%m-%d %H:%M"), dayname_filter(form.work_start_time.data))
                 if int(activity.start_time) == int(form.start_time.data):
                     timestr_modify = u'%s 不变' % timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
                 else:
@@ -510,7 +512,7 @@ def activityappoint(activity_id, member_uid):
             db.session.commit()
             # need or not
             timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
-            worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+            worktimestr = "%s (%s)" % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
             venue = venuename_filter(activity.venue)
             title = activity.title
             remark = activity.remark
@@ -562,7 +564,7 @@ def activitycancel(activity_id):
         activity.status = CONST.ACTIVITY_CANCELED
         duties = Duty.query.filter(Duty.aid == activity_id)
 
-        worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+        worktimestr = "%s (%s)" % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
         timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
         venue = venuename_filter(activity.venue)
         title = activity.title
@@ -704,7 +706,7 @@ def cron():
         # 1 hours before activity start
         activitylist = Activity.query.filter(Activity.work_start_time == now + 3600, Activity.status == CONST.ACTIVITY_SCHEDULING).all()
         for activity in activitylist:
-            work_timestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+            work_timestr = "%s (%s)" % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
             timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
             venue = venuename_filter(activity.venue)
             title = activity.title
@@ -775,7 +777,7 @@ def cron():
         if ts.tm_hour == 22 and ts.tm_min == 30 and ts.tm_sec == 0:
             activitylist = Activity.query.filter(Activity.start_time >= now - 22 * 3600 - 1800, Activity.start_time < now + 3600 + 1800, Activity.status == CONST.ACTIVITY_ONGOING).all()
             for activity in activitylist:
-                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+                worktimestr = "%s (%s)" % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
                 timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
                 venue = venuename_filter(activity.venue)
                 title = activity.title
@@ -846,7 +848,7 @@ def get_warnings():
             if duty.status in [CONST.DUTY_APPLY_ING, CONST.DUTY_APPLY_CONFIRM, CONST.DUTY_ARRANGE_CONFIRM]:
                 membername = duty.member.name
                 memberurl = url_for('memberdetail', member_uid=duty.uid)
-                worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+                worktimestr = "%s (%s)" % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
                 timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
                 venue = venuename_filter(activity.venue)
                 title = activity.title
@@ -855,7 +857,7 @@ def get_warnings():
                 content = mail.todo_duty_tmpl['content'] % (memberurl, membername, worktimestr, timestr, venue, title, url, url, statusname)
                 warnings.append(content)
         if ready_num == 0:
-            worktimestr = timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M")
+            worktimestr = "%s (%s)" % (timeformat_filter(activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(activity.work_start_time))
             timestr = timeformat_filter(activity.start_time, "%Y-%m-%d %H:%M")
             venue = venuename_filter(activity.venue)
             title = activity.title
