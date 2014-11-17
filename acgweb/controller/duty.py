@@ -236,6 +236,8 @@ def decline_reason():
                             'content': item['content'], 'interval': item['time'] - activity_appoint_time}
                 decline_duty_list.append(tmp_dict)
 
+    decline_duty_list = sorted(decline_duty_list, key=lambda e: e['time'], reverse=True)
+
     return render_template('duty/decline_reason.html', decline_duty_list=decline_duty_list)
 
 
