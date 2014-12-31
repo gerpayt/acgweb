@@ -1,0 +1,44 @@
+音控组管理系统Android版需求分析
+网络版 http://acg.husteye.cn/
+GitHub https://github.com/gerpayt/acgweb
+
+管理员账号 M201371888
+管理员密码 admin
+
+测试帐号： 自由注册 （邀请码8888）
+
+Android版本功能
+
+活动列表 （界面 参考http://acg.husteye.cn/activitylist）
+活动详细 （界面 参考http://acg.husteye.cn/activity-787）
+活动相关操作 （仅发送请求，显示提示，没有界面）
+
+成员列表 （界面 参考http://acg.husteye.cn/memberlist）
+成员详细 （界面 参考http://acg.husteye.cn/member-M201371888）
+调用发送短信，拨打电话等系统功能
+保存通讯录 （没有界面，需要通讯录权限）（保存单个通讯录，保存全部通讯录）
+
+记录列表 （界面 参考http://acg.husteye.cn/dutylist）
+
+文章列表 （界面 参考http://acg.husteye.cn/articlelist）
+文章详细 （界面 参考http://acg.husteye.cn/article-音控管理系统新增统计功能） HTML格式显示
+
+个人专区
+我的活动列表 （界面 参考http://acg.husteye.cn/myactivity）
+    活动详细（和 活动列表>活动详细 一样）
+我的消息列表 （界面 参考http://acg.husteye.cn/mymessage）
+消息详细 （界面 参考http://acg.husteye.cn/mymessagedetail-4209）（需要解析内容中的链接，比如点击活动连接，APP切换到活动界面，而不是打开浏览器）
+我的资料 （界面 参考http://acg.husteye.cn/myinfo 可以保存资料）
+    更改密码
+
+登录
+注销
+注册
+忘记密码
+
+APP版本更新接口
+APP用户统计
+
+消息推送接口
+
+（注：列表可以连续翻页，详细内容上拉刷新）
