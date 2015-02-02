@@ -1,0 +1,193 @@
+登陆
+地址 /api/login
+参数 username 账号
+     password 密码（明文）
+返回 登录失败 {"error": "101", "message": "..."}
+     登陆成功 {"access_token": "...", "name": "..", "uid": ".."}
+         access_token 访问令牌
+         name 名字
+         uid 学号
+
+注册
+ TODO
+
+活动列表
+地址 /api/activitylist
+参数 token 令牌
+     pagenum 页数（非必填）
+返回 [{"id":.., "title": ..., ... }, {...}, ...]
+        id 活动唯一标识
+        title 活动标题
+        work_start_time 值班开始时间
+        start_time 活动开始时间
+        end_time 活动结束时间
+        venue 活动场地
+        status 活动状态
+        type 活动类型
+        duties 任务数组
+            uid 用户学号
+            name 用户姓名
+            status 任务状态
+
+活动详细
+地址 /api/activitydetail
+参数 token 令牌
+     activity_id 活动ID
+返回 {"id": ..., "title": ..., ...}
+        id 活动唯一标识
+        title 活动标题
+        work_start_time 值班开始时间
+        start_time 活动开始时间
+        end_time 活动结束时间
+        remark 活动备注
+        venue 活动场地
+        status 活动状态
+        type 活动类型
+        duties 任务数组
+            uid 用户学号
+            name 用户姓名
+            mobile 手机号
+            mobile_type 手机号类型
+            mobile_short 手机短号
+            status 任务状态
+
+成员列表
+地址 /api/memberlist
+参数 token 令牌
+返回 [{"uid":.., "name": ..., ... }, {...}, ...]
+        uid 成员唯一标识
+        name 成员姓名
+        mobile 手机号
+        mobile_type 手机号类型
+        mobile_short 手机短号
+        type 成员类型
+
+成员详细
+地址 /api/memberdetail
+参数 token 令牌
+     member_uid 成员UID
+返回 {"uid": ..., "name": ..., ...}
+        uid 学号
+        name 用户名
+        type 用户类型
+        sex 性别
+        school 专业
+        mobile 手机号
+        mobile_type 手机号类型
+        mobile_short 手机短号
+        email 电子邮件
+        qqnum QQ号码
+        address 住址
+        photo 照片列表
+        introduce 个人简介
+        register_time 注册时间
+        lastlogin_time 上次登陆时间
+
+记录列表
+地址 /api/dutylist
+参数 token 令牌
+     pagenum 页数（非必填）
+返回 [{"id":.., "title": ..., ... }, {...}, ...]
+        id 活动唯一标识
+        title 活动标题
+        work_start_time 值班开始时间
+        start_time 活动开始时间
+        end_time 活动结束时间
+        venue 活动场地
+        status 活动状态
+        type 活动类型
+        logs 日志数组
+            uid 用户学号
+            name 用户姓名
+            type 日志类型
+            content 日志内容
+
+
+文章列表
+地址 /api/articlelist
+参数 token 令牌
+返回 [{"id":.., "title": ..., ... }, {...}, ...]
+        id 文章ID
+        title 文章标题
+        cate_id 分类号
+        posttime 发布日期
+
+文章详细
+地址 /api/articledetail
+参数 token 令牌
+     article_id 文章ID
+返回 {"id":.., "title": ..., ... }
+        id 文章ID
+        title 文章标题
+        cate_id 分类号
+        posttime 发布日期
+        content 文章内容
+
+我的消息列表
+地址 /api/mymessagelist
+参数 token 令牌
+     pagenum 页数（非必填）
+返回 [{"id":.., "subject": ..., ... }, {...}, ...]
+        id 消息ID
+        subject 消息主题
+        readtime 阅读时间
+        type 消息类型
+
+消息详细
+地址 /api/mymessagedetail
+参数 token 令牌
+     message_id 消息ID
+返回 {"id":.., "subject": ..., ... }
+        id 消息ID
+        fromuid 发信人UID
+        touid 收信人UID
+        subject 消息主题
+        content 消息内容
+        sendtime 发送时间
+        readtime 阅读时间
+        type 消息类型
+        status 消息状态
+        frommember 发信人对象
+            name 发信人姓名
+            mobile 发信人电话
+        tomember 收信人对象
+            name 收信人姓名
+            mobile 收信人电话
+
+我的活动
+地址 /api/myactivitylist
+参数 token 令牌
+返回 [{"id":.., "title": ..., ... }, {...}, ...]
+        id 活动唯一标识
+        title 活动标题
+        work_start_time 值班开始时间
+        start_time 活动开始时间
+        end_time 活动结束时间
+        venue 活动场地
+        status 活动状态
+        type 活动类型
+        duties 任务数组
+            uid 用户学号
+            name 用户姓名
+            status 任务状态
+
+我的信息
+地址 /api/myinfo
+参数 token 令牌
+返回 {"uid": ..., "name": ..., ...}
+        uid 学号
+        name 用户名
+        type 用户类型
+        sex 性别
+        school 专业
+        mobile 手机号
+        mobile_type 手机号类型
+        mobile_short 手机短号
+        email 电子邮件
+        qqnum QQ号码
+        address 住址
+        credit_card 银行卡号
+        photo 照片列表
+        introduce 个人简介
+        register_time 注册时间
+        lastlogin_time 上次登陆时间
