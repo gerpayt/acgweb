@@ -1,0 +1,34 @@
+{% extends "layout_mobile.html" %}
+
+
+{% block body %}
+
+<div class="wrapper-mobile">
+<div class="cms-row">
+  <div class="cms-div">
+    <h4>{{ act_sign.title }} 签到表</h4>
+    {% if status == 1 %}
+      {{ session.name }}，你已签到。
+    {% elif status == 2 %}
+      {{ session.name }}，你还未签到。
+    {% elif status == 3 %}
+      {{ session.name }}，你已签到。
+    {% elif status == 4 %}
+      你还没登陆，请登陆或。。。
+    {% endif %}
+    <ul class="long-text">
+    {% if sign_list %}
+    {% for sign in sign_list %}
+    <li>
+      <span class="label">{{sign.name}}</span>
+    </li>
+    {% endfor %}
+    {% else %}
+      暂时没人签到。
+    {% endif %}
+    </ul>
+  </div>
+</div>
+</div>
+
+{% endblock %}

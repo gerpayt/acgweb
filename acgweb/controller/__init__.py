@@ -14,6 +14,7 @@ import ranklist
 import index
 import my
 import notify
+import other
 
 import error
 import activity_type
