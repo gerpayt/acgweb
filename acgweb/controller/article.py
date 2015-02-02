@@ -32,11 +32,10 @@ def articlelist(pagenum=1, cateid=0):
             page_count=(article_count - 1) / CONST.article_per_page + 1, page_current=pagenum, cateid=cateid, category_list=category_list)
 
 
-@app.route('/api/articlelist-p<int:pagenum>')
 @app.route('/api/articlelist')
 @return_json
-def articlelistapi(me, pagenum=1):
-    article_list = Article.query.order_by('posttime DESC').limit(CONST.article_per_page).offset(CONST.article_per_page * (pagenum - 1)).all()
+def articlelistapi(me):
+    article_list = Article.query.order_by('posttime DESC').all()
     res = []
     for article in article_list:
         d = {}
@@ -45,9 +44,7 @@ def articlelistapi(me, pagenum=1):
         d['cate_id'] = article.cate_id
         d['posttime'] = article.posttime
         res.append(d)
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/articlemanage-p<int:pagenum>')
@@ -81,17 +78,21 @@ def articledetail(article_title):
         return render_template('article/articledetail.html', article_detail=article_detail, category_list=category_list)
 
 
-@app.route('/api/article-<article_title>')
+@app.route('/api/articledetail')
 @return_json
-def articledetailapi(me, article_title):
-    article = Article.query.filter(Article.title == article_title).one()
-    d = {}
-    d['id'] = article.id
-    d['title'] = article.title
-    d['cate_id'] = article.cate_id
-    d['content'] = article.content
-    d['posttime'] = article.posttime
-    res = d
+def articledetailapi(me):
+    article_id = int(request.args.get('article_id', 0))
+    article = Article.query.filter(Article.id == article_id).first()
+    if article:
+        d = {}
+        d['id'] = article.id
+        d['title'] = article.title
+        d['cate_id'] = article.cate_id
+        d['content'] = article.content
+        d['posttime'] = article.posttime
+        res = d
+    else:
+        res = {'error': '404', 'message': '文章不存在。'}
     return res
 
 

@@ -48,30 +48,6 @@ def memberlistapi(me):
     return res
 
 
-@app.route('/api/member-<member_uid>')
-@return_json
-def memberdetailapi(me, member_uid):
-    member = Member.query.get(member_uid)
-    res = {}
-    res['uid'] = member.uid
-    res['name'] = member.name
-    res['type'] = member.type
-    res['sex'] = member.sex
-    res['school'] = member.school
-    res['mobile'] = member.mobile_num
-    res['mobile_type'] = member.mobile_type
-    res['mobile_short'] = member.mobile_short
-    res['email'] = member.email
-    res['qqnum'] = member.qqnum
-    res['address'] = member.address
-    res['photo'] = member.photo
-    res['introduce'] = member.introduce
-    res['register_time'] = member.register_time
-    res['lastlogin_time'] = member.lastlogin_time
-
-    return res
-
-
 @app.route('/member-<member_uid>')
 @login_required
 def memberdetail(member_uid):
@@ -112,6 +88,34 @@ def memberdetail(member_uid):
     else:
         return render_template('member/memberdetail.html', member=member, schedule_table=schedule_table,
                                weekstart=weekstart, weeknum=weeknum, duty_list=duty_list)
+
+
+@app.route('/api/memberdetail')
+@return_json
+def memberdetailapi(me):
+    member_uid = request.args.get('member_uid', '')
+    member = Member.query.get(member_uid)
+    res = {}
+    if member:
+        res['uid'] = member.uid
+        res['name'] = member.name
+        res['type'] = member.type
+        res['sex'] = member.sex
+        res['school'] = member.school
+        res['mobile'] = member.mobile_num
+        res['mobile_type'] = member.mobile_type
+        res['mobile_short'] = member.mobile_short
+        res['email'] = member.email
+        res['qqnum'] = member.qqnum
+        res['address'] = member.address
+        res['photo'] = member.photo
+        res['introduce'] = member.introduce
+        res['register_time'] = member.register_time
+        res['lastlogin_time'] = member.lastlogin_time
+    else:
+        res = {'error': '404', 'message': '成员不存在。'}
+
+    return res
 
 
 @app.route('/membermanage-p<int:pagenum>')

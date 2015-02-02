@@ -39,16 +39,16 @@ def activitylist(pagenum=1):
 @return_json
 def activitylistapi(me):
     ts = time.localtime()
+    pagenum = int(request.args.get('pagenum', 1))
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN)\
-        .order_by(Activity.start_time).all()
+        .order_by(Activity.start_time).limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
     res = []
     for activity in activity_list:
         d = {}
         d['id'] = activity.id
         d['title'] = activity.title
         d['venue'] = activity.venue
-        d['remark'] = activity.remark
         d['work_start_time'] = activity.work_start_time
         d['start_time'] = activity.start_time
         d['end_time'] = activity.end_time
@@ -120,11 +120,12 @@ def activitydetail(activity_id):
             return jsonify(result='err', msg='非法操作，请重试。')
 
 
-@app.route('/api/activity-<int:activity_id>', methods=['GET', 'POST'])
+@app.route('/api/activitydetail', methods=['GET', 'POST'])
 @return_json
-def activitydetailapi(me, activity_id):
+def activitydetailapi(me):
     """Page: activity detail"""
     if request.method == 'GET':
+        activity_id = int(request.args.get('activity_id', 0))
         activity = Activity.query.get(activity_id)
         if activity != None:
             is_busy = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()

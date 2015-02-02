@@ -29,10 +29,9 @@ def dutylist(pagenum=1):
 
 
 @app.route('/api/dutylist')
-@app.route('/api/dutylist-p<int:pagenum>')
 @return_json
-def dutylistapi(me, pagenum=1):
-    activity_count = Activity.query.filter(Activity.end_time != 0).count()
+def dutylistapi(me):
+    pagenum = int(request.args.get('pagenum', 1))
     activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(CONST.duty_per_page).offset(CONST.duty_per_page * (pagenum - 1))
     res = []
     for activity in activity_list:

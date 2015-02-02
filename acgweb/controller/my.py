@@ -28,11 +28,10 @@ def myactivity(pagenum=1):
             page_count=(duty_count - 1) / CONST.activity_per_page + 1, page_current=pagenum)
 
 
-@app.route('/api/myactivity')
+@app.route('/api/myactivitylist')
 @return_json
 def myactivityapi(me):
-    uid = request.args.get('uid')
-    activity_list = Activity.query.join(Duty).filter(Duty.uid == uid).order_by(Activity.start_time).all()
+    activity_list = Activity.query.join(Duty).filter(Duty.uid == me.uid).order_by(Activity.start_time).all()
     res = []
     for activity in activity_list:
         d = {}
@@ -104,8 +103,8 @@ def myinfo():
 @app.route('/api/myinfo', methods=['GET', 'POST'])
 @return_json
 def myinfoapi(me):
-    uid = request.args.get('uid')
     if request.method == 'POST':
+        #TODO
         member = Member.query.get(uid)
         form = MemberForm(request.form)
         if form.validate_on_submit():
@@ -138,8 +137,7 @@ def myinfoapi(me):
             return redirect('/myinfo')
 
     else:
-        member = Member.query.get(uid)
-        form = MemberForm(obj=member)
+        member = Member.query.get(me.uid)
 
         res = {}
         res['uid'] = member.uid

@@ -27,10 +27,10 @@ def mymessage(pagenum=1):
         page_count=(message_count - 1) / CONST.message_per_page + 1, page_current=pagenum)
 
 
-@app.route('/api/mymessage-p<int:pagenum>')
-@app.route('/api/mymessage')
+@app.route('/api/mymessagelist')
 @return_json
-def mymessageapi(me, pagenum=1):
+def mymessageapi(me):
+    pagenum = int(request.args.get('pagenum', 1))
     message_list = Message.query.filter(Message.touid == me.uid).order_by('sendtime DESC').\
         limit(CONST.message_per_page).offset(CONST.message_per_page * (pagenum - 1))
     res = []
@@ -103,29 +103,30 @@ def mymessagedetail(message_id=0):
             message=message)
 
 
-@app.route('/api/mymessage-<int:message_id>')
+@app.route('/api/mymessagedetail')
 @return_json
-def messagedetailapi(me, message_id=0):
-    message = Message.query.get(message_id)
-    if me.uid != message.touid and not session.get('is_arra_monitor'):
-        abort(403)
-    if me.uid == message.touid and not message.readtime:
-        message.update_readtime()
-        db.session.add(message)
-        db.session.commit()
-    res = {}
-    res['id'] = message.id
-    res['fromuid'] = message.fromuid
-    res['touid'] = message.touid
-    res['subject'] = message.subject
-    res['content'] = message.content
-    res['sendtime'] = message.sendtime
-    res['readtime'] = message.readtime
-    res['type'] = message.type
-    res['status'] = message.status
-    res['frommember'] = {'name': message.frommember.name, 'mobile': message.frommember.mobile_num}
-    res['tomember'] = {'name': message.tomember.name, 'mobile': message.tomember.mobile_num}
-
+def messagedetailapi(me):
+    message_id = int(request.args.get('message_id', 0))
+    message = Message.query.query.filter(Message.id == message_id and Message.touid == me.uid).first()
+    if message:
+        if me.uid == message.touid and not message.readtime:
+            message.update_readtime()
+            db.session.add(message)
+            db.session.commit()
+        res = {}
+        res['id'] = message.id
+        res['fromuid'] = message.fromuid
+        res['touid'] = message.touid
+        res['subject'] = message.subject
+        res['content'] = message.content
+        res['sendtime'] = message.sendtime
+        res['readtime'] = message.readtime
+        res['type'] = message.type
+        res['status'] = message.status
+        res['frommember'] = {'name': message.frommember.name, 'mobile': message.frommember.mobile_num}
+        res['tomember'] = {'name': message.tomember.name, 'mobile': message.tomember.mobile_num}
+    else:
+        res = {'error': '404', 'message': '信息不存在。'}
     return res
 
 
