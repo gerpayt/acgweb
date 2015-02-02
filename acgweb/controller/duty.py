@@ -29,26 +29,28 @@ def dutylist(pagenum=1):
 
 
 @app.route('/api/dutylist')
-#@login_required
-def dutylistapi():
-    activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(50)
+@app.route('/api/dutylist-p<int:pagenum>')
+@return_json
+def dutylistapi(me, pagenum=1):
+    activity_count = Activity.query.filter(Activity.end_time != 0).count()
+    activity_list = Activity.query.filter(Activity.end_time != 0).order_by('start_time DESC').limit(CONST.duty_per_page).offset(CONST.duty_per_page * (pagenum - 1))
     res = []
     for activity in activity_list:
         d = {}
         d['id'] = activity.id
         d['title'] = activity.title
-        d['start_time'] = activity.start_time
-        d['work_start_time'] = activity.work_start_time
         d['venue'] = activity.venue
+        d['work_start_time'] = activity.work_start_time
+        d['start_time'] = activity.start_time
         d['end_time'] = activity.end_time
+        d['type'] = activity.type
+        d['status'] = activity.status
         d['logs'] = []
         for duty in activity.duties:
             for log in duty.getlogs():
                 d['logs'].append({'uid': duty.member.uid, 'name': duty.member.name, 'type': log['type'], 'content': log['content']})
         res.append(d)
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/dutymanage-p<int:pagenum>')

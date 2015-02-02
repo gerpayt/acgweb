@@ -27,11 +27,12 @@ def mymessage(pagenum=1):
         page_count=(message_count - 1) / CONST.message_per_page + 1, page_current=pagenum)
 
 
-@app.route('/api/messagelist')
-#@login_required
-def messageapi():
-    uid = request.args.get('uid')
-    message_list = Message.query.filter(Message.touid == uid).order_by('sendtime DESC').all()
+@app.route('/api/mymessage-p<int:pagenum>')
+@app.route('/api/mymessage')
+@return_json
+def mymessageapi(me, pagenum=1):
+    message_list = Message.query.filter(Message.touid == me.uid).order_by('sendtime DESC').\
+        limit(CONST.message_per_page).offset(CONST.message_per_page * (pagenum - 1))
     res = []
     for message in message_list:
         d = {}
@@ -40,9 +41,7 @@ def messageapi():
         d['readtime'] = message.readtime
         d['type'] = message.type
         res.append(d)
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/messagemanage-p<int:pagenum>')
@@ -86,7 +85,7 @@ def mymessage(member_uid=''):
 '''
 
 
-@app.route('/mymessagedetail-<int:message_id>')
+@app.route('/mymessage-<int:message_id>')
 @login_required
 def mymessagedetail(message_id=0):
     message = Message.query.get_or_404(message_id)
@@ -104,14 +103,13 @@ def mymessagedetail(message_id=0):
             message=message)
 
 
-@app.route('/api/messagedetail-<int:message_id>')
-#@login_required
-def messagedetailapi(message_id=0):
-    uid = request.args.get('uid')
+@app.route('/api/mymessage-<int:message_id>')
+@return_json
+def messagedetailapi(me, message_id=0):
     message = Message.query.get(message_id)
-    if uid != message.touid and not session.get('is_arra_monitor'):
+    if me.uid != message.touid and not session.get('is_arra_monitor'):
         abort(403)
-    if uid == message.touid and not message.readtime:
+    if me.uid == message.touid and not message.readtime:
         message.update_readtime()
         db.session.add(message)
         db.session.commit()
@@ -128,9 +126,7 @@ def messagedetailapi(message_id=0):
     res['frommember'] = {'name': message.frommember.name, 'mobile': message.frommember.mobile_num}
     res['tomember'] = {'name': message.tomember.name, 'mobile': message.tomember.mobile_num}
 
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/mymessagesend', methods=['GET', 'POST'])

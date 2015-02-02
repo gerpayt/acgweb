@@ -1,0 +1,1 @@
+ALTER TABLE  `member` ADD  `access_token` VARCHAR( 32 ) NULL , ADD UNIQUE ( `access_token` ) ;

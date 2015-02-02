@@ -2,6 +2,7 @@
 from functools import wraps
 
 from flask import request, redirect, url_for, session
+from acgweb.model.member import Member
 
 
 def login_required(f):
@@ -36,3 +37,21 @@ def viewtype():
             if re:
                 break
     return re
+
+
+def return_json(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        from flask import json, make_response
+        from acgweb.model.member import Member
+
+        access_token = request.args.get('access_token', '0')
+        me = Member.query.filter(Member.access_token == access_token).first()
+        if me:
+            res = f(me, *args, **kwargs)
+        else:
+            res = {'error': '110', 'message': 'token不正确或者已经过期。'}
+        resp = make_response(json.dumps(res))
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    return decorated_function

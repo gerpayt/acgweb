@@ -32,8 +32,8 @@ def memberlist(pagenum=1):
 
 
 @app.route('/api/memberlist')
-#@login_required
-def memberlistapi():
+@return_json
+def memberlistapi(me):
     member_list = Member.query.order_by('convert(name using gb2312) ASC').all()
     res = []
     for member in member_list:
@@ -43,15 +43,14 @@ def memberlistapi():
         d['mobile'] = member.mobile_num
         d['mobile_type'] = member.mobile_type
         d['mobile_short'] = member.mobile_short
+        d['type'] = member.type
         res.append(d)
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
-@app.route('/api/memberdetail-<member_uid>')
-#@login_required
-def memberdetailapi(member_uid):
+@app.route('/api/member-<member_uid>')
+@return_json
+def memberdetailapi(me, member_uid):
     member = Member.query.get(member_uid)
     res = {}
     res['uid'] = member.uid
@@ -65,14 +64,12 @@ def memberdetailapi(member_uid):
     res['email'] = member.email
     res['qqnum'] = member.qqnum
     res['address'] = member.address
-    res['introduce'] = member.introduce
     res['photo'] = member.photo
+    res['introduce'] = member.introduce
     res['register_time'] = member.register_time
     res['lastlogin_time'] = member.lastlogin_time
 
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/member-<member_uid>')

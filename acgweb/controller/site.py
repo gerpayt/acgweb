@@ -1,7 +1,7 @@
 # coding: utf-8
 import md5
 
-from flask import render_template, flash, jsonify, abort, make_response
+from flask import render_template, flash, jsonify, abort, make_response, json
 from acgweb import app, db
 from acgweb.model.member import Member
 from acgweb.form.register import RegisterForm
@@ -42,6 +42,30 @@ def login():
         return render_template('site/login.html')
 
 
+@app.route('/api/login')
+def loginapi():
+    username = request.args.get('username', '').upper()
+    password = request.args.get('password', '')
+    key = md5.new()
+    key.update(password)
+    member = Member.query.filter(Member.uid == username, Member.password == key.hexdigest()).first()
+    #print user
+    if member:
+        import random
+        access_token = str(random.randint(1000000000000000, 9999999999999999))
+        res = {'uid': member.uid, 'name': member.name, 'access_token': access_token}
+        member.update_lastlogin_time()
+        member.access_token = access_token
+        db.session.add(member)
+        db.session.commit()
+    else:
+        res = {'error': '101', 'message': '你提供的学号和密码不正确。'}
+
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
 @app.route('/logout')
 def logout():
     """Page: activity detail"""
@@ -51,6 +75,16 @@ def logout():
     session.clear()
     flash({'type': 'success', 'content': '注销成功。'})
     return redirect(url_for('login'))
+
+
+@app.route('/api/logout')
+@return_json
+def logoutapi(me):
+    me.access_token = None
+    db.session.add(me)
+    db.session.commit()
+    res = ({'message': '注销成功。'})
+    return res
 
 
 @app.route('/forgetpassword', methods=['GET', 'POST'])

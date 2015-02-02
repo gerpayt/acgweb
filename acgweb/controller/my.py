@@ -29,8 +29,8 @@ def myactivity(pagenum=1):
 
 
 @app.route('/api/myactivity')
-#@login_required
-def myactivityapi():
+@return_json
+def myactivityapi(me):
     uid = request.args.get('uid')
     activity_list = Activity.query.join(Duty).filter(Duty.uid == uid).order_by(Activity.start_time).all()
     res = []
@@ -39,13 +39,15 @@ def myactivityapi():
         d['id'] = activity.id
         d['title'] = activity.title
         d['venue'] = activity.venue
-        d['status'] = activity.status
+        d['remark'] = activity.remark
+        d['work_start_time'] = activity.work_start_time
         d['start_time'] = activity.start_time
+        d['end_time'] = activity.end_time
+        d['type'] = activity.type
+        d['status'] = activity.status
         d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'status': x.status} for x in activity.duties]
         res.append(d)
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/myinfo', methods=['GET', 'POST'])
@@ -100,8 +102,8 @@ def myinfo():
 
 
 @app.route('/api/myinfo', methods=['GET', 'POST'])
-#@login_required
-def myinfoapi():
+@return_json
+def myinfoapi(me):
     uid = request.args.get('uid')
     if request.method == 'POST':
         member = Member.query.get(uid)
@@ -157,9 +159,7 @@ def myinfoapi():
         res['register_time'] = member.register_time
         res['lastlogin_time'] = member.lastlogin_time
 
-        resp = make_response(json.dumps(res))
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        return resp
+        return res
 
 
 @app.route('/mysetting-reset')

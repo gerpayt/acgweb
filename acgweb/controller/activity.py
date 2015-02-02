@@ -17,6 +17,7 @@ from acgweb.controller import mail
 from acgweb.controller import sms
 import notify
 
+
 @app.route('/activitylist-p<int:pagenum>')
 @app.route('/activitylist')
 @login_required
@@ -35,8 +36,8 @@ def activitylist(pagenum=1):
 
 
 @app.route('/api/activitylist')
-#@login_required
-def activitylistapi():
+@return_json
+def activitylistapi(me):
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN)\
@@ -47,13 +48,15 @@ def activitylistapi():
         d['id'] = activity.id
         d['title'] = activity.title
         d['venue'] = activity.venue
-        d['status'] = activity.status
+        d['remark'] = activity.remark
+        d['work_start_time'] = activity.work_start_time
         d['start_time'] = activity.start_time
+        d['end_time'] = activity.end_time
+        d['type'] = activity.type
+        d['status'] = activity.status
         d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'status': x.status} for x in activity.duties]
         res.append(d)
-    resp = make_response(json.dumps(res))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return res
 
 
 @app.route('/activitymanage-p<int:pagenum>')
@@ -117,35 +120,39 @@ def activitydetail(activity_id):
             return jsonify(result='err', msg='非法操作，请重试。')
 
 
-@app.route('/api/activitydetail-<int:activity_id>', methods=['GET', 'POST'])
-#@login_required
-def activitydetailapi(activity_id):
+@app.route('/api/activity-<int:activity_id>', methods=['GET', 'POST'])
+@return_json
+def activitydetailapi(me, activity_id):
     """Page: activity detail"""
     if request.method == 'GET':
         activity = Activity.query.get(activity_id)
-        uid = request.args.get('uid')
-        is_busy = Duty.query.filter(Duty.uid == uid, Duty.aid == activity_id).count()
-        duty = Duty.query.filter(Duty.uid == uid, Duty.aid == activity_id).first()
-        if duty:
-            is_success = duty.status == CONST.DUTY_ACTIVITY_ONGOING
+        if activity != None:
+            is_busy = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()
+            duty = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).first()
+            if duty:
+                is_success = duty.status == CONST.DUTY_ACTIVITY_ONGOING
+            else:
+                is_success = False
+            now = int(time.time())
+            d = {}
+            #d['is_busy'] = is_busy
+            #d['is_success'] = is_success
+            d['id'] = activity.id
+            d['title'] = activity.title
+            d['venue'] = activity.venue
+            d['remark'] = activity.remark
+            d['work_start_time'] = activity.work_start_time
+            d['start_time'] = activity.start_time
+            d['end_time'] = activity.end_time
+            d['type'] = activity.type
+            d['status'] = activity.status
+            d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'mobile': x.member.mobile_num,
+                            'mobile_type': x.member.mobile_type, 'mobile_short': x.member.mobile_short, 'status': x.status}
+                           for x in activity.duties]
+            res = d #, 'is_busy': is_busy, 'is_success': is_success, 'now': now}
         else:
-            is_success = False
-        now = int(time.time())
-        d = {}
-        d['is_busy'] = is_busy
-        d['is_success'] = is_success
-        d['id'] = activity.id
-        d['title'] = activity.title
-        d['venue'] = activity.venue
-        d['remark'] = activity.remark
-        d['status'] = activity.status
-        d['start_time'] = activity.start_time
-        d['end_time'] = activity.end_time
-        d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'mobile': x.member.mobile_num, 'status': x.status} for x in activity.duties]
-        res = d #, 'is_busy': is_busy, 'is_success': is_success, 'now': now}
-        resp = make_response(json.dumps(res))
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        return resp
+            res = {'error': '404', 'message': '活动不存在。'}
+        return res
     else:
         activity = Activity.query.get(activity_id)
         if activity.status == CONST.ACTIVITY_ONGOING or activity.status == CONST.ACTIVITY_ENDED:
