@@ -15,11 +15,12 @@ import time
 @login_required
 def siteindex():
     """Site index method"""
-    now = int(time.time())
+    ts = time.localtime()
+    todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
     article_notice = Article.query.filter(Article.cate_id == 1).order_by(Article.posttime.desc()).first()
-    activity_list = Activity.query.filter(Activity.start_time > now, Activity.status != CONST.ACTIVITY_UNKNOWN, Activity.status != CONST.ACTIVITY_CANCELED).order_by(Activity.start_time).limit(CONST.activity_index_num)
+    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN, Activity.status != CONST.ACTIVITY_CANCELED).order_by(Activity.start_time).limit(CONST.activity_index_num)
     article_list = Article.query.order_by(Article.posttime.desc()).limit(CONST.article_index_num)
-    duty_list = Duty.query.join(Activity).filter(Duty.uid == session[u'uid'], Activity.start_time > now).order_by(Activity.start_time).limit(CONST.duty_index_page)
+    duty_list = Duty.query.join(Activity).filter(Duty.uid == session[u'uid'], Activity.start_time > todaytime).order_by(Activity.start_time).limit(CONST.duty_index_page)
     #rank_list = Duty.query.group_by(Duty.uid).order_by('sumtime ASC').limit(CONST.rank_index_page)
     ### 3qto kongkongyzt  #db.session.query(Activity).order_by(desc('end_time-start_time')).all()
     struct_now = time.localtime()
