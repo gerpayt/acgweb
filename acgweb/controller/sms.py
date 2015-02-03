@@ -9,13 +9,14 @@ import urllib2
 
 messages = {
     '0': '短信发送成功',
-    '30': '密码错误',
-    '40': '账号不存在',
-    '41': '余额不足',
-    '42': '帐号过期',
-    '43': 'IP地址限制',
-    '50': '内容含有敏感词',
-    '51': '手机号码不正确'
+    '30': '短信接口密码错误',
+    '40': '短信接口账号不存在',
+    '41': '短信接口余额不足',
+    '42': '短信接口帐号过期',
+    '43': '短信接口IP地址限制',
+    '50': '短信接口内容含有敏感词',
+    '51': '短信接口手机号码不正确',
+    '99': '短信接口网络连接超时'
 }
 
 
@@ -24,8 +25,11 @@ def send_sms(phone, content):
     url = config.SMS_BASE_URL + config.SMS_SEND_URL.format(username=config.SMS_USERNAME, password=config.SMS_PASSWORD, phone=phone, content=quote_plus(str(content)))
     #print url
     if 1:
-        response = urllib2.urlopen(url)
-        rtn = response.read()
+        try:
+            response = urllib2.urlopen(url, timeout=5)
+            rtn = response.read()
+        except urllib2.URLError:
+            rtn = '99'
     else:
         rtn = '0'
     #print rtn
@@ -55,9 +59,12 @@ def log_sms(phone, content, rtn):
 def query_sms():
     url = config.SMS_BASE_URL + config.SMS_QUERY_URL.format(username=config.SMS_USERNAME, password=config.SMS_PASSWORD)
     #print url
-    response = urllib2.urlopen(url)
-    rtn = response.read()
-    send, rest = 0, 0
+    try:
+        response = urllib2.urlopen(url, timeout=5)
+        rtn = response.read()
+    except urllib2.URLError:
+        rtn = ''
+    send, rest = '-', '-'
     if rtn.startswith("0\n"):
         (send, rest) = rtn[2:].split(',')
     #print send, rest
