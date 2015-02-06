@@ -40,6 +40,7 @@ def memberlistapi(me):
         d = {}
         d['uid'] = member.uid
         d['name'] = member.name
+        d['sex'] = member.sex
         d['mobile'] = member.mobile_num
         d['mobile_type'] = member.mobile_type
         d['mobile_short'] = member.mobile_short

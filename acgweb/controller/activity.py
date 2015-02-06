@@ -49,9 +49,7 @@ def activitylistapi(me):
         d['id'] = activity.id
         d['title'] = activity.title
         d['venue'] = activity.venue
-        d['work_start_time'] = activity.work_start_time
         d['start_time'] = activity.start_time
-        d['end_time'] = activity.end_time
         d['type'] = activity.type
         d['status'] = activity.status
         d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'status': x.status} for x in activity.duties]

@@ -18,9 +18,7 @@
 返回 [{"id":.., "title": ..., ... }, {...}, ...]
         id 活动唯一标识
         title 活动标题
-        work_start_time 值班开始时间
         start_time 活动开始时间
-        end_time 活动结束时间
         venue 活动场地
         status 活动状态
         type 活动类型
