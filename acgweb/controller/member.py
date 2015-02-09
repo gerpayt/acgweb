@@ -109,7 +109,6 @@ def memberdetailapi(me):
         res['email'] = member.email
         res['qqnum'] = member.qqnum
         res['address'] = member.address
-        res['status'] = member.status
         res['photo'] = member.photo
         res['introduce'] = member.introduce
         res['register_time'] = member.register_time
