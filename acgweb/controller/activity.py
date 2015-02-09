@@ -16,6 +16,7 @@ from decorated_function import *
 from acgweb.controller import mail
 from acgweb.controller import sms
 import notify
+from push import push_alias
 
 
 @app.route('/activitylist-p<int:pagenum>')
@@ -229,6 +230,7 @@ def activityoperation(operation, duty_id):
                             mail.send_mail(subject, content, duty.member.name, duty.member.email,
                                            msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_COVER_DUTY):
+                            push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_COVER_DUTY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
@@ -251,6 +253,7 @@ def activityoperation(operation, duty_id):
                         if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_APPROVE_APPLY):
                             mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_APPROVE_APPLY):
+                            push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
@@ -265,6 +268,7 @@ def activityoperation(operation, duty_id):
                         if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_APPROVE_APPLY):
                             mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_APPROVE_APPLY):
+                            push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
@@ -288,6 +292,7 @@ def activityoperation(operation, duty_id):
                         if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_DECLINE_DUTY):
                             mail.send_mail(subject, content, member.name, member.email, msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_DECLINE_DUTY):
+                            push_alias(uid, subject, content=content, msgid=msg_id, touid=uid, dutyid=duty.id, activityid=duty.aid)
                             pass  # TODO app notify
                         if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_DECLINE_DUTY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
@@ -411,6 +416,7 @@ def activityedit(activity_id=0):
                         if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_MODIFY):
                             mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_MODIFY):
+                            push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_MODIFY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
@@ -543,6 +549,7 @@ def activityappoint(activity_id, member_uid):
             if notify.is_notify(member_uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_APPOINT):
                 mail.send_mail(subject, content, member.name, member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
             if notify.is_notify(member_uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_APPOINT):
+                push_alias(member_uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                 pass  # TODO app notify
             if notify.is_notify(member_uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_APPOINT):
                 sms.send_sms(duty.member.mobile_num, sms_content)
@@ -607,6 +614,7 @@ def activitycancel(activity_id):
             if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_ACTIVITY_CANCEL):
                 mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
             if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_CANCEL):
+                push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                 pass  # TODO app notify
             if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_CANCEL):
                 sms.send_sms(duty.member.mobile_num, sms_content)
@@ -744,6 +752,7 @@ def cron():
                         mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         logs.append("%s: Send mail to %s" % (nowstr, duty.uid))
                     if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_NEARLY_BEGIN):
+                        push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                         pass  # TODO app notify
                     if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_NEARLY_BEGIN):
                         sms.send_sms(duty.member.mobile_num, sms_content)
@@ -786,6 +795,7 @@ def cron():
                     if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_TODO):
                         mail.send_mail(subject, content, member.name, member.email, msgid=msg_id)
                     if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_TODO):
+                        push_alias(uid, subject, content=content, msgid=msg_id)
                         pass  # TODO app notify
                     if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_TODO):
                         pass  #
@@ -814,6 +824,7 @@ def cron():
                             mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                             logs.append("%s: Send mail to %s" % (nowstr, duty.uid))
                         if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_ACTIVITY_MARK_ENDTIME):
+                            push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_ACTIVITY_MARK_ENDTIME):
                             sms.send_sms(duty.member.mobile_num, sms_content)

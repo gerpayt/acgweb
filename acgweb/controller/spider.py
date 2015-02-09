@@ -14,6 +14,7 @@ from acgweb.controller.activity_type import activitytypeclassify
 
 import time
 import notify
+from push import push_alias
 
 
 def activity_spider(content):
@@ -153,6 +154,7 @@ def activity_spider(content):
             if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_SPIDER):
                 mail.send_mail(subject, content, member.name, member.email, msgid=msg_id)
             if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_SPIDER):
+                push_alias(uid, subject, content=content, msgid=msg_id)
                 pass  # TODO app notify
             if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_SPIDER):
                 pass  #
