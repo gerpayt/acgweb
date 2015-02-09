@@ -12,4 +12,17 @@ def push_alias(uid, message, **kargs):
     android = jpush.android(alert=message, extras=kargs)
     push.notification = jpush.notification(android=android)
     push.platform = jpush.all_
-    push.send()
+    try:
+        resp = push.send()
+        success = True
+    except jpush.JPushFailure:
+        resp = 'JPushFailure %s %s' % (uid, message)
+        success = False
+    try:
+        fp = open(config.BASE_DIR + 'log/push.log', 'a')
+    except:
+        fp = open(config.BASE_DIR + 'log/push.log', 'w')
+
+    fp.write("%s\n" % resp)
+    fp.close()
+    return success
