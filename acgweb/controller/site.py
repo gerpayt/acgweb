@@ -12,7 +12,7 @@ from acgweb.controller import mail, sms
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def weblogin():
+def login():
     if request.method == 'POST':
         username = request.form['username'].upper()
         password = request.form['password']
@@ -42,7 +42,7 @@ def weblogin():
 
 
 @app.route('/api/login')
-def apilogin():
+def loginapi():
     username = request.args.get('username', '').upper()
     password = request.args.get('password', '')
     key = md5.new()
@@ -66,8 +66,7 @@ def apilogin():
 
 
 @app.route('/logout')
-def weblogout():
-    """Page: activity detail"""
+def logout():
     session.pop('uid', None)
     session.pop('name', None)
     session.pop('is_arra_monitor', None)
@@ -78,7 +77,7 @@ def weblogout():
 
 @app.route('/api/logout')
 @return_json
-def apilogout(me):
+def logoutapi(me):
     me.access_token = None
     db.session.add(me)
     db.session.commit()
@@ -87,7 +86,7 @@ def apilogout(me):
 
 
 @app.route('/forgetpassword', methods=['GET', 'POST'])
-def webforgetpassword():
+def forgetpassword():
     if request.method == 'POST':
         username = request.form['username'].upper()
         email = request.form['email']
@@ -111,7 +110,7 @@ def webforgetpassword():
 
 
 @app.route('/api/forgetpassword')
-def apiforgetpassword():
+def forgetpasswordapi():
     username = request.args.get('username', '').upper()
     mobile = request.args.get('mobile', '')
     user = Member.query.filter(Member.uid == username, Member.mobile_num == mobile).first()
@@ -133,7 +132,7 @@ def apiforgetpassword():
 
 
 @app.route('/resetpassword-<token>', methods=['GET', 'POST'])
-def webresetpassword(token=''):
+def resetpassword(token=''):
     if request.method == 'POST':
         if session.has_key('reset_password_token') and session['reset_password_token'] == token:
             password = request.form['password']
@@ -172,7 +171,7 @@ def webresetpassword(token=''):
 
 
 @app.route('/api/resetpassword')
-def apiresetpassword():
+def resetpasswordapi():
     username = request.args.get('username', '').upper()
     reset_password_token = request.args.get('reset_password_token', '')
     password = request.args.get('password', '')
@@ -198,7 +197,7 @@ def apiresetpassword():
 
 @app.route('/changepassword', methods=['GET', 'POST'])
 @login_required
-def webchangepassword():
+def changepassword():
     if request.method == 'POST':
         password_old = request.form['password_old']
         password_new = request.form['password_new']
@@ -239,7 +238,7 @@ def webchangepassword():
 
 @app.route('/api/changepassword')
 @return_json
-def apichangepassword(me):
+def changepasswordapi(me):
     password_old = request.args.get('password_old', '')
     password_new = request.args.get('password_new', '')
     if not password_new:
@@ -261,7 +260,7 @@ def apichangepassword(me):
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def webregister():
+def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -279,7 +278,7 @@ def webregister():
             name = form.name.data
             email = form.email.data
             mobile = form.mobile_num.data
-            register(username, password, name, email, mobile)
+            _register(username, password, name, email, mobile)
             flash({'type': 'success', 'content': '注册成功，请登陆。'})
             if viewtype() == 1:
                 return render_template('site/login_mobile.html', form=form)
@@ -292,7 +291,7 @@ def webregister():
 
 
 @app.route('/api/register')
-def apiregister():
+def registerapi():
     username = request.args.get('username', '').upper()
     password = request.args.get('password', '')
     name = request.args.get('name', '')
@@ -310,7 +309,7 @@ def apiregister():
         errors.append('手机号码已存在')
 
     if not errors:
-        register(username, password, name, email, mobile)
+        _register(username, password, name, email, mobile)
         res = {'success': True, 'message': '注册成功，请登陆。'}
     else:
         res = {'error': '120', 'message': json.dumps(errors)}
@@ -319,7 +318,7 @@ def apiregister():
     return resp
 
 
-def register(username, password, name, email, mobile):
+def _register(username, password, name, email, mobile):
     key = md5.new()
     key.update(password)
     member = Member()
