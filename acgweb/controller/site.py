@@ -82,7 +82,7 @@ def apilogout(me):
     me.access_token = None
     db.session.add(me)
     db.session.commit()
-    res = ({'message': '注销成功。'})
+    res = ({'success': True, 'message': '注销成功。'})
     return res
 
 

@@ -8,8 +8,48 @@
          name 名字
          uid 学号
 
+注销
+地址 /api/logout
+参数 token 令牌
+返回 {'success': True, 'message': '...'}
+
 注册
- TODO
+地址 /api/register
+参数 username 学号
+     password 密码
+     name 姓名
+     email 电子邮箱
+     mobile 手机号
+     reqcode 注册码
+返回
+     注册成功 {'success': True, 'message': '...'}
+     注册失败 {'error': '120', 'message': ['...', '...', ...]}
+
+忘记密码
+地址 /api/forgetpassword
+参数 username 学号
+     mobile 手机号
+返回
+     成功 {'success': True, 'message': '...'}
+     失败 {'error': '102', 'message': '...'}
+
+重置密码
+地址 /api/resetpassword
+参数 username 学号
+     reset_password_token 验证码
+     password 新密码
+返回
+     成功 {'success': True, 'message': '...'}
+     失败 {'error': '...', 'message': '...'}
+
+修改密码
+地址 /api/changepassword
+参数 token 令牌
+     password_old 旧密码
+     password_new 新密码
+返回
+     成功 {'success': True, 'message': '...'}
+     失败 {'error': '...', 'message': '...'}
 
 活动列表
 地址 /api/activitylist
