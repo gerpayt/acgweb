@@ -122,51 +122,35 @@ def activitydetail(activity_id):
 @app.route('/api/activitydetail', methods=['GET', 'POST'])
 @return_json
 def activitydetailapi(me):
-    """Page: activity detail"""
-    if request.method == 'GET':
-        activity_id = int(request.args.get('activity_id', 0))
-        activity = Activity.query.get(activity_id)
-        if activity != None:
-            is_busy = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()
-            duty = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).first()
-            if duty:
-                is_success = duty.status == CONST.DUTY_ACTIVITY_ONGOING
-            else:
-                is_success = False
-            now = int(time.time())
-            d = {}
-            #d['is_busy'] = is_busy
-            #d['is_success'] = is_success
-            d['id'] = activity.id
-            d['title'] = activity.title
-            d['venue'] = activity.venue
-            d['remark'] = activity.remark
-            d['work_start_time'] = activity.work_start_time
-            d['start_time'] = activity.start_time
-            d['end_time'] = activity.end_time
-            d['type'] = activity.type
-            d['status'] = activity.status
-            d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'mobile': x.member.mobile_num,
-                            'mobile_type': x.member.mobile_type, 'mobile_short': x.member.mobile_short, 'status': x.status}
-                           for x in activity.duties]
-            res = d #, 'is_busy': is_busy, 'is_success': is_success, 'now': now}
+    activity_id = int(request.args.get('activity_id', 0))
+    activity = Activity.query.get(activity_id)
+    if activity != None:
+        is_busy = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()
+        duty = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).first()
+        if duty:
+            is_success = duty.status == CONST.DUTY_ACTIVITY_ONGOING
         else:
-            res = {'error': '404', 'message': '活动不存在。'}
-        return res
+            is_success = False
+        now = int(time.time())
+        d = {}
+        #d['is_busy'] = is_busy
+        #d['is_success'] = is_success
+        d['id'] = activity.id
+        d['title'] = activity.title
+        d['venue'] = activity.venue
+        d['remark'] = activity.remark
+        d['work_start_time'] = activity.work_start_time
+        d['start_time'] = activity.start_time
+        d['end_time'] = activity.end_time
+        d['type'] = activity.type
+        d['status'] = activity.status
+        d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'mobile': x.member.mobile_num,
+                        'mobile_type': x.member.mobile_type, 'mobile_short': x.member.mobile_short, 'status': x.status}
+                       for x in activity.duties]
+        res = d #, 'is_busy': is_busy, 'is_success': is_success, 'now': now}
     else:
-        activity = Activity.query.get(activity_id)
-        if activity.status == CONST.ACTIVITY_ONGOING or activity.status == CONST.ACTIVITY_ENDED:
-            duty = Duty.query.filter(Duty.aid == activity_id, Duty.uid == session['uid']).first()
-
-            type = request.form['type']
-            content = request.form['content']
-            duty.appendlog(type, content)
-            db.session.add(activity)
-            db.session.commit()
-            # 根据不同的类型来通知不同的人 #TODO
-            return jsonify(result='ok', msg='成功')
-        else:
-            return jsonify(result='err', msg='非法操作，请重试。')
+        res = {'error': '404', 'message': '活动不存在。'}
+    return res
 
 
 @app.route('/activityoperation-<operation>-<int:duty_id>', methods=['GET', 'POST'])

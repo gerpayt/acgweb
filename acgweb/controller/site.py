@@ -344,6 +344,20 @@ def _register(username, password, name, email, mobile):
                    msgid=msg_id, touid=member.uid, uid=member.uid)
 
 
+@app.route('/api/check_update')
+def check_update():
+    platform = request.args.get('platfrom', '')
+    try:
+        new_version = str(open(config.BASE_DIR + 'data/%s.ver' % platform, 'r').read())
+    except:
+        new_version = '0.0.0'
+
+    res = {platform: new_version}
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
 @app.route('/imageupload', methods=['POST'])
 @login_required
 def imageupload():

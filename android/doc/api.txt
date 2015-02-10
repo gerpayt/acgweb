@@ -51,6 +51,12 @@
      成功 {'success': True, 'message': '...'}
      失败 {'error': '...', 'message': '...'}
 
+检查更新
+地址 /api/check_update
+参数 platform 平台
+返回
+     {platform: new_version}
+
 活动列表
 地址 /api/activitylist
 参数 token 令牌
