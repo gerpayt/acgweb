@@ -128,9 +128,10 @@ register_tmpl = {'subject': "注册成功", 'content': '''
 
 '''}
 
-forgetpassword_tmpl = {'subject': "重置密码", 'content': '''
+webforgetpassword_tmpl = {'subject': "重置密码", 'content': '''
 点击下面链接来重置密码 <br />
-<a href="%s">%s</a>
+<a href="%s">%s</a> <br />
+如非本人操作,请忽略本邮件。
 
 '''}
 

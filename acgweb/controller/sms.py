@@ -88,3 +88,5 @@ sms_activity_appoint_tmpl = '''【音控组】班长排班 %s [%s] 活动:%s'''
 sms_activity_nearly_begin_tmpl = '''【音控组】活动即将开始 %s [%s] 活动:%s '''
 
 sms_activity_mark_endtime_tmpl = '''【音控组】标记活动结束时间 活动:%s '''
+
+sms_forgetpassword_tmpl = '''【音控组】重置密码 验证码为 %s 请在APP中填写此验证码来继续操作。'''

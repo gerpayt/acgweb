@@ -8,12 +8,11 @@ from acgweb.form.register import RegisterForm
 from decorated_function import *
 from acgweb import config
 import os
-from acgweb.controller import mail
+from acgweb.controller import mail, sms
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
-    """Page: all activitylist"""
+def weblogin():
     if request.method == 'POST':
         username = request.form['username'].upper()
         password = request.form['password']
@@ -43,7 +42,7 @@ def login():
 
 
 @app.route('/api/login')
-def loginapi():
+def apilogin():
     username = request.args.get('username', '').upper()
     password = request.args.get('password', '')
     key = md5.new()
@@ -67,7 +66,7 @@ def loginapi():
 
 
 @app.route('/logout')
-def logout():
+def weblogout():
     """Page: activity detail"""
     session.pop('uid', None)
     session.pop('name', None)
@@ -79,7 +78,7 @@ def logout():
 
 @app.route('/api/logout')
 @return_json
-def logoutapi(me):
+def apilogout(me):
     me.access_token = None
     db.session.add(me)
     db.session.commit()
@@ -88,23 +87,20 @@ def logoutapi(me):
 
 
 @app.route('/forgetpassword', methods=['GET', 'POST'])
-def forgetpassword():
-    """Page: activity detail"""
+def webforgetpassword():
     if request.method == 'POST':
         username = request.form['username'].upper()
         email = request.form['email']
         user = Member.query.filter(Member.uid == username, Member.email == email).first()
         if user:
             import random
-            token = str(random.randint(10000000, 99999999))
+            reset_password_token = str(random.randint(10000000, 99999999))
             session['reset_password_uid'] = username
-            session['reset_password_token'] = token
-            url = config.BASE_URL + url_for('resetpassword', token=token)
-            subject = mail.forgetpassword_tmpl['subject']
-            content = mail.forgetpassword_tmpl['content'] % (url, url)
-            mail.send_mail(subject, content, username, email,
-                           touid=username, uid=username)
-            #subject,content,toname,toemail
+            session['reset_password_token'] = reset_password_token
+            url = config.BASE_URL + url_for('resetpassword', token=reset_password_token)
+            subject = mail.webforgetpassword_tmpl['subject']
+            content = mail.webforgetpassword_tmpl['content'] % (url, url)
+            mail.send_mail(subject, content, username, email, touid=username, uid=username)
             flash({'type': 'success', 'content': '已经向邮箱中发送了电子邮件，请查收！'})
         else:
             flash({'type': 'error', 'content': '你提供的学号和电子邮件不正确。'})
@@ -114,9 +110,30 @@ def forgetpassword():
         return render_template('site/forgetpassword.html')
 
 
+@app.route('/api/forgetpassword')
+def apiforgetpassword():
+    username = request.args.get('username', '').upper()
+    mobile = request.args.get('mobile', '')
+    user = Member.query.filter(Member.uid == username, Member.mobile_num == mobile).first()
+    if user:
+        import random
+        reset_password_token = str(random.randint(100000, 999999))
+        user.reset_password_token = reset_password_token
+        db.session.add(user)
+        db.session.commit()
+        content = sms.sms_forgetpassword_tmpl % reset_password_token
+        sms.send_sms(mobile, content)
+        res = {'success': True, 'message': '已经向手机中发送了验证码，请查收！'}
+    else:
+        res = {'error': '102', 'message': '你提供的学号和电子邮箱不正确。'}
+
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
 @app.route('/resetpassword-<token>', methods=['GET', 'POST'])
-def resetpassword(token=''):
-    """Page: activity detail"""
+def webresetpassword(token=''):
     if request.method == 'POST':
         if session.has_key('reset_password_token') and session['reset_password_token'] == token:
             password = request.form['password']
@@ -126,9 +143,11 @@ def resetpassword(token=''):
             elif password != password_confirm:
                 flash({'type': 'danger', 'content': '两次密码不一致。'})
             else:
-                member = Member.query.get_or_404(session['reset_password_uid'])
+                uid = session['reset_password_uid']
+                password = request.form['password']
+                member = Member.query.get_or_404(uid)
                 key = md5.new()
-                key.update(request.form['password'])
+                key.update(password)
                 member.password = key.hexdigest()
                 db.session.add(member)
                 db.session.commit()
@@ -145,17 +164,41 @@ def resetpassword(token=''):
     else:
         if session.has_key('reset_password_token') and session['reset_password_token'] == token:
             if viewtype() == 1:
-                return render_template('site/resetpassword.html')
+                return render_template('site/resetpassword_mobile.html')
             else:
                 return render_template('site/resetpassword.html')
         else:
             abort(403)
 
 
+@app.route('/api/resetpassword')
+def apiresetpassword():
+    username = request.args.get('username', '').upper()
+    reset_password_token = request.args.get('reset_password_token', '')
+    password = request.args.get('password', '')
+    if password:
+        member = Member.query.filter(Member.uid == username, Member.reset_password_token == reset_password_token).first()
+        if member:
+            key = md5.new()
+            key.update(request.form['password'])
+            member.password = key.hexdigest()
+            member.reset_password_token = None
+            db.session.add(member)
+            db.session.commit()
+            res = {'success': True, 'message': '修改密码成功。'}
+        else:
+            res = {'error': '105', 'message': '你提供的验证码不正确。'}
+    else:
+        res = {'error': '106', 'message': '密码不能为空。'}
+
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
 @app.route('/changepassword', methods=['GET', 'POST'])
 @login_required
-def changepassword():
-    """Page: activity detail"""
+def webchangepassword():
     if request.method == 'POST':
         password_old = request.form['password_old']
         password_new = request.form['password_new']
@@ -194,9 +237,31 @@ def changepassword():
             return render_template('site/changepassword.html')
 
 
+@app.route('/api/changepassword')
+@return_json
+def apichangepassword(me):
+    password_old = request.args.get('password_old', '')
+    password_new = request.args.get('password_new', '')
+    if not password_new:
+        res = {'error': '110', 'content': '新密码不能为空。'}
+    else:
+        member = Member.query.get_or_404(me.uid)
+        key = md5.new()
+        key.update(password_old)
+        if member.password != key.hexdigest():
+            res = {'error': '111', 'content': '旧密码不正确。'}
+        else:
+            key = md5.new()
+            key.update(password_new)
+            member.password = key.hexdigest()
+            db.session.add(member)
+            db.session.commit()
+            res = {'success': True, 'content': '修改密码成功。'}
+    return res
+
+
 @app.route('/register', methods=['GET', 'POST'])
-def register():
-    """Page: activity detail"""
+def webregister():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -209,30 +274,12 @@ def register():
             if Member.query.filter(Member.mobile_num == form.mobile_num.data).count():
                 form.mobile_num.errors.append('手机号码已存在')
         if not form.errors:
-            key = md5.new()
-            key.update(form.password.data)
-            member = Member()
-            member.uid = form.username.data.upper()
-            member.name = form.name.data
-            member.password = key.hexdigest()
-            member.email = form.email.data
-            member.mobile_num = form.mobile_num.data
-            member.type = 0
-            member.update_register_time()
-            member.update_lastlogin_time()
-            db.session.add(member)
-            db.session.commit()
-
-            adminmember = Member.query.get(config.SYS_ADMIN)
-            readmeurl = config.BASE_URL + url_for('articledetail', article_title=config.README_TITLE)
-            admin_url = config.BASE_URL + url_for('memberdetail', member_uid=config.SYS_ADMIN)
-            admin_name = adminmember.name
-            subject = mail.register_tmpl['subject']
-            content = mail.register_tmpl['content'] % (readmeurl, readmeurl, admin_url, admin_name)
-            msg_id = mail.send_message(member.uid, config.SYS_ADMIN, subject, content, 2)
-            mail.send_mail(subject, content, member.name, member.email,
-                msgid=msg_id, touid=member.uid, uid=member.uid)
-
+            username = form.username.data
+            password = form.password.data
+            name = form.name.data
+            email = form.email.data
+            mobile = form.mobile_num.data
+            register(username, password, name, email, mobile)
             flash({'type': 'success', 'content': '注册成功，请登陆。'})
             if viewtype() == 1:
                 return render_template('site/login_mobile.html', form=form)
@@ -242,6 +289,60 @@ def register():
         return render_template('site/register_mobile.html', form=form)
     else:
         return render_template('site/register.html', form=form)
+
+
+@app.route('/api/register')
+def apiregister():
+    username = request.args.get('username', '').upper()
+    password = request.args.get('password', '')
+    name = request.args.get('name', '')
+    email = request.args.get('email', '')
+    mobile = request.args.get('mobile', '')
+    reqcode = request.args.get('reqcode', '')
+    errors = []
+    if reqcode != config.REQCODE:
+        errors.append('邀请码错误')
+    if Member.query.filter(Member.uid == username).count():
+        errors.append('帐号已存在')
+    if Member.query.filter(Member.email == email).count():
+        errors.append('电子邮箱已存在')
+    if Member.query.filter(Member.mobile_num == mobile).count():
+        errors.append('手机号码已存在')
+
+    if not errors:
+        register(username, password, name, email, mobile)
+        res = {'success': True, 'message': '注册成功，请登陆。'}
+    else:
+        res = {'error': '120', 'message': json.dumps(errors)}
+    resp = make_response(json.dumps(res))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+def register(username, password, name, email, mobile):
+    key = md5.new()
+    key.update(password)
+    member = Member()
+    member.uid = username.upper()
+    member.name = name
+    member.password = key.hexdigest()
+    member.email = email
+    member.mobile_num = mobile
+    member.type = 0
+    member.update_register_time()
+    member.update_lastlogin_time()
+    db.session.add(member)
+    db.session.commit()
+
+    adminmember = Member.query.get(config.SYS_ADMIN)
+    readmeurl = config.BASE_URL + url_for('articledetail', article_title=config.README_TITLE)
+    admin_url = config.BASE_URL + url_for('memberdetail', member_uid=config.SYS_ADMIN)
+    admin_name = adminmember.name
+    subject = mail.register_tmpl['subject']
+    content = mail.register_tmpl['content'] % (readmeurl, readmeurl, admin_url, admin_name)
+    msg_id = mail.send_message(member.uid, config.SYS_ADMIN, subject, content, 2)
+    mail.send_mail(subject, content, member.name, member.email,
+                   msgid=msg_id, touid=member.uid, uid=member.uid)
 
 
 @app.route('/imageupload', methods=['POST'])
