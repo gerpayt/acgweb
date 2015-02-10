@@ -1,0 +1,1 @@
+ALTER TABLE  `member` ADD  `reset_password_token` VARCHAR( 32 ) NULL;

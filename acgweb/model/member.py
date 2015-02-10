@@ -26,6 +26,7 @@ class Member(db.Model):
     flag = db.Column(db.Integer)
     setting = db.Column(db.Text)
     access_token = db.Column(db.String(32), index=True)
+    reset_password_token = db.Column(db.String(32))
     duties = db.relationship('Duty',
         backref=db.backref('owner', lazy='joined'))
     photos = []
