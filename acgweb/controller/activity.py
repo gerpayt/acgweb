@@ -126,15 +126,7 @@ def activitydetailapi(me):
     activity = Activity.query.get(activity_id)
     if activity != None:
         is_busy = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()
-        duty = Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).first()
-        if duty:
-            is_success = duty.status == CONST.DUTY_ACTIVITY_ONGOING
-        else:
-            is_success = False
-        now = int(time.time())
         d = {}
-        #d['is_busy'] = is_busy
-        #d['is_success'] = is_success
         d['id'] = activity.id
         d['title'] = activity.title
         d['venue'] = activity.venue
@@ -144,9 +136,25 @@ def activitydetailapi(me):
         d['end_time'] = activity.end_time
         d['type'] = activity.type
         d['status'] = activity.status
-        d['duties'] = [{'uid': x.member.uid, 'name': x.member.name, 'mobile': x.member.mobile_num,
-                        'mobile_type': x.member.mobile_type, 'mobile_short': x.member.mobile_short, 'status': x.status}
-                       for x in activity.duties]
+        d['duties'] = []
+        for duty in activity.duties:
+            ops = []
+            if me.uid == duty.member.uid:
+                for op in config.CONST.duty_status_operation_selfuser_mapper[duty.status]:
+                    ops.append({'name': op, 'title': config.CONST.dutyoperationname[op].title,
+                                'color': config.CONST.dutyoperationname[op].color,
+                                'content': config.CONST.dutyoperationname[op].content,
+                                'require': config.CONST.dutyoperationname[op].require_input})
+            elif not is_busy:
+                for op in config.CONST.duty_status_operation_selfuser_mapper[duty.status]:
+                    ops.append({'name': op, 'title': config.CONST.dutyoperationname[op].title,
+                                'color': config.CONST.dutyoperationname[op].color,
+                                'content': config.CONST.dutyoperationname[op].content,
+                                'require': config.CONST.dutyoperationname[op].require_input})
+            d['duties'].append({'id': duty.id, 'uid': duty.member.uid, 'name': duty.member.name,
+                                'mobile': duty.member.mobile_num, 'mobile_type': duty.member.mobile_type,
+                                'mobile_short': duty.member.mobile_short, 'status': duty.status, 'operations': ops})
+
         res = d #, 'is_busy': is_busy, 'is_success': is_success, 'now': now}
     else:
         res = {'error': '404', 'message': '活动不存在。'}
@@ -303,6 +311,156 @@ def activityoperation(operation, duty_id):
     return redirect(url_for('activitydetail', activity_id=duty.aid))
 
 
+@app.route('/api/activityoperation')
+@return_json
+def activityoperationapi(me):
+    duty_id = request.args.get('duty_id', '0')
+    operation = request.args.get('operation', '')
+    duty = Duty.query.get(duty_id)
+    if duty:
+        if duty.activity.status == CONST.ACTIVITY_SCHEDULING:
+            if ((me.uid == duty.member.uid and operation in CONST.duty_status_operation_selfuser_mapper[duty.status]) or
+                (me.uid != duty.member.uid and operation in CONST.duty_status_operation_otheruser_mapper[duty.status])):
+                # 一个活动一个成员只能有一条值班记录
+                if operation in ['activity_appoint', 'approve_apply']:
+                    target_uid = duty.uid
+                elif operation in ['apply_duty', 'confirm_apply', 'accept_duty', 'cover_duty']:
+                    target_uid = me.uid
+                else:
+                    target_uid = ''
+
+                if not Duty.query.filter(Duty.id != duty_id, Duty.uid == target_uid, Duty.aid == duty.aid).count():
+                    #print Article.query.filter(Article.title==article_title).statement
+                    reason = request.args.get('reason', '')
+                    if CONST.dutyoperationname[operation].has_key('require_input') and not reason:
+                        res = {'error': '130', 'content': '请填写申请理由。'}
+                        return res
+
+                    duty.status = CONST.duty_status_operation_next[operation]
+                    duty.appendprocesse(operation, reason)
+                    db.session.add(duty)
+                    db.session.commit()
+
+                    if operation == 'cover_duty':
+                        if Duty.query.filter(Duty.uid == me.uid, Duty.aid == duty.aid).count():
+                            flash({'type': 'danger', 'content': '你在本时间段已经有此活动，请勿重复选班。'})
+                            return redirect(url_for('activitydetail', activity_id=duty.aid))
+                        else:
+                            new_duty = Duty(aid=duty.aid, uid=me.uid, status=CONST.DUTY_BEFORE_START, log='')
+                            new_duty.appendprocesse('cover_duty', 'From: %s:%s' % (me.uid, me.name))
+                            db.session.add(new_duty)
+                            db.session.commit()
+
+                            worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
+                            timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
+                            venue = venuename_filter(duty.activity.venue)
+                            title = duty.activity.title
+                            remark = duty.activity.remark
+                            url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
+                            member_url = config.BASE_URL + url_for('memberdetail', member_uid=me.uid)
+                            member_name = me.name
+
+                            subject = mail.cover_duty_tmpl['subject']
+                            content = mail.cover_duty_tmpl['content'] % (member_url, member_name, worktimestr, timestr, venue, title, remark, url, url)
+                            sms_content = sms.sms_cover_duty_tmpl % (member_name, worktimestr, venue, title)
+                            if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_COVER_DUTY):
+                                msg_id = mail.send_message(duty.uid, me.uid, subject, content, 2)
+                            else:
+                                msg_id = 0
+                            if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_COVER_DUTY):
+                                mail.send_mail(subject, content, duty.member.name, duty.member.email,
+                                               msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                            if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_COVER_DUTY):
+                                push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                                pass  # TODO app notify
+                            if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_COVER_DUTY):
+                                sms.send_sms(duty.member.mobile_num, sms_content)
+
+                    elif operation == 'approve_apply' or operation == 'decline_apply':
+                        worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
+                        timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
+                        venue = venuename_filter(duty.activity.venue)
+                        title = duty.activity.title
+                        remark = duty.activity.remark
+                        url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
+                        if operation == 'approve_apply':
+                            subject = mail.approve_apply_tmpl['subject']
+                            content = mail.approve_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+                            sms_content = sms.sms_approve_apply_tmpl % (worktimestr, venue, title)
+                            if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_APPROVE_APPLY):
+                                msg_id = mail.send_message(duty.uid, me.uid, subject, content, 2)
+                            else:
+                                msg_id = 0
+                            if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_APPROVE_APPLY):
+                                mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                            if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_APPROVE_APPLY):
+                                push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                                pass  # TODO app notify
+                            if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
+                                sms.send_sms(duty.member.mobile_num, sms_content)
+                        else:
+                            subject = mail.decline_apply_tmpl['subject']
+                            content = mail.decline_apply_tmpl['content'] % (worktimestr, timestr, venue, title, remark, url, url)
+                            sms_content = sms.sms_decline_apply_tmpl % (worktimestr, venue, title)
+                            if notify.is_notify(duty.uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_APPROVE_APPLY):
+                                msg_id = mail.send_message(duty.uid, me.uid, subject, content, 2)
+                            else:
+                                msg_id = 0
+                            if notify.is_notify(duty.uid, notify.NOTIFY_EMAIL, notify.NOTIFY_APPROVE_APPLY):
+                                mail.send_mail(subject, content, duty.member.name, duty.member.email, msgid=msg_id, touid=duty.uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                            if notify.is_notify(duty.uid, notify.NOTIFY_APP, notify.NOTIFY_APPROVE_APPLY):
+                                push_alias(duty.uid, subject, content=content, msgid=msg_id, touid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                                pass  # TODO app notify
+                            if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
+                                sms.send_sms(duty.member.mobile_num, sms_content)
+                    elif operation == 'decline_duty':
+                        uname = me.name
+                        worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
+                        timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
+                        venue = venuename_filter(duty.activity.venue)
+                        title = duty.activity.title
+                        remark = duty.activity.remark
+                        url = config.BASE_URL + url_for('activitydetail', activity_id=duty.activity.id)
+                        subject = mail.decline_duty_tmpl['subject']
+                        content = mail.decline_duty_tmpl['content'] % (uname, reason, worktimestr, timestr, venue, title, remark, url, url)
+                        sms_content = sms.sms_decline_duty_tmpl % (uname, worktimestr, venue, title)
+                        for uid in config.ARRA_MONITOR:
+                            member = Member.query.get(uid)
+                            if notify.is_notify(uid, notify.NOTIFY_MESSAGE, notify.NOTIFY_DECLINE_DUTY):
+                                msg_id = mail.send_message(uid, me.uid, subject, content, 2)
+                            else:
+                                msg_id = 0
+                            if notify.is_notify(uid, notify.NOTIFY_EMAIL, notify.NOTIFY_DECLINE_DUTY):
+                                mail.send_mail(subject, content, member.name, member.email, msgid=msg_id, touid=uid, uid=duty.uid, dutyid=duty.id, activityid=duty.aid)
+                            if notify.is_notify(uid, notify.NOTIFY_APP, notify.NOTIFY_DECLINE_DUTY):
+                                push_alias(uid, subject, content=content, msgid=msg_id, touid=uid, dutyid=duty.id, activityid=duty.aid)
+                                pass  # TODO app notify
+                            if notify.is_notify(uid, notify.NOTIFY_SMS, notify.NOTIFY_DECLINE_DUTY):
+                                sms.send_sms(duty.member.mobile_num, sms_content)
+
+                    elif operation == 'cancel_task':
+                        pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
+                        #venue = venuename_filter(duty.activity.venue)
+                        #title = duty.activity.title
+                        #remark = duty.activity.remark
+                        #url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
+                        #subject = mail.approve_apply_tmpl['subject']
+                        #content = mail.approve_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
+                        #msg_id = mail.send_message(duty.uid,me.uid,subject,content,2)
+                        #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
+
+                    res = {'success': True, 'message': '操作成功！'}
+                else:
+                    res = {'error': '132', 'message': '一个活动只能选一个班。'}
+            else:
+                res = {'error': '133', 'message': '没有权限。'}
+        else:
+            res = {'error': '134', 'message': '过期操作。'}
+    else:
+        res = {'error': '135', 'message': '没找到任务。'}
+    return res
+
+
 @app.route('/activityapply-<int:activity_id>', methods=['GET', 'POST'])
 @login_required
 def activityapply(activity_id):
@@ -317,11 +475,33 @@ def activityapply(activity_id):
             newduty.appendprocesse('apply_duty', content)
             db.session.add(newduty)
             db.session.commit()
-            flash({'type': 'success', 'content': '值班申请提交成功，等待排版班长审核。'})
+            flash({'type': 'success', 'content': '值班申请提交成功，等待排班班长审核。'})
     else:
         flash({'type': 'danger', 'content': '非法操作，请重试。'})
     return redirect(url_for('activitydetail', activity_id=activity_id))
 
+
+@app.route('/api/activityapply')
+@return_json
+def activityapplyapi(me):
+    activity_id = request.args.get('activity_id', '0')
+    activity = Activity.query.get(activity_id)
+    if activity:
+        if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()):
+            reason = request.args.get('reason', '')
+            if not reason:
+                res = {'error': '141', 'message': '请填写申请理由。'}
+            else:
+                newduty = Duty(aid=activity_id, uid=me.uid, status=CONST.DUTY_APPLY_ING, process='', log='')
+                newduty.appendprocesse('apply_duty', reason)
+                db.session.add(newduty)
+                db.session.commit()
+                res = {'success': True, 'message': '值班申请提交成功，等待排班班长审核。'}
+        else:
+            res = {'error': '142', 'message': '非法操作，请重试。'}
+    else:
+        res = {'error': '143', 'message': '非法操作，请重试。'}
+    return res
 
 @app.route('/activityedit', methods=['GET', 'POST'])
 @app.route('/activityedit-<int:activity_id>', methods=['GET', 'POST'])
@@ -651,6 +831,35 @@ def activityterminate(activity_id):
     else:
         flash({'type': 'danger', 'content': '非法操作，请重试。'})
     return redirect(url_for('activitydetail', activity_id=activity_id))
+
+
+@app.route('/api/activityterminate')
+@return_json
+def activityterminateapi(me):
+    activity_id = request.args.get('activity_id', '0')
+    activity = Activity.query.get(activity_id)
+    if activity:
+        if activity.status == CONST.ACTIVITY_ONGOING and Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id, Duty.status == CONST.DUTY_ACTIVITY_ONGOING).count():
+            #print Article.query.filter(Article.title==article_title).statement
+            end_time = int(request.args.get('end_time', '0'))
+            last_time = end_time - activity.start_time
+            if last_time < 30 * 60 or last_time > 6 * 3600:
+                res = {'error': '161', 'message': '活动结束时间填写有误。'}
+            else:
+                activity.end_time = end_time
+                activity.status = CONST.ACTIVITY_ENDED
+                duties = Duty.query.filter(Duty.aid == activity_id, Duty.status == CONST.DUTY_ACTIVITY_ONGOING)
+                for duty in duties:
+                    duty.status = CONST.DUTY_ACTIVITY_ENDED
+                    db.session.add(duty)
+                db.session.add(activity)
+                db.session.commit()
+                res = {'success': True, 'message': '活动已经成功标记为结束状态。'}
+        else:
+            res = {'error': '162', 'message': '非法操作，请重试。'}
+    else:
+        res = {'error': '163', 'message': '非法操作，请重试。'}
+    return res
 
 
 @app.route('/activitysync', methods=['GET', 'POST'])

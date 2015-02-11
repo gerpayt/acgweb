@@ -21,16 +21,14 @@
      email 电子邮箱
      mobile 手机号
      reqcode 注册码
-返回
-     注册成功 {'success': True, 'message': '...'}
+返回 注册成功 {'success': True, 'message': '...'}
      注册失败 {'error': '120', 'message': ['...', '...', ...]}
 
 忘记密码
 地址 /api/forgetpassword
 参数 username 学号
      mobile 手机号
-返回
-     成功 {'success': True, 'message': '...'}
+返回 成功 {'success': True, 'message': '...'}
      失败 {'error': '102', 'message': '...'}
 
 重置密码
@@ -38,24 +36,13 @@
 参数 username 学号
      reset_password_token 验证码
      password 新密码
-返回
-     成功 {'success': True, 'message': '...'}
-     失败 {'error': '...', 'message': '...'}
-
-修改密码
-地址 /api/changepassword
-参数 token 令牌
-     password_old 旧密码
-     password_new 新密码
-返回
-     成功 {'success': True, 'message': '...'}
+返回 成功 {'success': True, 'message': '...'}
      失败 {'error': '...', 'message': '...'}
 
 检查更新
 地址 /api/check_update
 参数 platform 平台
-返回
-     {platform: new_version}
+返回 {platform: new_version}
 
 活动列表
 地址 /api/activitylist
@@ -88,12 +75,44 @@
         status 活动状态
         type 活动类型
         duties 任务数组
+            id 任务ID
             uid 用户学号
             name 用户姓名
             mobile 手机号
             mobile_type 手机号类型
             mobile_short 手机短号
             status 任务状态
+            operations 可操作的数组
+                name 操作名称
+                title 操作显示名称
+                color 显示颜色
+                content 提示框信息
+                require 是否需要填写附加信息
+
+活动操作
+地址 /api/activityoperation
+参数 token 令牌
+     duty_id 任务ID
+     operation 操作名称
+     reason 附加信息（可选）
+返回 成功 {'success': True, 'message': '...'}
+     失败 {'error': '...', 'message': '...'}
+
+活动申请值班
+地址 /api/activityoperation
+参数 token 令牌
+     activity_id 活动ID
+     reason 附加信息
+返回 成功 {'success': True, 'message': '...'}
+     失败 {'error': '...', 'message': '...'}
+
+活动结束
+地址 /api/activityoperation
+参数 token 令牌
+     activity_id 活动ID
+     end_time 结束时间
+返回 成功 {'success': True, 'message': '...'}
+     失败 {'error': '...', 'message': '...'}
 
 成员列表
 地址 /api/memberlist
@@ -235,3 +254,16 @@
         introduce 个人简介
         register_time 注册时间
         lastlogin_time 上次登陆时间
+
+修改我的信息
+TODO
+
+修改密码
+地址 /api/changepassword
+参数 token 令牌
+     password_old 旧密码
+     password_new 新密码
+返回
+     成功 {'success': True, 'message': '...'}
+     失败 {'error': '...', 'message': '...'}
+
