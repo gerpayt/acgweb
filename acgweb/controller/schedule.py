@@ -40,6 +40,7 @@ def myscheduleapi():
         d['section'] = schedule.section
         res.append(d)
     resp = make_response(json.dumps(res))
+    resp.headers['Content-Type'] = 'text/json; charset=utf-8'
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 

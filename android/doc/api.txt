@@ -10,7 +10,7 @@
 
 注销
 地址 /api/logout
-参数 token 令牌
+参数 access_token 令牌
 返回 {'success': True, 'message': '...'}
 
 注册
@@ -46,7 +46,7 @@
 
 活动列表
 地址 /api/activitylist
-参数 token 令牌
+参数 access_token 令牌
      pagenum 页数（非必填）
 返回 [{"id":.., "title": ..., ... }, {...}, ...]
         id 活动唯一标识
@@ -62,7 +62,7 @@
 
 活动详细
 地址 /api/activitydetail
-参数 token 令牌
+参数 access_token 令牌
      activity_id 活动ID
 返回 {"id": ..., "title": ..., ...}
         id 活动唯一标识
@@ -91,7 +91,7 @@
 
 活动操作
 地址 /api/activityoperation
-参数 token 令牌
+参数 access_token 令牌
      duty_id 任务ID
      operation 操作名称
      reason 附加信息（可选）
@@ -100,7 +100,7 @@
 
 活动申请值班
 地址 /api/activityoperation
-参数 token 令牌
+参数 access_token 令牌
      activity_id 活动ID
      reason 附加信息
 返回 成功 {'success': True, 'message': '...'}
@@ -108,7 +108,7 @@
 
 活动结束
 地址 /api/activityoperation
-参数 token 令牌
+参数 access_token 令牌
      activity_id 活动ID
      end_time 结束时间
 返回 成功 {'success': True, 'message': '...'}
@@ -116,7 +116,7 @@
 
 成员列表
 地址 /api/memberlist
-参数 token 令牌
+参数 access_token 令牌
 返回 [{"uid":.., "name": ..., ... }, {...}, ...]
         uid 成员唯一标识
         name 成员姓名
@@ -127,7 +127,7 @@
 
 成员详细
 地址 /api/memberdetail
-参数 token 令牌
+参数 access_token 令牌
      member_uid 成员UID
 返回 {"uid": ..., "name": ..., ...}
         uid 学号
@@ -148,7 +148,7 @@
 
 记录列表
 地址 /api/dutylist
-参数 token 令牌
+参数 access_token 令牌
      pagenum 页数（非必填）
 返回 [{"id":.., "title": ..., ... }, {...}, ...]
         id 活动唯一标识
@@ -168,7 +168,7 @@
 
 文章列表
 地址 /api/articlelist
-参数 token 令牌
+参数 access_token 令牌
 返回 [{"id":.., "title": ..., ... }, {...}, ...]
         id 文章ID
         title 文章标题
@@ -177,7 +177,7 @@
 
 文章详细
 地址 /api/articledetail
-参数 token 令牌
+参数 access_token 令牌
      article_id 文章ID
 返回 {"id":.., "title": ..., ... }
         id 文章ID
@@ -188,7 +188,7 @@
 
 我的消息列表
 地址 /api/mymessagelist
-参数 token 令牌
+参数 access_token 令牌
      pagenum 页数（非必填）
 返回 [{"id":.., "subject": ..., ... }, {...}, ...]
         id 消息ID
@@ -198,7 +198,7 @@
 
 消息详细
 地址 /api/mymessagedetail
-参数 token 令牌
+参数 access_token 令牌
      message_id 消息ID
 返回 {"id":.., "subject": ..., ... }
         id 消息ID
@@ -219,7 +219,7 @@
 
 我的活动
 地址 /api/myactivitylist
-参数 token 令牌
+参数 access_token 令牌
 返回 [{"id":.., "title": ..., ... }, {...}, ...]
         id 活动唯一标识
         title 活动标题
@@ -236,7 +236,7 @@
 
 我的信息
 地址 /api/myinfo
-参数 token 令牌
+参数 access_token 令牌
 返回 {"uid": ..., "name": ..., ...}
         uid 学号
         name 用户名
@@ -260,7 +260,7 @@ TODO
 
 修改密码
 地址 /api/changepassword
-参数 token 令牌
+参数 access_token 令牌
      password_old 旧密码
      password_new 新密码
 返回

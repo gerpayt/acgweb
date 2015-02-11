@@ -61,6 +61,7 @@ def loginapi():
         res = {'error': '101', 'message': '你提供的学号和密码不正确。'}
 
     resp = make_response(json.dumps(res))
+    resp.headers['Content-Type'] = 'text/json; charset=utf-8'
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -127,6 +128,7 @@ def forgetpasswordapi():
         res = {'error': '102', 'message': '你提供的学号和电子邮箱不正确。'}
 
     resp = make_response(json.dumps(res))
+    resp.headers['Content-Type'] = 'text/json; charset=utf-8'
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -191,6 +193,7 @@ def resetpasswordapi():
         res = {'error': '106', 'message': '密码不能为空。'}
 
     resp = make_response(json.dumps(res))
+    resp.headers['Content-Type'] = 'text/json; charset=utf-8'
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -314,6 +317,7 @@ def registerapi():
     else:
         res = {'error': '120', 'message': json.dumps(errors)}
     resp = make_response(json.dumps(res))
+    resp.headers['Content-Type'] = 'text/json; charset=utf-8'
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -354,6 +358,7 @@ def check_update():
 
     res = {platform: new_version}
     resp = make_response(json.dumps(res))
+    resp.headers['Content-Type'] = 'text/json; charset=utf-8'
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
