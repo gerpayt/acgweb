@@ -181,7 +181,7 @@ def resetpasswordapi():
         member = Member.query.filter(Member.uid == username, Member.reset_password_token == reset_password_token).first()
         if member:
             key = md5.new()
-            key.update(request.form['password'])
+            key.update(password)
             member.password = key.hexdigest()
             member.reset_password_token = None
             db.session.add(member)
