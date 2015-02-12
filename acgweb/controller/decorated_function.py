@@ -52,7 +52,7 @@ def return_json(f):
         else:
             res = {'error': '110', 'message': 'token不正确或者已经过期。'}
         resp = make_response(json.dumps(res))
-        resp.headers['Content-Type'] = 'text/json; charset=utf-8'
+        resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     return decorated_function
