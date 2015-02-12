@@ -351,7 +351,7 @@ def _register(username, password, name, email, mobile):
 
 @app.route('/api/check_update')
 def check_update():
-    platform = request.args.get('platfrom', '')
+    platform = request.args.get('platform', '')
     try:
         new_version = str(open(config.BASE_DIR + 'data/%s.ver' % platform, 'r').read())
     except:
