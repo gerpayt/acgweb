@@ -364,6 +364,76 @@ def check_update():
     return resp
 
 
+@app.route('/mobile_app')
+def mobileapp():
+    ua = request.headers.get('User-Agent')
+    if ua:
+        ua = ua.lower()
+    else:
+        ua = ''
+    if ua.find('android') >= 0:
+        platform = 'android'
+    elif ua.find('mac os') >= 0:
+        platform = 'ios'
+    elif ua.find('windows phone os') >= 0:
+        platform = 'winphone'
+    else:
+        platform = ''
+
+    try:
+        android_version = str(open(config.BASE_DIR + 'data/android.ver', 'r').read())
+    except:
+        android_version = '0.0.0'
+    try:
+        ios_version = str(open(config.BASE_DIR + 'data/ios.ver', 'r').read())
+    except:
+        ios_version = '0.0.0'
+    try:
+        winphone_version = str(open(config.BASE_DIR + 'data/winphone.ver', 'r').read())
+    except:
+        winphone_version = '0.0.0'
+
+    data = {'android': {'version': android_version, 'url': '/data/acg.apk'},
+            'ios': {'version': ios_version, 'url': 'ios'},
+            'winphone': {'version': winphone_version, 'url': 'winphone'}}
+    if viewtype() == 1:
+        return render_template('site/mobileapp_mobile.html', data=data, platform=platform)
+    else:
+        return render_template('site/mobileapp.html', data=data, platform=platform)
+
+
+@app.route('/api/download_app')
+def download_app():
+    platform = request.args.get('platform', '')
+    if not platform:
+        ua = request.headers.get('User-Agent')
+        if ua:
+            ua = ua.lower()
+        else:
+            ua = ''
+        if ua.find('android') >= 0:
+            platform = 'android'
+        elif ua.find('mac os') >= 0:
+            platform = 'ios'
+        elif ua.find('windows phone os') >= 0:
+            platform = 'winphone'
+        else:
+            platform = ''
+    try:
+        url = str(open(config.BASE_DIR + 'data/%s.url' % platform, 'r').read())
+    except:
+        if platform == 'android':
+            url = '/data/acg.apk'
+        elif platform == 'ios':
+            url = 'https://itunes.apple.com/app/acg/id999999&mt=8'
+            #TODO
+        else:
+            url = url_for('mobileapp')
+
+    return redirect(url, code=302)
+
+
+
 @app.route('/imageupload', methods=['POST'])
 @login_required
 def imageupload():

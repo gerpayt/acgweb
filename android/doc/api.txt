@@ -44,6 +44,11 @@
 参数 platform 平台
 返回 {platform: new_version}
 
+下载APP
+地址 /api/download_app
+参数 platform 平台（可选）
+返回 （302跳转到下载URL）
+
 活动列表
 地址 /api/activitylist
 参数 access_token 令牌
