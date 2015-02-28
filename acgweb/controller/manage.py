@@ -103,7 +103,7 @@ def mailmanage():
 def logmanage():
     """Page: all activitylist"""
     logdict = {}
-    for t in ['cron', 'sync', 'sms', 'error']:
+    for t in ['cron', 'sync', 'sms', 'push', 'error']:
         logs = []
         try:
             fp = open(config.BASE_DIR + 'log/%s.log' % t, 'r')
@@ -114,7 +114,7 @@ def logmanage():
         logs.reverse()
         logdict[t] = logs
 
-    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], smslogs=logdict['sms'], errorlogs=logdict['error'])
+    return render_template('manage/managelog.html', cronlogs=logdict['cron'], synclogs=logdict['sync'], smslogs=logdict['sms'], pushlogs=logdict['push'], errorlogs=logdict['error'])
 
 
 @app.route('/systemmanage')
