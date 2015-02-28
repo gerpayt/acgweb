@@ -1,6 +1,6 @@
 # coding: utf-8
 
-salaperhour = 10
+salaperhour = 11
 max_time = 2147483647L
 
 article_category = [
