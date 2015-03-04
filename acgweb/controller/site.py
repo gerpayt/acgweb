@@ -8,6 +8,7 @@ from acgweb.form.register import RegisterForm
 from decorated_function import *
 from acgweb import config
 import os
+import re
 from acgweb.controller import mail, sms
 
 
@@ -305,10 +306,22 @@ def registerapi():
     errors = []
     if reqcode != config.REQCODE:
         errors.append('邀请码错误')
+    if Member.uid == '':
+        errors.append('帐号不能为空')
     if Member.query.filter(Member.uid == username).count():
         errors.append('帐号已存在')
+    if Member.password == '':
+        errors.append('密码不能为空')
+    if Member.name == '':
+        errors.append('姓名不能为空')
+    if Member.email == '':
+        errors.append('电子邮件不能为空')
+    if not re.match('^.+@.+\..+$', Member.email):
+        errors.append('电子邮件格式不正确')
     if Member.query.filter(Member.email == email).count():
         errors.append('电子邮箱已存在')
+    if Member.mobile_num == '':
+        errors.append('手机号码不能为空')
     if Member.query.filter(Member.mobile_num == mobile).count():
         errors.append('手机号码已存在')
 
