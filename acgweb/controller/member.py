@@ -60,7 +60,10 @@ def memberdetail(member_uid):
         weeknum = 1
     elif weeknum > 25:
         weeknum = 25
-    weekstart = int(time.time()) - 86400 * (time.localtime().tm_wday + 1)
+    day_offset = time.localtime().tm_wday + 1
+    if day_offset == 7:
+        day_offset = 0
+    weekstart = int(time.time()) - 86400 * day_offset
     if weekstart < config.SEMESTER_BASE:
         weekstart = config.SEMESTER_BASE
     elif weekstart > config.SEMESTER_BASE + 25 * 7 * 86400:
