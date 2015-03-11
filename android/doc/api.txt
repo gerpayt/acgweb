@@ -198,6 +198,7 @@
 返回 [{"id":.., "subject": ..., ... }, {...}, ...]
         id 消息ID
         subject 消息主题
+        sendtime 发送时间
         readtime 阅读时间
         type 消息类型
 

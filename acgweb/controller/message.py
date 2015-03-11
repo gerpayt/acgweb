@@ -38,6 +38,7 @@ def mymessageapi(me):
         d = {}
         d['id'] = message.id
         d['subject'] = message.subject
+        d['sendtime'] = message.sendtime
         d['readtime'] = message.readtime
         d['type'] = message.type
         res.append(d)
