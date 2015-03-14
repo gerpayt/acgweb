@@ -141,16 +141,15 @@ def activitydetailapi(me):
             ops = []
             if me.uid == duty.member.uid:
                 for op in config.CONST.duty_status_operation_selfuser_mapper[duty.status]:
-                    ops.append({'name': op, 'title': config.CONST.dutyoperationname[op]['title'],
-                                'color': config.CONST.dutyoperationname[op]['color'],
-                                'content': config.CONST.dutyoperationname[op]['content'],
-                                'require': config.CONST.dutyoperationname[op]['require_input']})
+                    op_dict = config.CONST.dutyoperationname[op]
+                    op_dict['name'] = op
+                    ops.append(op_dict)
             elif not is_busy:
-                for op in config.CONST.duty_status_operation_selfuser_mapper[duty.status]:
-                    ops.append({'name': op, 'title': config.CONST.dutyoperationname[op]['title'],
-                                'color': config.CONST.dutyoperationname[op]['color'],
-                                'content': config.CONST.dutyoperationname[op]['content'],
-                                'require': config.CONST.dutyoperationname[op]['require_input']})
+                for op in config.CONST.duty_status_operation_otheruser_mapper[duty.status]:
+                    op_dict = config.CONST.dutyoperationname[op]
+                    op_dict['name'] = op
+                    ops.append(op_dict)
+            # TODO monitor operations
             d['duties'].append({'id': duty.id, 'uid': duty.member.uid, 'name': duty.member.name,
                                 'mobile': duty.member.mobile_num, 'mobile_type': duty.member.mobile_type,
                                 'mobile_short': duty.member.mobile_short, 'status': duty.status, 'operations': ops})
