@@ -316,7 +316,7 @@ def registerapi():
         errors.append('姓名不能为空')
     if Member.email == '':
         errors.append('电子邮件不能为空')
-    if not re.match('^.+@.+\..+$', Member.email):
+    if not re.match('^.+@.+\..+$', email):
         errors.append('电子邮件格式不正确')
     if Member.query.filter(Member.email == email).count():
         errors.append('电子邮箱已存在')
