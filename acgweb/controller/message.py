@@ -108,7 +108,7 @@ def mymessagedetail(message_id=0):
 @return_json
 def messagedetailapi(me):
     message_id = int(request.args.get('message_id', 0))
-    message = Message.query.query.filter(Message.id == message_id and Message.touid == me.uid).first()
+    message = Message.query.filter(Message.id == message_id, Message.touid == me.uid).first()
     if message:
         if me.uid == message.touid and not message.readtime:
             message.update_readtime()
