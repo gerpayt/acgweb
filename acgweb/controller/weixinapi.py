@@ -36,13 +36,12 @@ def weixinapi():
         tfp.close()
 
         tree = xml.etree.ElementTree.fromstring(data)
-        root = tree.getroot()
-        MsgType = root.find('MsgType').text
+        MsgType = tree.find('MsgType').text
 
-        ToUserName = root.find('ToUserName').text
-        FromUserName = root.find('FromUserName').text
-        FromUserName = root.find('FromUserName').text
-        MsgType = root.find('MsgType').text
-        MsgId = root.find('MsgId').text
+        ToUserName = tree.find('ToUserName').text
+        FromUserName = tree.find('FromUserName').text
+        FromUserName = tree.find('FromUserName').text
+        MsgType = tree.find('MsgType').text
+        MsgId = tree.find('MsgId').text
 
         return make_response(data)
