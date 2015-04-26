@@ -510,14 +510,14 @@ def imagedelete():
 @login_required
 def set(key, value=None):
     """Page: all articles"""
-    referer = request.referrer
-    if not referer:
-        referer = url_for('index')
+    referrer = request.referrer
+    if not referrer:
+        referrer = url_for('index')
 
-    if value == None:
-        response = make_response(redirect(referer))
+    if value is None:
+        response = make_response(redirect(referrer))
         response.set_cookie(key, expires=0)
     else:
-        response = make_response(redirect(referer))
+        response = make_response(redirect(referrer))
         response.set_cookie(key, value)
     return response

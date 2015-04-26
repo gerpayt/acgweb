@@ -17,26 +17,19 @@ def login_required(f):
 
 def viewtype():
     vt = request.cookies.get('vt')
-    if vt != None:
+    if vt is not None:
         return int(vt)
     ua = request.headers.get('User-Agent')
     if ua:
         ua = ua.lower()
     else:
         ua = ''
+    mobile_ua = ['iphone', 'android', 'windows phone']
     #print ua
-    re = 0
-    osArr = {'iphone': 1, 'ipad': 1, 'ipod': 1, 'android': 2, 'windows phone': 3}
-    touchArr = {1: ['safari', 'crios', 'ucbrowser', 'mqqbrowser'], 2: ['chrome', 'ucbrowser', 'mqqbrowser'], 3: ['ie']}
-    for phone, k in osArr.items():
-        if ua.find(phone) != -1:
-            for u in touchArr[k]:
-                if ua.find(u) != -1:
-                    re = 1
-                    break
-            if re:
-                break
-    return re
+    for u in mobile_ua:
+        if ua.find(u) != -1:
+            return 1
+    return 0
 
 
 def return_json(f):
