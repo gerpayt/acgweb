@@ -110,7 +110,7 @@
   <p>{% if on_schedule %}你有“{{ on_schedule }}”。{% else %}你有空闲时间，可以申请此次活动。{% endif %}
   <a class="btn btn-default btn-mini modal-trigger" role="button" href="#myModal" data-toggle="modal"
    data-href="{{url_for('activityapply',activity_id=activity.id)}}"
-   data-label="申请值班" data-content="申请值班成功后不可以拒绝" data-require_input='1' data-modal-loading-text="正在申请">申请值班</a>
+   data-label="申请值班" data-content="仅能申请一周内的活动，申请值班成功后不可以拒绝" data-require_input='1' data-modal-loading-text="正在申请">申请值班</a>
 </p>{% endif %}
 {% else %}
 <p>活动尚未就绪。</p>
