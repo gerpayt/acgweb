@@ -78,7 +78,7 @@ dutystatuscolor = ['inverse', 'warning', 'important', 'default', 'important', 'd
 
 dutyoperationname = {
     'activity_appoint': {'color': 'success', 'title': '安排值班', 'loading': '正在排班'},
-    'apply_duty': {'color': 'success', 'title': '申请值班', 'content': '申请值班成功后不可以拒绝', 'loading': '正在申请', 'require_input': True},
+    'apply_duty': {'color': 'success', 'title': '申请值班', 'content': '仅能申请一周内的活动，申请值班成功后不可以拒绝', 'loading': '正在申请', 'require_input': True},
     'approve_apply': {'color': 'success', 'title': '批准值班', 'loading': '正在处理'},
     'decline_apply': {'color': 'danger', 'title': '拒绝值班', 'loading': '正在处理'},
     'confirm_apply': {'color': 'success', 'title': '确认值班', 'content': '核对日期时间无误后确认值班', 'loading': '正在处理'},

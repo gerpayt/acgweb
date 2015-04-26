@@ -465,18 +465,23 @@ def activityoperationapi(me):
 def activityapply(activity_id):
     """Page: activity detail"""
     activity = Activity.query.get_or_404(activity_id)
-    if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()):
-        content = request.form['content']
-        if not content:
-            flash({'type': 'error', 'content': '请填写申请理由。'})
+    ts = time.localtime()
+
+    if ts < activity.start_time <= ts + 7 * 86400:
+        if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()):
+            content = request.form['content']
+            if not content:
+                flash({'type': 'error', 'content': '请填写申请理由。'})
+            else:
+                newduty = Duty(aid=activity_id, uid=session['uid'], status=CONST.DUTY_APPLY_ING, process='', log='')
+                newduty.appendprocesse('apply_duty', content)
+                db.session.add(newduty)
+                db.session.commit()
+                flash({'type': 'success', 'content': '值班申请提交成功，等待排班班长审核。'})
         else:
-            newduty = Duty(aid=activity_id, uid=session['uid'], status=CONST.DUTY_APPLY_ING, process='', log='')
-            newduty.appendprocesse('apply_duty', content)
-            db.session.add(newduty)
-            db.session.commit()
-            flash({'type': 'success', 'content': '值班申请提交成功，等待排班班长审核。'})
+            flash({'type': 'danger', 'content': '非法操作，请重试。'})
     else:
-        flash({'type': 'danger', 'content': '非法操作，请重试。'})
+        flash({'type': 'danger', 'content': '只能申请一周内开始的活动。'})
     return redirect(url_for('activitydetail', activity_id=activity_id))
 
 
@@ -486,21 +491,27 @@ def activityapplyapi(me):
     activity_id = request.args.get('activity_id', '0')
     activity = Activity.query.get(activity_id)
     if activity:
-        if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()):
-            reason = request.args.get('reason', '')
-            if not reason:
-                res = {'error': '141', 'message': '请填写申请理由。'}
+        ts = time.localtime()
+
+        if ts < activity.start_time <= ts + 7 * 86400:
+            if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()):
+                reason = request.args.get('reason', '')
+                if not reason:
+                    res = {'error': '141', 'message': '请填写申请理由。'}
+                else:
+                    newduty = Duty(aid=activity_id, uid=me.uid, status=CONST.DUTY_APPLY_ING, process='', log='')
+                    newduty.appendprocesse('apply_duty', reason)
+                    db.session.add(newduty)
+                    db.session.commit()
+                    res = {'success': True, 'message': '值班申请提交成功，等待排班班长审核。'}
             else:
-                newduty = Duty(aid=activity_id, uid=me.uid, status=CONST.DUTY_APPLY_ING, process='', log='')
-                newduty.appendprocesse('apply_duty', reason)
-                db.session.add(newduty)
-                db.session.commit()
-                res = {'success': True, 'message': '值班申请提交成功，等待排班班长审核。'}
+                res = {'error': '142', 'message': '非法操作，请重试。'}
         else:
-            res = {'error': '142', 'message': '非法操作，请重试。'}
+            res = {'error': '144', 'content': '只能申请一周内开始的活动。'}
     else:
         res = {'error': '143', 'message': '非法操作，请重试。'}
     return res
+
 
 @app.route('/activityedit', methods=['GET', 'POST'])
 @app.route('/activityedit-<int:activity_id>', methods=['GET', 'POST'])
