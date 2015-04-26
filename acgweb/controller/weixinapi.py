@@ -52,6 +52,9 @@ def weixinapi():
                 if event == 'subscribe':
                     reply_content = "感谢您的关注！"
                     receive_content = 'subscribe'
+                elif event == 'unsubscribe':
+                    reply_content = "感谢您的关注！"
+                    receive_content = 'unsubscribe'
 
             elif receive_msg_type == 'text':
                 msg_id = tree.find('MsgId').text
@@ -64,7 +67,7 @@ def weixinapi():
             tfp = open(config.BASE_DIR + 'log/weixin.log', 'a')
             time_str = time.strftime('%Y-%m-%d %H:%I:%S')
             tfp.write('%s\t%s\t%s\t%s\n%s\n%s\n\n' %
-                      (time_str, receive_content, from_user_name, to_user_name, receive_content, reply_content))
+                      (time_str, receive_msg_type, from_user_name, to_user_name, receive_content, reply_content))
             tfp.close()
 
             return make_response(result_str)
