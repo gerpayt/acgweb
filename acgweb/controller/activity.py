@@ -465,7 +465,7 @@ def activityoperationapi(me):
 def activityapply(activity_id):
     """Page: activity detail"""
     activity = Activity.query.get_or_404(activity_id)
-    ts = time.localtime()
+    ts = time.time()
 
     if ts < activity.start_time <= ts + 7 * 86400:
         if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()):
@@ -491,7 +491,7 @@ def activityapplyapi(me):
     activity_id = request.args.get('activity_id', '0')
     activity = Activity.query.get(activity_id)
     if activity:
-        ts = time.localtime()
+        ts = time.time()
 
         if ts < activity.start_time <= ts + 7 * 86400:
             if activity.status == CONST.ACTIVITY_SCHEDULING and (not Duty.query.filter(Duty.uid == me.uid, Duty.aid == activity_id).count()):
