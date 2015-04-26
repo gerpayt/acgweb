@@ -46,7 +46,7 @@ def weixinapi():
                             </xml>"""
             msg_type = "text"
             reply_content = "感谢您的关注！"
-            time_str = str(int(time.time))
+            time_str = str(int(time.time()))
             result_str = text_tpl % (from_user_name, to_user_name, time_str, msg_type, reply_content)
 
             tfp = open(config.BASE_DIR + 'log/weixin.log', 'a')
