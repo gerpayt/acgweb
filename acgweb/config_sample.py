@@ -63,4 +63,4 @@ JPUSH_SECRET = ''
 
 ACT_SIGNS = {'NY2015': {'name': 'NY2015', 'title': '音控之夜', 'start_time': 1419849900, 'end_time': '1419864300'}}
 
-WEIXIN_TOKEN = 'ACGWEIXINTOKEN'
+WEIXIN_TOKEN = u'ACGWEIXINTOKEN'

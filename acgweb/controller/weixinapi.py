@@ -18,9 +18,11 @@ def check_signature():
     sig_arr = [token, timestamp, nonce]
     sig_arr.sort()
     sig_str = ''.join(sig_arr)
-    sig_str = hashlib.sha1(sig_str)
 
-    if sig_str == signature:
+    sha1 = hashlib.sha1()
+    sha1.update(sig_str)
+
+    if sha1.hexdigest() == signature:
         return make_response(echostr)
     else:
         abort(403)
