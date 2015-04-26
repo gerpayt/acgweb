@@ -28,8 +28,13 @@ def weixinapi():
             return make_response(echostr)
         else:
             abort(403)
-    else:
-        data = request.args.post
+    elif request.method == 'POST':
+        data = request.data
+
+        tfp = open(config.BASE_DIR + 'log/weixin.log', 'w')
+        tfp.write(data)
+        tfp.close()
+
         tree = xml.etree.ElementTree.fromstring(data)
         root = tree.getroot()
         MsgType = root.find('MsgType').text
@@ -39,9 +44,5 @@ def weixinapi():
         FromUserName = root.find('FromUserName').text
         MsgType = root.find('MsgType').text
         MsgId = root.find('MsgId').text
-
-        tfp = open(config.BASE_DIR + 'log/weixin-'+str(MsgId)+'.log', 'w')
-        tfp.write(data)
-        tfp.close()
 
         return make_response(data)
