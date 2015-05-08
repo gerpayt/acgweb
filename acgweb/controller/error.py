@@ -26,3 +26,8 @@ def error500(error):
         return render_template('site/error500_mobile.html'), 500
     else:
         return render_template('site/error500.html'), 500
+
+
+@app.route('/error50x')
+def error50x():
+    raise SystemError

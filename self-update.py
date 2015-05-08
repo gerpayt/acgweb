@@ -28,12 +28,12 @@ class PullHTTPHandle(BaseHTTPRequestHandler):
         self.wfile.write(buf)
 
     def do_PULL(self):
-        cmd = 'git pull'
+        cmd = 'git pull; service uwsgi reload'
         (status, output) = commands.getstatusoutput(cmd)
         return output
 
 
-signal.signal(signal.SIGINT, lambda x,y:exit(1))
+signal.signal(signal.SIGINT, lambda x, y: exit(1))
 
 http_server = HTTPServer(('127.0.0.1', int(port)), PullHTTPHandle)
 http_server.serve_forever()
