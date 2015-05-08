@@ -185,6 +185,9 @@ def activityoperation(operation, duty_id):
                 if CONST.dutyoperationname[operation].has_key('require_input') and not reason:
                     flash({'type': 'error', 'content': '请填写申请理由。'})
                     return redirect(url_for('activitydetail', activity_id=duty.aid))
+                if CONST.dutyoperationname[operation].has_key('disable'):
+                    flash({'type': 'danger', 'content': '操作被禁用！'})
+                    return redirect(url_for('activitydetail', activity_id=duty.aid))
 
                 duty.status = CONST.duty_status_operation_next[operation]
                 duty.appendprocesse(operation, reason)
@@ -263,7 +266,7 @@ def activityoperation(operation, duty_id):
                             pass  # TODO app notify
                         if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
                             sms.send_sms(duty.member.mobile_num, sms_content)
-                elif operation == 'decline_duty':
+                elif operation == 'decline_duty(deprecated)':
                     uname = session['name']
                     worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
                     timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
@@ -299,7 +302,6 @@ def activityoperation(operation, duty_id):
                     #msg_id = mail.send_message(duty.uid,session['uid'],subject,content,2)
                     #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
 
-
                 flash({'type': 'success', 'content': '操作成功！'})
             else:
                 flash({'type': 'danger', 'content': '一个活动只能选一个班。'})
@@ -333,6 +335,9 @@ def activityoperationapi(me):
                     reason = request.args.get('reason', '')
                     if CONST.dutyoperationname[operation].has_key('require_input') and not reason:
                         res = {'error': '130', 'content': '请填写申请理由。'}
+                        return res
+                    if CONST.dutyoperationname[operation].has_key('disable'):
+                        flash({'type': 'danger', 'content': '操作被禁用！'})
                         return res
 
                     duty.status = CONST.duty_status_operation_next[operation]
@@ -412,7 +417,7 @@ def activityoperationapi(me):
                                 pass  # TODO app notify
                             if notify.is_notify(duty.uid, notify.NOTIFY_SMS, notify.NOTIFY_APPROVE_APPLY):
                                 sms.send_sms(duty.member.mobile_num, sms_content)
-                    elif operation == 'decline_duty':
+                    elif operation == 'decline_duty(deprecated)':
                         uname = me.name
                         worktimestr = "%s(%s)" % (timeformat_filter(duty.activity.work_start_time, "%Y-%m-%d %H:%M"), dayname_filter(duty.activity.work_start_time))
                         timestr = timeformat_filter(duty.activity.start_time, "%Y-%m-%d %H:%M")
@@ -438,15 +443,7 @@ def activityoperationapi(me):
                                 sms.send_sms(duty.member.mobile_num, sms_content)
 
                     elif operation == 'cancel_task':
-                        pass#timestr = timeformat_filter(duty.activity.start_time,"%Y-%m-%d %H:%M")
-                        #venue = venuename_filter(duty.activity.venue)
-                        #title = duty.activity.title
-                        #remark = duty.activity.remark
-                        #url = config.BASE_URL + url_for('activitydetail',activity_id=duty.activity.id)
-                        #subject = mail.approve_apply_tmpl['subject']
-                        #content = mail.approve_apply_tmpl['content'] % ( timestr, venue, title, remark, url , url )
-                        #msg_id = mail.send_message(duty.uid,me.uid,subject,content,2)
-                        #mail.send_mail(subject, content, duty.member.name, duty.member.email, msg_id)
+                        pass
 
                     res = {'success': True, 'message': '操作成功！'}
                 else:

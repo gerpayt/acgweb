@@ -23,4 +23,3 @@ import activity_operation
 import partner
 
 import weixinapi
-

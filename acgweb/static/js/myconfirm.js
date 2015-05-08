@@ -50,4 +50,9 @@ $('.modal-trigger').click(function(){
     else
         $('#myModalSelect').hide();
 
+    if ($(this).data('disable'))
+        $('#myModalButton').hide();
+    else
+        $('#myModalButton').show();
+
 });
