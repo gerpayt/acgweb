@@ -15,7 +15,10 @@
   <span class="label label-{{ activity.venue|venuecolor }} pull-left">{{ activity.venue|venuename }}</span>
   <span class="activity-members">
     {% for duty in activity.duties %}
-      {% if duty.is_success() %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a> {% endif %}
+      {% if duty.is_success() %}
+        <a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a>
+        {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
+      {% endif %}
     {% endfor %}
   </span>
   <span class="label label-{{ activity.status|activitystatuscolor }} pull-right">{{ activity.status|activitystatusname }}</span>

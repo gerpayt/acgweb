@@ -21,7 +21,9 @@
 
       <a class="fw-name" href="{{ url_for('memberdetail',member_uid=member.uid) }}"
          {% if session['uid'] == member.uid %} class="text-warning" {% endif %}
-        >{{member.name}}</a>
+        >{{member.name}}
+        {% if member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
+      </a>
       {% endfor %}
       <span class="label label-inverse pull-right">{{partner.count}} 次</span>
     </li>

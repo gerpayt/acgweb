@@ -51,7 +51,9 @@
 {% if activity.duties %}
   {% for duty in activity.duties %}
   <div class="duty-item">
-    <div class="member-name"><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a></div>
+    <div class="member-name"><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a>
+      {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
+    </div>
     <div class="member-mobileshort">{{duty.member.mobile_short}}</div><div class="member-mobile">{{duty.member.mobile_num}}</div>
     <br />
     <div class="member-dutystatus">{{ duty.status|dutystatusname() }}</div>

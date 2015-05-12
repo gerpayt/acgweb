@@ -17,7 +17,10 @@
   <td><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
   <td><span class="label label-{{ activity.type|activitytypecolor }}">{{ activity.type|activitytypename }}</span></td>
   <td>{% for duty in activity.duties %}
-      {% if duty.is_success() %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a> {% endif %}
+    {% if duty.is_success() %}
+      <a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">{{ duty.member.name }}</a>
+      {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
+    {% endif %}
     {% endfor %}</td>
   <td><span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></td></tr>
   {% endfor %}

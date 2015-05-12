@@ -6,7 +6,9 @@
 <table class="table table-striped">
   <tr><th>姓名</th><th>专业</th><th>短号</th><th>电话号码</th></tr>
   {% for member in member_list %}
-  <tr><td><a href="{{ url_for('memberdetail', member_uid=member.uid) }}">{{ member.name }}</a></td>
+  <tr><td><a href="{{ url_for('memberdetail', member_uid=member.uid) }}">{{ member.name }}</a>
+    {% if member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
+    </td>
       <td>{{ member.school }}</td>
       <td>{{ member.mobile_short }}</td>
       <td>{{ member.mobile_num }}</td>
