@@ -19,7 +19,11 @@
 <table class="table table-striped">
   <tr><th>分类</th><th>标题</th><th>发表时间</th></tr>
 {% for article in article_list %}
-  <tr><td>[{{ article.cate_id|categoryname }}]</td><td><a href="{{url_for('articledetail',article_title=article.title)}}">{{ article.title }}</a></td><td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('%m-%d') }}</span></td></tr>
+  <tr>
+    <td>[{{ article.cate_id|categoryname }}]</td>
+    <td><a href="{{url_for('articledetail',article_title=article.title)}}">{{ article.title }}</a></td>
+    <td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('&Y-%m-%d') }}</span></td>
+  </tr>
 {% endfor %}
 </table>
 {% if page_count > 1 %}
