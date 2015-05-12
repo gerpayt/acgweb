@@ -22,7 +22,7 @@
   <tr>
     <td>[{{ article.cate_id|categoryname }}]</td>
     <td><a href="{{url_for('articledetail',article_title=article.title)}}">{{ article.title }}</a></td>
-    <td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('&Y-%m-%d') }}</span></td>
+    <td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('%Y-%m-%d') }}</span></td>
   </tr>
 {% endfor %}
 </table>
