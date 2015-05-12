@@ -16,7 +16,9 @@
   <td><span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></td>
   <td><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
   <td>{% for duty in activity.duties %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">
-      {{ duty.member.name }}</a> <small class="label label-{{ duty.status|dutystatuscolor }}"> ({{ duty.status|dutystatusname }})</small><br /> {% endfor %}</td>
+      {{ duty.member.name }}</a>
+      {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
+      <small class="label label-{{ duty.status|dutystatuscolor }}"> ({{ duty.status|dutystatusname }})</small><br /> {% endfor %}</td>
   <td><span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></td>
   <td><a class="btn btn-mini" href="{{ url_for('activityedit',activity_id=activity.id) }}">编辑</a>
     {% if activity.status %}
