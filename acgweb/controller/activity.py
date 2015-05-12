@@ -639,7 +639,7 @@ def activityarrange(activity_id):
             for d in a.duties:
                 busymember[d.uid] = 9
         for member in memberlist:
-            m = {'uid': member.uid, 'name': member.name, 'mobile_num': member.mobile_num, 'qqnum': member.qqnum, 'email': member.email,
+            m = {'uid': member.uid, 'name': member.name, 'type': member.type, 'mobile_num': member.mobile_num, 'qqnum': member.qqnum, 'email': member.email,
                  'available': busymember.get(member.uid, 0), 'venue': 0, 'start_time': 0, 'weekcount': 0, 'monthcount': 0}
             available_member[member.uid] = m
             try:
