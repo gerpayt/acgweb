@@ -26,7 +26,7 @@
   <tr><th>分类</th><th>标题</th><th>发表时间</th><th>操作</th></tr>
 {% for article in article_list %}
   <tr><td>[{{ article.cate_id|categoryname }}]</td><td><a href="{{url_for('articledetail',article_title=article.title)}}">{{ article.title }}</a></td>
-      <td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('%m-%d') }}<span></td>
+      <td><span title="{{ article.posttime|timeformat('%Y-%m-%d %H:%M:%S') }}">{{ article.posttime|timeformat('%Y-%m-%d') }}</span></td>
   <td><a href="{{ url_for('articleedit',article_id=article.id) }}" class="btn btn-mini">编辑</a>
         <a class="btn btn-mini btn-danger modal-trigger" role="button" href="#myModal" data-toggle="modal"
           data-href="{{url_for('articledelete',article_id=article.id)}}"
