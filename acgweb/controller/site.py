@@ -512,7 +512,7 @@ def set(key, value=None):
     """Page: all articles"""
     referrer = request.referrer
     if not referrer:
-        referrer = url_for('index')
+        referrer = url_for('siteindex')
 
     if value is None:
         response = make_response(redirect(referrer))
