@@ -220,5 +220,5 @@ margin-left:7px;
 }
 
 .text-deleted {
-    text-decoration: line-through !important;
+    text-decoration: line-through;
 }
