@@ -282,3 +282,7 @@ margin-left:7px;
     display: inline-block;
     text-align: center;
 }
+
+.text-deleted {
+    text-decoration: line-through;
+}

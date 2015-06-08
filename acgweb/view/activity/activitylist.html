@@ -11,7 +11,8 @@
 <table class="table table-striped">
   <tr><th width='155'>日期</th><th width='70'>活动时间</th><th width='30'>地点</th><th>活动</th><th width='30'>类型</th><th>音控员</th><th width='45'>状态</th></tr>
   {% for activity in activity_list %}
-  <tr><td>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}</td>
+  <tr {% if activity.status == config.CONST.ACTIVITY_CANCELED %}class="text-deleted"{% endif %}>
+  <td>{{ activity.start_time|timeformat('%Y年%m月%d日') }} {{ activity.start_time|dayname }}</td>
   <td>{{ activity.start_time|periodname }} {{ activity.start_time|timeformat('%H:%M') }}</td>
   <td><span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></td>
   <td><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
@@ -22,7 +23,8 @@
       {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
     {% endif %}
     {% endfor %}</td>
-  <td><span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></td></tr>
+  <td><span class="label label-{{ activity.status|activitystatuscolor }}">{{ activity.status|activitystatusname }}</span></td>
+  </tr>
   {% endfor %}
 </table>
 

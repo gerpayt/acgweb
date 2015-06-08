@@ -12,9 +12,10 @@
 <table class="table table-striped">
   <tr><th width='115'>活动时间</th><th width='30'>地点</th><th>活动</th><th width="200">音控员</th><th>状态</th><th width='80'>操作</th></tr>
   {% for activity in activity_list %}
-  <tr><td>{{ activity.start_time|timeformat('%Y-%m-%d %H:%M') }}</td>
+  <tr>
+  <td {% if activity.status == config.CONST.ACTIVITY_CANCELED %}class="text-deleted"{% endif %}>{{ activity.start_time|timeformat('%Y-%m-%d %H:%M') }}</td>
   <td><span class="label label-{{ activity.venue|venuecolor }}">{{ activity.venue|venuename }}</span></td>
-  <td><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
+  <td {% if activity.status == config.CONST.ACTIVITY_CANCELED %}class="text-deleted"{% endif %}><a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></td>
   <td>{% for duty in activity.duties %}<a href="{{ url_for('memberdetail',member_uid=duty.member.uid) }}">
       {{ duty.member.name }}</a>
       {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
@@ -26,7 +27,8 @@
     {% else %}
     <a class="btn btn-mini btn-warning" href="{{ url_for('activityready',activity_id=activity.id) }}">就绪</a>
     {% endif %}
-  </td></tr>
+  </td>
+  </tr>
   {% endfor %}
 </table>
 <!-- TODO <a class="btn btn-mini" href="{{ url_for('activityedit') }}">添加活动</a> -->

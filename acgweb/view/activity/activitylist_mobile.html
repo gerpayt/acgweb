@@ -10,7 +10,7 @@
     {{ activity.start_time|timeformat('%H:%M') }} <br />
     {{ activity.start_time|dayname }}
   </div>
-  <div class="activity-content">
+  <div class="activity-content{% if activity.status == config.CONST.ACTIVITY_CANCELED %} text-deleted{% endif %}">
   <div class="activity-title"> <a href="{{ url_for('activitydetail',activity_id=activity.id) }}">{{ activity.title }}</a></div>
   <span class="label label-{{ activity.venue|venuecolor }} pull-left">{{ activity.venue|venuename }}</span>
   <span class="activity-members">
