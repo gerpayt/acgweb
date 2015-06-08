@@ -19,7 +19,7 @@ from push import push_alias
 
 def activity_spider(content):
     log = []
-    url = 'http://vrs.husteye.cn/Api'
+    url = 'http://cdzl.student.hust.edu.cn/Api'
     sid2ven = {u'5': 1, u'8': 2, u'10': 3}
     #Fetch contents
     if not content:
