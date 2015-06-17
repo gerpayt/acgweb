@@ -35,6 +35,13 @@ article_index_num = 5
 sexname = ['未知', '男', '女']
 mobiletypename = ['未知', '移动', '联通', '电信', '其他']
 
+MEMBER_TYPE_NORMAL = 1
+MEMBER_TYPE_BUSY = 2
+MEMBER_TYPE_INTERN = 3
+MEMBER_TYPE_HISTORY = 4
+MEMBER_TYPE_ELIMINATED = 5
+MEMBER_TYPE_OTHER = 6
+
 membertype = ['unknown', 'normal', 'busy', 'intern', 'history', 'eliminated', 'other']
 membertypename = ['未知', '正常', '休班', '实习', '历史', '淘汰', '其他']
 

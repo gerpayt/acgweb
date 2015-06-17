@@ -340,11 +340,11 @@ def _register(username, password, name, email, mobile):
     key = md5.new()
     key.update(password)
     member = Member()
-    member.uid = username.upper()
-    member.name = name
+    member.uid = username.upper().replace(' ', '')
+    member.name = name.replace(' ', '')
     member.password = key.hexdigest()
-    member.email = email
-    member.mobile_num = mobile
+    member.email = email.replace(' ', '')
+    member.mobile_num = mobile.replace(' ', '')
     member.type = 0
     member.update_register_time()
     member.update_lastlogin_time()

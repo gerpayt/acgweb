@@ -180,14 +180,14 @@ def memberedit(member_uid=''):
                 member.uid = member_uid
             member.name = form.name.data
             member.sex = form.sex.data
-            member.school = form.school.data
-            member.mobile_num = form.mobile_num.data
+            member.school = form.school.data.replace(' ', '')
+            member.mobile_num = form.mobile_num.data.replace(' ', '')
             member.mobile_type = form.mobile_type.data
-            member.mobile_short = form.mobile_short.data
-            member.qqnum = form.qqnum.data
-            member.email = form.email.data
-            member.address = form.address.data
-            member.credit_card = form.credit_card.data
+            member.mobile_short = form.mobile_short.data.replace(' ', '')
+            member.qqnum = form.qqnum.data.replace(' ', '')
+            member.email = form.email.data.replace(' ', '')
+            member.address = form.address.data.replace(' ', '')
+            member.credit_card = form.credit_card.data.replace(' ', '')
             member.type = form.type.data
             member.introduce = form.introduce.data
             db.session.add(member)
@@ -261,7 +261,7 @@ def memberactas(member_uid):
 @login_required
 def memberexport():
     member_count = Member.query.count()
-    member_list = Member.query.filter(Member.type==1).order_by('convert(name using gb2312) ASC')
+    member_list = Member.query.filter(Member.type == CONST.MEMBER_TYPE_NORMAL).order_by('convert(name using gb2312) ASC')
 
     from acgweb.controller.export import export_member
 

@@ -66,16 +66,16 @@ def myinfo():
                 abort(403)
             if not member: member = Member()
             member.uid = session[u'uid']
-            member.name = form.name.data
+            member.name = form.name.data.replace(' ', '')
             member.sex = form.sex.data
-            member.school = form.school.data
-            member.mobile_num = form.mobile_num.data
+            member.school = form.school.data.replace(' ', '')
+            member.mobile_num = form.mobile_num.data.replace(' ', '')
             member.mobile_type = form.mobile_type.data
-            member.mobile_short = form.mobile_short.data
-            member.qqnum = form.qqnum.data
-            member.email = form.email.data
-            member.address = form.address.data
-            member.credit_card = form.credit_card.data
+            member.mobile_short = form.mobile_short.data.replace(' ', '')
+            member.qqnum = form.qqnum.data.replace(' ', '')
+            member.email = form.email.data.replace(' ', '')
+            member.address = form.address.data.replace(' ', '')
+            member.credit_card = form.credit_card.data.replace(' ', '')
             member.introduce = form.introduce.data
             session['name'] = member.name
             db.session.add(member)
