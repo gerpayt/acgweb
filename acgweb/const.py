@@ -44,6 +44,7 @@ dutylogtypename = {'equip': '设备记录', 'disc': '报告纪律班长', 'tech'
 
 #venueid = [ '', '305', '513', 'd4' ]
 
+venue = ['unknown', '305', '513', 'd4']
 venuename = ['未知', '305', '513', '东四']
 venuecolor = ['inverse', 'warning', 'important', 'info']
 

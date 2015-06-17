@@ -4,10 +4,21 @@
 {% block body %}
 
 <div class="page-header">
-  <h1>活动列表</h1>
+  <div class="row">
+    <div class="span4">
+      <h1>活动列表</h1>
+    </div>
+    <div class="span8">
+      <div class="btn-group pull-right">
+        <a class="btn{% if venuename=='all'%} active{% endif %}" href="{{ url_for('activitylist',venuename='all') }}">全部</a>
+        <a class="btn{% if venuename=='513'%} active{% endif %}" href="{{ url_for('activitylist',venuename='513') }}">513</a>
+        <a class="btn{% if venuename=='305'%} active{% endif %}" href="{{ url_for('activitylist',venuename='305') }}">305</a>
+        <a class="btn{% if venuename=='d4'%} active{% endif %}" href="{{ url_for('activitylist',venuename='d4') }}">东四</a>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="row">
-<div class="span12">
+{% if activity_count %}
 <table class="table table-striped">
   <tr><th width='155'>日期</th><th width='70'>活动时间</th><th width='30'>地点</th><th>活动</th><th width='30'>类型</th><th>音控员</th><th width='45'>状态</th></tr>
   {% for activity in activity_list %}
@@ -32,19 +43,25 @@
 <div class="pagination pagination-centered">
   <ul>
   <li{% if page_current == 1 %} class="active"{% endif %}>
-      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('activitylist',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('activitylist',pagenum=page_current-1,venuename=venuename) }}{% endif %}">&laquo;</a></li>
   {% for page in range(1,page_count+1) %}
   <li{% if page == page_current %} class="active"{% endif %}>
-      <a href="{{ url_for('activitylist',pagenum=page) }}">{{ page }}</a></li>
+      <a href="{{ url_for('activitylist',pagenum=page,venuename=venuename) }}">{{ page }}</a></li>
   {% endfor %}
   <li{% if page_current == page_count %} class="active"{% endif %}>
-      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('activitylist',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('activitylist',pagenum=page_current+1,venuename=venuename) }}{% endif %}">&raquo;</a></li>
   </ul>
 </div>
 {% endif %}
-
-</div>
-</div>
+{% else %}
+  <p>
+    {% if venuename=='all' %}
+      暂时没有活动信息。
+    {% else %}
+      {{ config.CONST.venuename[config.CONST.venue.index(venuename)] }}暂时没有活动信息，<a href="{{ url_for('activitylist') }}">查看全部场地活动信息</a>。
+    {% endif %}
+  </p>
+{% endif %}
 
 {% endblock %}
 

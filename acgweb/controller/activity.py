@@ -19,21 +19,33 @@ import notify
 from push import push_alias
 
 
+@app.route('/activitylist-<venuename>-p<int:pagenum>')
+@app.route('/activitylist-<venuename>')
 @app.route('/activitylist-p<int:pagenum>')
 @app.route('/activitylist')
 @login_required
-def activitylist(pagenum=1):
+def activitylist(pagenum=1, venuename='all'):
+    if venuename in CONST.venue:
+        venue = CONST.venue.index(venuename)
+    elif venuename == 'all':
+        venue = 0
+    else:
+        abort(404)
+        venue = 0
+
     ts = time.localtime()
     todaytime = int(time.time()) - ts.tm_hour * 3600 - ts.tm_min * 60 - ts.tm_sec
-    activity_count = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN).count()
-    activity_list = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN)\
-        .order_by(Activity.start_time).limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
+    query = Activity.query.filter(Activity.start_time > todaytime, Activity.status != CONST.ACTIVITY_UNKNOWN)
+    if venue:
+        query = query.filter(Activity.venue == venue)
+    activity_count = query.count()
+    activity_list = query.order_by(Activity.start_time).limit(CONST.activity_per_page).offset(CONST.activity_per_page * (pagenum - 1))
     if viewtype() == 1:
-        return render_template('activity/activitylist_mobile.html', activity_list=activity_list,
-                               page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum)
+        return render_template('activity/activitylist_mobile.html', activity_list=activity_list, activity_count=activity_count,
+                               page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum, venuename=venuename)
     else:
-        return render_template('activity/activitylist.html', activity_list=activity_list,
-                               page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum)
+        return render_template('activity/activitylist.html', activity_list=activity_list, activity_count=activity_count,
+                               page_count=(activity_count - 1) / CONST.activity_per_page + 1, page_current=pagenum, venuename=venuename)
 
 
 @app.route('/api/activitylist')
