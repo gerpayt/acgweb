@@ -14,21 +14,34 @@ import acgweb.const as CONST
 from acgweb import config
 
 
+@app.route('/memberlist-<typename>-p<int:pagenum>')
+@app.route('/memberlist-<typename>')
 @app.route('/memberlist-p<int:pagenum>')
 @app.route('/memberlist')
 @login_required
-def memberlist(pagenum=1):
+def memberlist(pagenum=1, typename='normal'):
     """Page: all activitylist"""
-    member_count = Member.query.count()
-    member_list = Member.query.order_by('convert(name using gb2312) ASC').limit(CONST.member_per_page).offset(CONST.member_per_page * (pagenum - 1))
+    if typename in CONST.membertype:
+        type = CONST.membertype.index(typename)
+    elif typename == 'all':
+        type = 0
+    else:
+        abort(404)
+        type = 0
+
+    query = Member.query
+    if type:
+        query = query.filter(Member.type == type)
+    member_count = query.count()
+    member_list = query.order_by('convert(name using gb2312) ASC').limit(CONST.member_per_page).offset(CONST.member_per_page * (pagenum - 1))
     if viewtype() == 1:
         return render_template('member/memberlist_mobile.html',
         member_list=member_list,
-        page_count=(member_count - 1) / CONST.member_per_page + 1, page_current=pagenum)
+        page_count=(member_count - 1) / CONST.member_per_page + 1, page_current=pagenum, typename=typename)
     else:
         return render_template('member/memberlist.html',
         member_list=member_list,
-        page_count=(member_count - 1) / CONST.member_per_page + 1, page_current=pagenum)
+        page_count=(member_count - 1) / CONST.member_per_page + 1, page_current=pagenum, typename=typename)
 
 
 @app.route('/api/memberlist')

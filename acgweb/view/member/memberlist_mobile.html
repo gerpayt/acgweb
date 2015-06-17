@@ -3,6 +3,15 @@
 
 {% block body %}
 
+<div class="pagination-centered">
+<p class="btn-group">
+  <a class="btn{% if typename=='all'%} active{% endif %}" href="{{ url_for('memberlist',typename='all') }}">全部</a>
+  <a class="btn{% if typename=='normal'%} active{% endif %}" href="{{ url_for('memberlist',typename='normal') }}">值班</a>
+  <a class="btn{% if typename=='intern'%} active{% endif %}" href="{{ url_for('memberlist',typename='intern') }}">实习</a>
+  <a class="btn{% if typename=='history'%} active{% endif %}" href="{{ url_for('memberlist',typename='history') }}">历史</a>
+</p>
+</div>
+
 <table class="table table-striped">
   <tr><th>姓名</th><th>专业</th><th>电话号码</th></tr>
   {% for member in member_list %}
@@ -19,13 +28,13 @@
 <div class="pagination pagination-centered">
   <ul>
   <li{% if page_current == 1 %} class="active"{% endif %}>
-      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current-1) }}{% endif %}">&laquo;</a></li>
+      <a href="{% if page_current == 1 %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current-1,typename=typename) }}{% endif %}">&laquo;</a></li>
   {% for page in range(1,page_count+1) %}
   <li{% if page == page_current %} class="active"{% endif %}>
       <a href="{{ url_for('memberlist',pagenum=page) }}">{{ page }}</a></li>
   {% endfor %}
   <li{% if page_current == page_count %} class="active"{% endif %}>
-      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current+1) }}{% endif %}">&raquo;</a></li>
+      <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current+1,typename=typename) }}{% endif %}">&raquo;</a></li>
   </ul>
 </div>
 {% endif %}
