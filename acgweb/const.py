@@ -35,7 +35,8 @@ article_index_num = 5
 sexname = ['未知', '男', '女']
 mobiletypename = ['未知', '移动', '联通', '电信', '其他']
 
-membertypename = ['未知', '正常', '休班', '实习', '历史', '其他']
+membertype = ['unknown', 'normal', 'busy', 'intern', 'history', 'eliminated', 'other']
+membertypename = ['未知', '正常', '休班', '实习', '历史', '淘汰', '其他']
 
 classtypename = ['未知', '必修课', '选修课', '其他']
 messagetypename = {0: '未知', 1: '广播', 2: '排班', 9: '用户'}
