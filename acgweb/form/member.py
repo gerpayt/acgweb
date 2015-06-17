@@ -17,6 +17,7 @@ class MemberForm(Form):
     qqnum = TextField('qqnum', description='QQ号')
     email = TextField('email', description='电子邮件', validators=[validators.DataRequired(message="电子邮件不能为空"), validators.Email(message="电子邮件格式错误")])
     address = TextField('address', description='住址')
+    mobile_num2 = TextField('mobile_num2', description='第二联系人号码')
     credit_card = TextField('credit_card', description='银行卡号')
     type = SelectField('type', description='类型', coerce=int, choices=zip(range(len(CONST.membertypename)), CONST.membertypename))
 

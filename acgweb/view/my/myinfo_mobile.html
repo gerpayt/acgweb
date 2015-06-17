@@ -98,6 +98,15 @@
     </div>
   </div>
   
+  <div class="control-group{% if form.mobile_num2.errors %} error{% endif %}">
+    <label class="control-label" for="inputMobile_num2">第二联系人电话</label>
+    <div class="controls">{{form.mobile_num2(placeholder='室友或者班长电话')}}
+    {% if form.mobile_num2.errors %}
+      <span class="help-inline">{% for message in form.mobile_num2.errors %}{{ message }}<br />{% endfor %}</span>
+    {% endif %}
+    </div>
+  </div>
+
   <div class="control-group{% if form.credit_card.errors %} error{% endif %}">
     <label class="control-label" for="inputCredit_card">银行卡号</label>
     <div class="controls">{{form.credit_card(placeholder='不会公开')}} 

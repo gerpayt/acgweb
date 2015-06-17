@@ -1,0 +1,1 @@
+ALTER TABLE  `member` ADD  `mobile_num2` VARCHAR( 12 ) NOT NULL AFTER  `address` ;

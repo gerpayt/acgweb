@@ -90,7 +90,7 @@ def activitymanage(pagenum=1):
 @login_required
 def activitydetail(activity_id):
     if request.method == 'GET':
-        activity = Activity.query.get_or_404(activity_id)
+        activity = Activity.query.order_by('duty.id DESC').get_or_404(activity_id)
         is_busy = Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()
         duty = Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).first()
         if duty:

@@ -18,6 +18,7 @@ class Member(db.Model):
     email = db.Column(db.String(32))
     qqnum = db.Column(db.String(32))
     address = db.Column(db.String(16))
+    mobile_num2 = db.Column(db.String(12))
     credit_card = db.Column(db.String(20))
     introduce = db.Column(db.Text)
     photo = db.Column(db.Text)
@@ -53,6 +54,7 @@ class Member(db.Model):
         self.mobile_short = ''
         self.qqnum = ''
         self.address = ''
+        self.mobile_num2 = ''
         self.credit_card = ''
         self.introduce = ''
         self.photo = ''
