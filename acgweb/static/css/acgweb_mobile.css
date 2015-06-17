@@ -69,6 +69,10 @@
 .duty-item .member-dutystatus {
     clear: both;
 }
+.duty-item .member-dutyoperation {
+    clear: both;
+    margin-top: 5px;
+}
 .sch-row {
     overflow: auto;
     clear: both;
