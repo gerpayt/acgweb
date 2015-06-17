@@ -12,6 +12,7 @@
 </p>
 </div>
 
+{% if member_count %}
 <table class="table table-striped">
   <tr><th>姓名</th><th>专业</th><th>电话号码</th></tr>
   {% for member in member_list %}
@@ -37,6 +38,16 @@
       <a href="{% if page_current == page_count %}javascript:void(0);{% else %}{{ url_for('memberlist',pagenum=page_current+1,typename=typename) }}{% endif %}">&raquo;</a></li>
   </ul>
 </div>
+{% endif %}
+{% else %}
+  <p class="wrapper-mobile">
+    {% if typename=='all' %}
+      没有成员。
+    {% else %}
+      {{ config.CONST.membertypename[config.CONST.membertype.index(typename)] }}分类下没有成员<br />
+        <a href="{{ url_for('memberlist') }}">查看全部成员</a>。
+    {% endif %}
+  </p>
 {% endif %}
 
 {% endblock %}

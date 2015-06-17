@@ -36,11 +36,11 @@ def memberlist(pagenum=1, typename='normal'):
     member_list = query.order_by('convert(name using gb2312) ASC').limit(CONST.member_per_page).offset(CONST.member_per_page * (pagenum - 1))
     if viewtype() == 1:
         return render_template('member/memberlist_mobile.html',
-        member_list=member_list,
+        member_list=member_list, member_count=member_count,
         page_count=(member_count - 1) / CONST.member_per_page + 1, page_current=pagenum, typename=typename)
     else:
         return render_template('member/memberlist.html',
-        member_list=member_list,
+        member_list=member_list, member_count=member_count,
         page_count=(member_count - 1) / CONST.member_per_page + 1, page_current=pagenum, typename=typename)
 
 
