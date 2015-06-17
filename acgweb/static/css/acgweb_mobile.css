@@ -66,6 +66,9 @@
     width: 25%;
     float: left;
 }
+.duty-item .member-dutystatus {
+    clear: both;
+}
 .sch-row {
     overflow: auto;
     clear: both;

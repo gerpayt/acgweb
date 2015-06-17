@@ -54,9 +54,9 @@
     <div class="member-name"><a href="{{ url_for('memberdetail',member_uid=duty.member.uid)}}">{{duty.member.name}}</a>
       {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
     </div>
-    <div class="member-mobileshort">{{duty.member.mobile_short}}</div><div class="member-mobile">{{duty.member.mobile_num}}</div>
+    <div class="member-mobile">{{duty.member.mobile_num}}</div>
     <br />
-    <div class="member-dutystatus">{{ duty.status|dutystatusname() }}</div>
+    <div class="member-dutystatus"><span class="label label-{{ duty.status|dutystatuscolor }}"> {{ duty.status|dutystatusname() }}</span></div>
     <div class="member-dutyoperation">
       {% if activity.status == config.CONST.ACTIVITY_SCHEDULING %}
       {% if session.uid == duty.member.uid %}{% for op in config.CONST.duty_status_operation_selfuser_mapper[duty.status] %}
