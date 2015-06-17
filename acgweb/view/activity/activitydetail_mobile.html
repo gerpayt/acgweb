@@ -55,6 +55,7 @@
       {% if duty.member.type == 3 %} <small class="text-warning">(实习)</small> {% endif %}
     </div>
     <div class="member-mobile">{{duty.member.mobile_num}}</div>
+    <div class="member-mobileshort">{{duty.member.mobile_short}}</div>
     <br />
     <div class="member-dutystatus"><span class="label label-{{ duty.status|dutystatuscolor }}"> {{ duty.status|dutystatusname() }}</span></div>
     <div class="member-dutyoperation">
