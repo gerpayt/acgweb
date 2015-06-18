@@ -91,6 +91,8 @@ def activitymanage(pagenum=1):
 def activitydetail(activity_id):
     if request.method == 'GET':
         activity = Activity.query.order_by('duty.id DESC').get_or_404(activity_id)
+        # 按顺序显示任务（覆盖活动成员）
+        activity.duties = Duty.query.filter(Duty.aid == activity_id).order_by(Duty.id).all()
         is_busy = Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).count()
         duty = Duty.query.filter(Duty.uid == session['uid'], Duty.aid == activity_id).first()
         if duty:
