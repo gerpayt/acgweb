@@ -28,11 +28,11 @@
     <th>操作间隔</th><th>总计</th></tr>
   {% for member in member_list %}
   <tr><td><a href="{{ url_for('memberdetail',member_uid=member.uid) }}">{{ member.name }}</a></td>
-    <td><div class="progress">
+    <td><div class="progress">{% if member.activity_source.total %}
       <div class="bar bar-success" style="width: {{ 100 * member.activity_source.apply / member.activity_source.total }}%;">{{ member.activity_source.apply }}</div>
       <div class="bar bar-warning" style="width: {{ 100 * member.activity_source.appoint / member.activity_source.total }}%;">{{ member.activity_source.appoint }}</div>
       <div class="bar bar-info" style="width: {{ 100 * member.activity_source.cover / member.activity_source.total }}%;">{{ member.activity_source.cover }}</div>
-    </div></td>
+    {% endif %}</div></td>
     <td><div class="progress">{% if member.activity_apply.total %}
       <div class="bar bar-success" style="width: {{ 100 * member.activity_apply.approve / member.activity_apply.total }}%;">{{ member.activity_apply.approve }}</div>
       <div class="bar bar-danger" style="width: {{ 100 * member.activity_apply.decline / member.activity_apply.total }}%;">{{ member.activity_apply.decline }}</div>
