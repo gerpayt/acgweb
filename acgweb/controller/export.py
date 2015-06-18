@@ -1,6 +1,6 @@
 # coding: utf-8
 from template_filter import *
-
+from flask import session
 
 import xlwt
 
@@ -102,7 +102,10 @@ def export_member(member_list):
     ws.write(1, 4, "短号")
     ws.write(1, 5, "qq")
     ws.write(1, 6, "住址")
-    ws.write(1, 7, "备注")
+    ws.write(1, 7, "第二联系电话")
+    ws.write(1, 8, "备注")
+    if session.get('is_arra_monitor'):
+        ws.write(1, 9, "银行卡号")
 
     ws.col(0).set_width(256 * 12)
     ws.col(1).set_width(256 * 7)
@@ -111,7 +114,10 @@ def export_member(member_list):
     ws.col(4).set_width(256 * 12)
     ws.col(5).set_width(256 * 12)
     ws.col(6).set_width(256 * 10)
-    ws.col(7).set_width(256 * 10)
+    ws.col(7).set_width(256 * 12)
+    ws.col(8).set_width(256 * 10)
+    if session.get('is_arra_monitor'):
+        ws.col(9).set_width(256 * 20)
 
     i = 2
     for member in member_list:
@@ -122,6 +128,9 @@ def export_member(member_list):
         ws.write(i, 4, member.mobile_short+'('+mobiletypename_filter(member.mobile_type)+')')
         ws.write(i, 5, member.qqnum)
         ws.write(i, 6, member.address)
+        ws.write(i, 7, member.mobile_num2)
+        if session.get('is_arra_monitor'):
+            ws.write(i, 9, member.credit_card)
         i += 1
 
     return wb
