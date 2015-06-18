@@ -8,6 +8,8 @@ from acgweb import app, db
 from acgweb.model.activity import Activity
 from acgweb.model.duty import Duty
 from acgweb.model.member import Member
+from acgweb.model.message import Message
+from acgweb.model.schedule import Schedule
 from acgweb.form.member import MemberForm
 from decorated_function import *
 import acgweb.const as CONST
@@ -211,11 +213,14 @@ def memberdelete(member_uid):
     """Page: activity detail"""
     if not session.get('is_arra_monitor'):
         abort(403)
-    member = Member.query.get(member_uid)
-    db.session.delete(member)
+
+    Member.query.filter(Member.uid == member_uid).delete()
+    Duty.query.filter(Duty.uid == member_uid).delete()
+    Message.query.filter(Message.touid == member_uid).delete()
+    Message.query.filter(Message.fromuid == member_uid).delete()
+    Schedule.query.filter(Schedule.uid == member_uid).delete()
+
     db.session.commit()
-    # TODO delete relation
-    # schedule cache duty message
     flash({'type': 'success', 'content': '成员已删除。'})
     return redirect(url_for('membermanage'))
 
