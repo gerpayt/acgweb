@@ -16,7 +16,12 @@
 
   <div class="control-group">
     <label class="control-label" for="inputUid">学号</label>
-    <div class="controls"><span class="uneditable-input">{{session['uid']}}</span></div>
+    <div class="controls">
+      <div class="input-append">
+        <span class="span2 uneditable-input">{{session['uid']}}</span>
+        <a class="btn" href="{{ url_for('changeuid') }}">修改学号</a>
+      </div>
+    </div>
   </div>
   
   <div class="control-group{% if form.name.errors %} error{% endif %}">

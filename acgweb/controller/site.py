@@ -4,6 +4,9 @@ import md5
 from flask import render_template, flash, jsonify, abort, make_response, json
 from acgweb import app, db
 from acgweb.model.member import Member
+from acgweb.model.duty import Duty
+from acgweb.model.schedule import Schedule
+from acgweb.model.message import Message
 from acgweb.form.register import RegisterForm
 from decorated_function import *
 from acgweb import config
@@ -262,6 +265,37 @@ def changepasswordapi(me):
             db.session.commit()
             res = {'success': True, 'content': '修改密码成功。'}
     return res
+
+
+@app.route('/changeuid', methods=['GET', 'POST'])
+@login_required
+def changeuid():
+    if request.method == 'POST':
+        uid_new = request.form['uid_new'].upper().replace(' ', '')
+        if not uid_new:
+            flash({'type': 'danger', 'content': '学号不能为空。'})
+        elif Member.query.filter(Member.uid == uid_new).count():
+            flash({'type': 'danger', 'content': '学号已存在。'})
+        else:
+            Member.query.filter(Member.uid == session['uid']).update({Member.uid: uid_new})
+            Duty.query.filter(Duty.uid == session['uid']).update({Duty.uid: uid_new})
+            Message.query.filter(Message.touid == session['uid']).update({Message.touid: uid_new})
+            Message.query.filter(Message.fromuid == session['uid']).update({Message.fromuid: uid_new})
+            Schedule.query.filter(Schedule.uid == session['uid']).update({Schedule.uid: uid_new})
+
+            db.session.commit()
+            session['uid'] = uid_new
+            flash({'type': 'success', 'content': '修改学号成功。'})
+            return redirect(url_for('myinfo'))
+        if viewtype() == 1:
+            return render_template('site/changeuid_mobile.html')
+        else:
+            return render_template('site/changeuid.html')
+    else:
+        if viewtype() == 1:
+            return render_template('site/changeuid_mobile.html')
+        else:
+            return render_template('site/changeuid.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
