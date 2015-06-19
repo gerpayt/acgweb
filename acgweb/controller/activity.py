@@ -352,7 +352,7 @@ def activityoperationapi(me):
                         res = {'error': '130', 'content': '请填写申请理由。'}
                         return res
                     if CONST.dutyoperationname[operation].has_key('disable'):
-                        flash({'type': 'danger', 'content': '操作被禁用！'})
+                        res = {'error': '131', 'content': '操作被禁用！'}
                         return res
 
                     duty.status = CONST.duty_status_operation_next[operation]
