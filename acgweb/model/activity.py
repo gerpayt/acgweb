@@ -3,6 +3,7 @@ from acgweb import db
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.sql import case
 from datetime import datetime
+from acgweb.model.duty import Duty
 from acgweb import config
 import acgweb.const as CONST
 import time
@@ -21,7 +22,8 @@ class Activity(db.Model):
     type = db.Column(db.Integer)
     hostname = db.Column(db.String(32))
     duties = db.relationship('Duty',
-        backref=db.backref('activity', lazy='joined'))
+        backref=db.backref('activity', lazy='joined'),
+        order_by=Duty.id)
     status = db.Column(db.Integer)
     _strustarttime = {}
 
