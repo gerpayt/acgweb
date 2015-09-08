@@ -75,6 +75,7 @@ def myinfo():
             member.qqnum = form.qqnum.data.replace(' ', '')
             member.email = form.email.data.replace(' ', '')
             member.address = form.address.data.replace(' ', '')
+            member.mobile_num2 = form.mobile_num2.data.replace(' ', '')
             member.credit_card = form.credit_card.data.replace(' ', '')
             member.introduce = form.introduce.data
             session['name'] = member.name
