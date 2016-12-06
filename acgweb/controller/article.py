@@ -50,7 +50,7 @@ def articlelistapi(me):
 @app.route('/articlemanage-p<int:pagenum>')
 @app.route('/articlemanage')
 @login_required
-def articlemanage(pagenum=1):
+def articlemanage(pagenum=1, cateid=0):
     """Page: all articles"""
     if not session.get('is_arra_monitor'):
         abort(403)
@@ -59,7 +59,7 @@ def articlemanage(pagenum=1):
     article_list = Article.query.order_by('posttime DESC').limit(CONST.article_per_page).offset(CONST.article_per_page * (pagenum - 1))
     return render_template('article/articlemanage.html',
         article_list=article_list,
-        page_count=(article_count - 1) / CONST.article_per_page + 1, page_current=pagenum, category_list=category_list)
+        page_count=(article_count - 1) / CONST.article_per_page + 1, page_current=pagenum, category_list=category_list, cateid=cateid)
 
 
 @app.route('/article-<article_title>')
